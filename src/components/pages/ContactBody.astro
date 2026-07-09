@@ -1,0 +1,45 @@
+---
+import PageHero from '../PageHero.astro';
+import ContactForm from '../ContactForm.astro';
+import CompanyBlock from '../CompanyBlock.astro';
+import { useTranslations, type Lang } from '../../i18n/utils';
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+---
+
+<PageHero eyebrow={t('contact.eyebrow')} title={t('contact.heading')} sub={t('contact.sub')} />
+
+<section class="section section-top">
+  <div class="container contact-grid">
+    <div class="contact-form-col">
+      <h2 class="form-heading">{t('contact.formHeading')}</h2>
+      <ContactForm type="contact" />
+    </div>
+    <CompanyBlock />
+  </div>
+</section>
+
+<style>
+  .section-top {
+    padding-top: 1rem;
+  }
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    align-items: start;
+  }
+  .form-heading {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--strong);
+    margin-bottom: 1.5rem;
+  }
+  @media (min-width: 880px) {
+    .contact-grid {
+      grid-template-columns: 1.5fr 1fr;
+      gap: 3.5rem;
+    }
+  }
+</style>

@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ContactBody from '../../components/pages/ContactBody.astro';
+import { useTranslations, type Lang } from '../../i18n/utils';
+
+const lang = (Astro.currentLocale ?? 'it') as Lang;
+const t = useTranslations(lang);
+---
+
+<BaseLayout title={t('pages.contact.title')} description={t('pages.contact.description')}>
+  <ContactBody />
+</BaseLayout>

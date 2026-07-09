@@ -1,0 +1,62 @@
+---
+import PageHero from '../PageHero.astro';
+import CompanyBlock from '../CompanyBlock.astro';
+import { useTranslations, type Lang } from '../../i18n/utils';
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+
+type Section = { heading: string; body: string };
+const sections = t('about.sections') as Section[];
+---
+
+<PageHero eyebrow={t('about.eyebrow')} title={t('about.heading')} sub={t('about.sub')} />
+
+<section class="section section-top">
+  <div class="container about-grid">
+    <div class="about-sections">
+      {sections.map((section) => (
+        <article class="about-block reveal">
+          <h2 class="about-block-heading">{section.heading}</h2>
+          <p class="about-block-body">{section.body}</p>
+        </article>
+      ))}
+    </div>
+    <CompanyBlock />
+  </div>
+</section>
+
+<style>
+  .section-top {
+    padding-top: 1rem;
+  }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    align-items: start;
+  }
+  .about-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .about-block-heading {
+    font-size: 1.3rem;
+    font-weight: 750;
+    color: var(--strong);
+    margin-bottom: 0.7rem;
+  }
+  .about-block-body {
+    color: var(--muted);
+    font-size: 1.02rem;
+    line-height: 1.7;
+    max-width: 60ch;
+  }
+  @media (min-width: 880px) {
+    .about-grid {
+      grid-template-columns: 1.6fr 1fr;
+      gap: 3.5rem;
+    }
+  }
+</style>

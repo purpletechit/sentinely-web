@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHero from '../../../components/PageHero.astro';
+import BlogList from '../../../components/BlogList.astro';
+import { useTranslations, type Lang } from '../../../i18n/utils';
+
+const lang = (Astro.currentLocale ?? 'it') as Lang;
+const t = useTranslations(lang);
+---
+
+<BaseLayout title={t('pages.blog.title')} description={t('pages.blog.description')}>
+  <PageHero title={t('blog.heading')} sub={t('blog.sub')} />
+  <section class="section" style="padding-top:1rem">
+    <div class="container">
+      <BlogList />
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,160 @@
+---
+import { localizePath, useTranslations, type Lang } from '../i18n/utils';
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+const homeHref = localizePath('/', lang);
+const p = (path: string) => localizePath(path, lang);
+
+const product = [
+  { href: `${homeHref}#features`, label: t('footer.product.features') },
+  { href: `${homeHref}#how`, label: t('footer.product.how') },
+  { href: `${homeHref}#pricing`, label: t('footer.product.pricing') },
+  { href: `${homeHref}#faq`, label: t('footer.product.faq') },
+];
+---
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <a href={homeHref} class="brand" aria-label={t('site.name')}>
+        <span class="beacon" aria-hidden="true"></span>
+        <span class="brand-name">{t('site.name')}</span>
+      </a>
+      <p class="footer-tagline measure">{t('footer.tagline')}</p>
+    </div>
+
+    <nav class="footer-col" aria-label={t('footer.colProduct')}>
+      <h2 class="footer-heading">{t('footer.colProduct')}</h2>
+      <ul>
+        {product.map((item) => (
+          <li><a href={item.href} class="footer-link">{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <nav class="footer-col" aria-label={t('footer.colCompany')}>
+      <h2 class="footer-heading">{t('footer.colCompany')}</h2>
+      <ul>
+        <li><a href={p('/about')} class="footer-link">{t('footer.company.about')}</a></li>
+        <li>
+          <a href={p('/blog')} class="footer-link is-soon">
+            {t('footer.company.blog')}
+            <span class="soon-tag">{t('common.soon')}</span>
+          </a>
+        </li>
+        <li><a href={p('/affiliates')} class="footer-link">{t('footer.company.affiliates')}</a></li>
+        <li><a href={p('/contact')} class="footer-link">{t('footer.company.contact')}</a></li>
+      </ul>
+    </nav>
+
+    <nav class="footer-col" aria-label={t('footer.colLegal')}>
+      <h2 class="footer-heading">{t('footer.colLegal')}</h2>
+      <ul>
+        <li><a href={p('/privacy')} class="footer-link">{t('footer.legal.privacy')}</a></li>
+        <li><a href={p('/terms')} class="footer-link">{t('footer.legal.terms')}</a></li>
+        <li><a href={p('/gdpr')} class="footer-link">{t('footer.legal.gdpr')}</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="container">
+    <div class="footer-legal">
+      <p>{t('footer.legalBar')}</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--line);
+    background-color: var(--surface);
+    padding-top: 3.5rem;
+    margin-top: 1rem;
+  }
+  .footer-grid {
+    display: grid;
+    gap: 2.5rem;
+    grid-template-columns: 1fr;
+    padding-bottom: 2.5rem;
+  }
+  .footer-brand .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-weight: 750;
+    font-size: 1.12rem;
+    letter-spacing: -0.02em;
+    color: var(--strong);
+  }
+  .footer-tagline {
+    margin-top: 0.9rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+    max-width: 30ch;
+  }
+  .footer-heading {
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--faint);
+    margin-bottom: 0.9rem;
+  }
+  .footer-col ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+  .footer-link {
+    color: var(--muted);
+    font-size: 0.94rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.14s ease;
+  }
+  .footer-link:hover {
+    color: var(--accent);
+  }
+  .soon-tag {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--faint);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0.1rem 0.4rem;
+  }
+  .footer-legal {
+    border-top: 1px solid var(--line);
+    padding-block: 1.5rem 2rem;
+  }
+  .footer-legal p {
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    color: var(--faint);
+    letter-spacing: 0.01em;
+  }
+
+  @media (min-width: 640px) {
+    .footer-grid {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+    .footer-brand {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (min-width: 900px) {
+    .footer-grid {
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem;
+    }
+    .footer-brand {
+      grid-column: auto;
+    }
+  }
+</style>

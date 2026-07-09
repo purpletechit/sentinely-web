@@ -1,0 +1,295 @@
+---
+import { useTranslations, type Lang } from '../i18n/utils';
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+
+type Row = { ip: string; provider: string; volume: string; status: 'pass' | 'fail' };
+const rows = t('verdict.rows') as Row[];
+
+// Auth bar segments — pass + quarantine = "Authenticated" (98.7%), fail = 1.3%.
+const segments = [
+  { key: 'pass', width: 93.7, cls: 'seg-pass', label: t('verdict.bar.pass') },
+  { key: 'quarantine', width: 5.0, cls: 'seg-quarantine', label: t('verdict.bar.quarantine') },
+  { key: 'fail', width: 1.3, cls: 'seg-fail', label: t('verdict.bar.fail') },
+];
+---
+
+<div class="verdict panel" role="img" aria-label={t('verdict.caption')}>
+  <div class="verdict-head">
+    <div class="domain">
+      <span class="dot" aria-hidden="true"></span>
+      <span class="mono domain-name">{t('verdict.domain')}</span>
+    </div>
+    <span class="chip policy">
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" aria-hidden="true">
+        <path
+          d="M12 3 5 6v5c0 4.4 3 8 7 9 4-1 7-4.6 7-9V6l-7-3Z"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linejoin="round"></path>
+        <path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+      {t('verdict.policy')}
+    </span>
+  </div>
+
+  <div class="score-row">
+    <div class="grade" aria-hidden="true">{t('verdict.grade')}</div>
+    <div class="score-meta">
+      <p class="label">{t('verdict.scoreLabel')}</p>
+      <p class="score-value">
+        <span class="mono num">{t('verdict.score')}</span><span class="denom">/ 100</span>
+      </p>
+    </div>
+  </div>
+
+  <div class="auth-bar" role="presentation">
+    {segments.map((s) => <span class={`seg ${s.cls}`} style={`width:${s.width}%`} title={`${s.label} ${s.width}%`}></span>)}
+  </div>
+  <div class="auth-kpis">
+    <div class="kpi">
+      <span class="kpi-dot seg-pass" aria-hidden="true"></span>
+      <span class="kpi-label">{t('verdict.authenticated')}</span>
+      <span class="mono kpi-value">{t('verdict.authRate')}</span>
+    </div>
+    <div class="kpi">
+      <span class="kpi-dot seg-fail" aria-hidden="true"></span>
+      <span class="kpi-label">{t('verdict.failLabel')}</span>
+      <span class="mono kpi-value">{t('verdict.failRate')}</span>
+    </div>
+  </div>
+
+  <div class="scroll-x">
+    <table class="sources">
+      <thead>
+        <tr>
+          <th>{t('verdict.table.source')}</th>
+          <th>{t('verdict.table.provider')}</th>
+          <th class="ta-right">{t('verdict.table.volume')}</th>
+          <th class="ta-right">{t('verdict.table.auth')}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((row) => (
+          <tr>
+            <td class="mono ip">{row.ip}</td>
+            <td class="provider">{row.provider}</td>
+            <td class="mono ta-right vol">{row.volume}</td>
+            <td class="ta-right">
+              <span class={`chip ${row.status === 'pass' ? 'chip-pass' : 'chip-fail'} chip-xs`}>
+                {row.status === 'pass' ? t('verdict.passShort') : t('verdict.failShort')}
+              </span>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="alert">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
+      <path d="M12 8v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+      <circle cx="12" cy="16.5" r="1.1" fill="currentColor"></circle>
+      <path
+        d="M10.3 4.3 3 17a2 2 0 0 0 1.7 3h14.6a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0Z"
+        stroke="currentColor"
+        stroke-width="1.6"
+        stroke-linejoin="round"></path>
+    </svg>
+    <span>{t('verdict.alert')}</span>
+  </div>
+</div>
+
+<style>
+  .verdict {
+    padding: 1.25rem;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .verdict-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  .domain {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .domain .dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background-color: var(--pass);
+    box-shadow: 0 0 0 3px var(--pass-soft);
+  }
+  .domain-name {
+    font-weight: 650;
+    color: var(--strong);
+    font-size: 0.98rem;
+  }
+  .chip.policy {
+    color: var(--strong);
+    background-color: var(--surface-2);
+  }
+  .chip.policy svg {
+    color: var(--accent);
+  }
+
+  .score-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-top: 0.25rem;
+  }
+  .grade {
+    display: grid;
+    place-items: center;
+    width: 3.4rem;
+    height: 3.4rem;
+    border-radius: 50%;
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: var(--strong);
+    border: 2px solid color-mix(in srgb, var(--pass) 55%, var(--line));
+    background:
+      radial-gradient(circle at 50% 40%, var(--pass-soft), transparent 70%);
+    letter-spacing: -0.02em;
+  }
+  .score-meta .label {
+    color: var(--muted);
+  }
+  .score-value {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    margin-top: 0.1rem;
+  }
+  .score-value .num {
+    font-size: 1.65rem;
+    font-weight: 700;
+    color: var(--strong);
+    line-height: 1;
+  }
+  .score-value .denom {
+    color: var(--faint);
+    font-size: 0.85rem;
+  }
+
+  .auth-bar {
+    display: flex;
+    width: 100%;
+    height: 0.6rem;
+    border-radius: 999px;
+    overflow: hidden;
+    background-color: var(--surface-2);
+    gap: 2px;
+  }
+  .seg {
+    height: 100%;
+    display: block;
+  }
+  .seg-pass {
+    background-color: var(--pass);
+  }
+  .seg-quarantine {
+    background-color: var(--warn);
+  }
+  .seg-fail {
+    background-color: var(--fail);
+  }
+
+  .auth-kpis {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .kpi {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.85rem;
+  }
+  .kpi-dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 3px;
+    display: inline-block;
+  }
+  .kpi-label {
+    color: var(--muted);
+  }
+  .kpi-value {
+    color: var(--strong);
+    font-weight: 650;
+  }
+
+  .sources {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    min-width: 22rem;
+  }
+  .sources th {
+    text-align: left;
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.62rem;
+    font-weight: 600;
+    color: var(--faint);
+    padding: 0 0.5rem 0.55rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .sources td {
+    padding: 0.6rem 0.5rem;
+    border-bottom: 1px solid var(--line);
+    vertical-align: middle;
+  }
+  .sources tbody tr:last-child td {
+    border-bottom: none;
+  }
+  .ta-right {
+    text-align: right;
+  }
+  .ip {
+    color: var(--ink);
+    font-size: 0.8rem;
+  }
+  .provider {
+    color: var(--muted);
+  }
+  .vol {
+    color: var(--strong);
+    font-weight: 600;
+  }
+  .chip-xs {
+    padding: 0.12rem 0.45rem;
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+  }
+
+  .alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.75rem 0.85rem;
+    border-radius: var(--radius-sm);
+    background-color: var(--fail-soft);
+    border: 1px solid color-mix(in srgb, var(--fail) 35%, var(--line));
+    color: var(--fail);
+    font-size: 0.85rem;
+    font-weight: 550;
+    line-height: 1.45;
+  }
+  .alert svg {
+    flex: none;
+    margin-top: 0.05rem;
+  }
+</style>

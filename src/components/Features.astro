@@ -1,0 +1,42 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import FeatureCard from './FeatureCard.astro';
+import { useTranslations, type Lang } from '../i18n/utils';
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+
+type Card = { title: string; body: string };
+const cards = t('features.cards') as Card[];
+const icons = ['gauge', 'sparkles', 'bell', 'shield', 'radar', 'layers'];
+---
+
+<section id="features" class="section features">
+  <div class="container">
+    <SectionHeading eyebrow={t('features.eyebrow')} title={t('features.heading')} sub={t('features.sub')} />
+    <div class="feature-grid">
+      {cards.map((card, i) => (
+        <FeatureCard icon={icons[i] ?? 'shield'} title={card.title} body={card.body} delay={(i % 3) * 70} />
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .feature-grid {
+    margin-top: 2.75rem;
+    display: grid;
+    gap: 1.1rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 620px) {
+    .feature-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 980px) {
+    .feature-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

@@ -1,0 +1,82 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import { useTranslations, type Lang } from '../i18n/utils';
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+
+type Step = { title: string; body: string };
+const steps = t('how.steps') as Step[];
+---
+
+<section id="how" class="section how">
+  <div class="container">
+    <SectionHeading eyebrow={t('how.eyebrow')} title={t('how.heading')} sub={t('how.sub')} />
+    <ol class="steps">
+      {steps.map((step, i) => (
+        <li class="step reveal" style={`transition-delay:${i * 80}ms`}>
+          <span class="step-num mono">{String(i + 1).padStart(2, '0')}</span>
+          <h3 class="step-title">{step.title}</h3>
+          <p class="step-body">{step.body}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .steps {
+    list-style: none;
+    margin-top: 2.75rem;
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: 1fr;
+    counter-reset: step;
+  }
+  .step {
+    position: relative;
+    padding: 1.6rem 1.5rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+  }
+  .step-num {
+    display: inline-block;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    padding: 0.2rem 0.55rem;
+    border: 1px solid var(--accent-line);
+    background-color: var(--accent-soft);
+    border-radius: 999px;
+    margin-bottom: 1rem;
+  }
+  .step-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--strong);
+    margin-bottom: 0.5rem;
+  }
+  .step-body {
+    color: var(--muted);
+    font-size: 0.97rem;
+    line-height: 1.6;
+  }
+  @media (min-width: 820px) {
+    .steps {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.1rem;
+    }
+    /* connector line between steps */
+    .step:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: 2.5rem;
+      right: -0.65rem;
+      width: 0.55rem;
+      height: 1px;
+      background-color: var(--accent-line);
+    }
+  }
+</style>

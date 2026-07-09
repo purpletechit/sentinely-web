@@ -1,0 +1,255 @@
+---
+import { useTranslations, type Lang } from '../i18n/utils';
+
+interface Props {
+  type: 'contact' | 'affiliate';
+}
+const { type } = Astro.props;
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+
+// Build-time public site key. Falls back to Cloudflare's "always passes" TEST
+// key so the form works locally; production MUST set PUBLIC_TURNSTILE_SITE_KEY.
+const TEST_SITE_KEY = '1x00000000000000000000AA';
+const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || TEST_SITE_KEY;
+
+const prefix = type === 'affiliate' ? 'affiliates' : 'contact';
+const endpoint = type === 'affiliate' ? '/api/affiliate' : '/api/contact';
+const submitLabel = type === 'affiliate' ? t('affiliates.submit') : t('contact.submit');
+const successKey = type === 'affiliate' ? 'form.successAffiliate' : 'form.success';
+---
+
+<form
+  class="cform"
+  data-form
+  data-type={type}
+  data-endpoint={endpoint}
+  data-lang={lang}
+  data-success={t(successKey)}
+  data-error={t('form.error')}
+  data-turnstile-error={t('form.turnstileError')}
+  novalidate
+>
+  <div class="form-grid">
+    <div class="form-row">
+      <label class="field-label" for={`cf-${type}-name`}>{t(`${prefix}.fields.name`)}</label>
+      <input
+        class="field"
+        id={`cf-${type}-name`}
+        name="name"
+        type="text"
+        required
+        autocomplete="name"
+        placeholder={t(`${prefix}.placeholders.name`)}
+      />
+    </div>
+
+    <div class="form-row">
+      <label class="field-label" for={`cf-${type}-email`}>{t(`${prefix}.fields.email`)}</label>
+      <input
+        class="field"
+        id={`cf-${type}-email`}
+        name="email"
+        type="email"
+        required
+        autocomplete="email"
+        placeholder={t(`${prefix}.placeholders.email`)}
+      />
+    </div>
+
+    <div class="form-row form-row-full">
+      <label class="field-label" for={`cf-${type}-company`}>{t(`${prefix}.fields.company`)}</label>
+      <input
+        class="field"
+        id={`cf-${type}-company`}
+        name="company"
+        type="text"
+        required={type === 'affiliate'}
+        autocomplete="organization"
+        placeholder={t(`${prefix}.placeholders.company`)}
+      />
+    </div>
+
+    <div class="form-row form-row-full">
+      <label class="field-label" for={`cf-${type}-message`}>
+        {type === 'affiliate' ? t('affiliates.fields.plan') : t('contact.fields.message')}
+      </label>
+      <textarea
+        class="field"
+        id={`cf-${type}-message`}
+        name="message"
+        required
+        rows="5"
+        placeholder={type === 'affiliate' ? t('affiliates.placeholders.plan') : t('contact.placeholders.message')}
+      ></textarea>
+    </div>
+  </div>
+
+  {/* Honeypot — hidden from humans; bots that fill it are rejected server-side. */}
+  <div class="hp-field" aria-hidden="true">
+    <label for={`cf-${type}-website`}>{t('form.botField')}</label>
+    <input id={`cf-${type}-website`} name="website_hp" type="text" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <div class="cf-turnstile" data-sitekey={siteKey} data-theme="auto" data-size="flexible"></div>
+
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary" data-submit>
+      <span data-submit-label>{submitLabel}</span>
+    </button>
+    <p class="form-status" role="status" aria-live="polite" data-status hidden></p>
+  </div>
+</form>
+
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer is:inline></script>
+
+<style>
+  .cform {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .form-row {
+    display: flex;
+    flex-direction: column;
+  }
+  .hp-field {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .cf-turnstile {
+    min-height: 65px;
+  }
+  .form-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .form-status {
+    font-size: 0.9rem;
+    font-weight: 550;
+    margin: 0;
+  }
+  .form-status[data-state='success'] {
+    color: var(--pass);
+  }
+  .form-status[data-state='error'] {
+    color: var(--fail);
+  }
+  .btn[data-loading] {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+  @media (min-width: 560px) {
+    .form-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .form-row-full {
+      grid-column: 1 / -1;
+    }
+  }
+</style>
+
+<script>
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  document.querySelectorAll<HTMLFormElement>('form[data-form]').forEach((form) => {
+    const statusEl = form.querySelector<HTMLElement>('[data-status]');
+    const submitBtn = form.querySelector<HTMLButtonElement>('[data-submit]');
+    const labelEl = form.querySelector<HTMLElement>('[data-submit-label]');
+    const originalLabel = labelEl?.textContent ?? '';
+    const sendingLabel = form.dataset.lang === 'it' ? 'Invio in corso…' : 'Sending…';
+
+    const setStatus = (message: string, state: 'success' | 'error') => {
+      if (!statusEl) return;
+      statusEl.textContent = message;
+      statusEl.dataset.state = state;
+      statusEl.hidden = false;
+    };
+
+    const setLoading = (loading: boolean) => {
+      if (!submitBtn) return;
+      if (loading) {
+        submitBtn.setAttribute('data-loading', '');
+        if (labelEl) labelEl.textContent = sendingLabel;
+      } else {
+        submitBtn.removeAttribute('data-loading');
+        if (labelEl) labelEl.textContent = originalLabel;
+      }
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (statusEl) statusEl.hidden = true;
+
+      const data = new FormData(form);
+      const name = String(data.get('name') ?? '').trim();
+      const email = String(data.get('email') ?? '').trim();
+      const message = String(data.get('message') ?? '').trim();
+
+      // Client-side validation (server re-validates authoritatively).
+      if (!name || !message || !EMAIL_RE.test(email)) {
+        setStatus(
+          form.dataset.lang === 'it'
+            ? 'Controlla i campi obbligatori e l’indirizzo email.'
+            : 'Please check the required fields and your email address.',
+          'error',
+        );
+        return;
+      }
+
+      const token = String(data.get('cf-turnstile-response') ?? '');
+      if (!token) {
+        setStatus(form.dataset.turnstileError ?? 'Anti-bot check failed.', 'error');
+        return;
+      }
+
+      const payload = {
+        type: form.dataset.type,
+        name,
+        email,
+        company: String(data.get('company') ?? '').trim(),
+        message,
+        website_hp: String(data.get('website_hp') ?? ''),
+        token,
+        lang: form.dataset.lang,
+      };
+
+      setLoading(true);
+      try {
+        const res = await fetch(form.dataset.endpoint ?? '/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (res.ok) {
+          setStatus(form.dataset.success ?? 'Thanks!', 'success');
+          form.reset();
+          if ('turnstile' in window) {
+            try {
+              (window as unknown as { turnstile: { reset: () => void } }).turnstile.reset();
+            } catch (e) {
+              /* no-op */
+            }
+          }
+        } else {
+          setStatus(form.dataset.error ?? 'Something went wrong.', 'error');
+        }
+      } catch (e) {
+        setStatus(form.dataset.error ?? 'Something went wrong.', 'error');
+      } finally {
+        setLoading(false);
+      }
+    });
+  });
+</script>

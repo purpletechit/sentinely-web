@@ -1,0 +1,53 @@
+---
+import { alternatePath, useTranslations, type Lang } from '../i18n/utils';
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+const pathname = Astro.url.pathname;
+const enHref = alternatePath(pathname, 'en');
+const itHref = alternatePath(pathname, 'it');
+---
+
+<div class="lang-switch" role="group" aria-label={t('common.langSwitch')}>
+  <a
+    href={enHref}
+    hreflang="en"
+    class:list={['lang-opt', { active: lang === 'en' }]}
+    aria-current={lang === 'en' ? 'true' : undefined}>EN</a
+  >
+  <span class="sep" aria-hidden="true">·</span>
+  <a
+    href={itHref}
+    hreflang="it"
+    class:list={['lang-opt', { active: lang === 'it' }]}
+    aria-current={lang === 'it' ? 'true' : undefined}>IT</a
+  >
+</div>
+
+<style>
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    padding: 0 0.2rem;
+  }
+  .lang-opt {
+    color: var(--muted);
+    padding: 0.2rem 0.15rem;
+    border-radius: 4px;
+    transition: color 0.14s ease;
+  }
+  .lang-opt:hover {
+    color: var(--accent);
+  }
+  .lang-opt.active {
+    color: var(--strong);
+  }
+  .sep {
+    color: var(--faint);
+  }
+</style>

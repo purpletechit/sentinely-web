@@ -1,0 +1,163 @@
+---
+import VerdictPanel from './VerdictPanel.astro';
+import { useTranslations, type Lang } from '../i18n/utils';
+import { APP_SIGNUP_URL } from '../config';
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+const microStats = t('hero.microStats') as string[];
+
+const dmarcXml = `<record>
+  <row>
+    <source_ip>193.42.33.8</source_ip>
+    <count>604</count>
+    <policy_evaluated>
+      <disposition>reject</disposition>
+      <dkim>fail</dkim>
+      <spf>fail</spf>
+    </policy_evaluated>
+  </row>
+  <identifiers>
+    <header_from>acme.com</header_from>
+  </identifiers>
+  <auth_results>
+    <spf><domain>acme.com</domain><result>fail</result></spf>
+  </auth_results>
+</record>`;
+---
+
+<section class="hero">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow reveal">{t('hero.eyebrow')}</p>
+      <h1 class="hero-title reveal">
+        {t('hero.h1Before')}<span class="text-accent-brand">{t('hero.h1Highlight')}</span>{t('hero.h1After')}
+      </h1>
+      <p class="hero-sub measure reveal">{t('hero.sub')}</p>
+
+      <div class="hero-cta reveal">
+        <a href={APP_SIGNUP_URL} class="btn btn-primary">{t('cta.startFree')}</a>
+        <a href="#how" class="btn btn-ghost">{t('cta.seeHow')}</a>
+      </div>
+
+      <ul class="micro-stats reveal">
+        {microStats.map((stat) => (
+          <li class="micro-stat">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden="true">
+              <path d="m5 12.5 4 4 10-10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+            <span class="mono">{stat}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="hero-visual reveal">
+      <pre class="xml-noise mono" aria-hidden="true">{dmarcXml}</pre>
+      <VerdictPanel />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    padding-top: 3.5rem;
+    padding-bottom: 3.5rem;
+    overflow: clip;
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(60% 60% at 78% 8%, var(--accent-soft), transparent 60%),
+      radial-gradient(50% 40% at 0% 0%, color-mix(in srgb, var(--accent-solid) 6%, transparent), transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .hero-grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.75rem;
+    align-items: center;
+  }
+
+  .hero-title {
+    font-size: clamp(2.25rem, 1.3rem + 4.2vw, 3.7rem);
+    margin-top: 1.1rem;
+    max-width: 15ch;
+  }
+  .hero-sub {
+    margin-top: 1.35rem;
+    font-size: 1.12rem;
+    color: var(--muted);
+  }
+  .hero-cta {
+    margin-top: 1.9rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .micro-stats {
+    list-style: none;
+    margin-top: 1.9rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.4rem;
+  }
+  .micro-stat {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  .micro-stat svg {
+    color: var(--pass);
+    flex: none;
+  }
+
+  .hero-visual {
+    position: relative;
+    z-index: 1;
+  }
+  .xml-noise {
+    position: absolute;
+    top: -1.75rem;
+    right: -1rem;
+    left: 2.5rem;
+    font-size: 0.66rem;
+    line-height: 1.5;
+    color: var(--faint);
+    opacity: 0.5;
+    white-space: pre;
+    overflow: hidden;
+    z-index: 0;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(180deg, transparent, #000 8%, #000 55%, transparent 92%);
+    mask-image: linear-gradient(180deg, transparent, #000 8%, #000 55%, transparent 92%);
+  }
+  .hero-visual :global(.verdict) {
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (min-width: 980px) {
+    .hero {
+      padding-top: 5rem;
+      padding-bottom: 5rem;
+    }
+    .hero-grid {
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 3.5rem;
+    }
+    .xml-noise {
+      font-size: 0.72rem;
+      left: 3.5rem;
+      top: -2.5rem;
+    }
+  }
+</style>

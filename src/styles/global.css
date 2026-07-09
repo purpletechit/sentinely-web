@@ -1,0 +1,576 @@
+@import "tailwindcss";
+
+/* ============================================================================
+   Sentinely design system
+   Accent brand = warm orange (#E67423). Pass/fail green/red are SEMANTIC only.
+   Monospace is used as a "voice" (eyebrows, labels, IPs, KPIs, prices).
+   Tokens are CSS custom properties with light + dark, switched by
+   prefers-color-scheme and overridden by :root[data-theme="light|dark"].
+   ============================================================================ */
+
+/* Map runtime CSS variables into Tailwind utilities. `inline` keeps utilities
+   referencing the variables (so theme switching works) instead of baking values. */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-strong: var(--strong);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-solid: var(--accent-solid);
+  --color-btn-fg: var(--btn-fg);
+  --color-pass: var(--pass);
+  --color-fail: var(--fail);
+  --color-warn: var(--warn);
+
+  --font-sans: var(--sans);
+  --font-mono: var(--mono);
+}
+
+/* ---- Light (default) ---- */
+:root {
+  color-scheme: light;
+
+  --bg: #f6f5f2;
+  --surface: #ffffff;
+  --surface-2: #efece6;
+  --ink: #241d16;
+  --strong: #120d08;
+  --muted: #6a6156;
+  --faint: #948a7d;
+  --line: #e4dfd7;
+  --accent: #a8521c; /* accent as TEXT (AA on light) */
+  --accent-solid: #e67423; /* accent as fill (CTA, beacon) */
+  --btn-fg: #251206;
+  --pass: #1c9a5f;
+  --fail: #cf3f3a;
+  --warn: #b0840f;
+
+  /* Derived */
+  --accent-soft: color-mix(in srgb, var(--accent-solid) 12%, transparent);
+  --accent-line: color-mix(in srgb, var(--accent-solid) 40%, var(--line));
+  --pass-soft: color-mix(in srgb, var(--pass) 14%, transparent);
+  --fail-soft: color-mix(in srgb, var(--fail) 14%, transparent);
+  --warn-soft: color-mix(in srgb, var(--warn) 16%, transparent);
+  --shadow: 0 1px 2px rgb(18 13 8 / 0.04), 0 8px 24px -12px rgb(18 13 8 / 0.12);
+  --shadow-lg: 0 2px 4px rgb(18 13 8 / 0.05), 0 24px 60px -20px rgb(18 13 8 / 0.22);
+
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  --radius-sm: 8px;
+  --radius: 14px;
+  --radius-lg: 20px;
+}
+
+/* ---- Dark values, shared by system-dark (no override) and forced dark ---- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+
+    --bg: #131009;
+    --surface: #1c1710;
+    --surface-2: #231d14;
+    --ink: #ece5da;
+    --strong: #fbf6ee;
+    --muted: #a79b8b;
+    --faint: #6f6557;
+    --line: #2e271d;
+    --accent: #eb8c4e;
+    --accent-solid: #e67423;
+    --btn-fg: #241206;
+    --pass: #37d389;
+    --fail: #ff6d68;
+    --warn: #e9c04a;
+
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 10px 30px -12px rgb(0 0 0 / 0.6);
+    --shadow-lg: 0 2px 6px rgb(0 0 0 / 0.4), 0 30px 70px -20px rgb(0 0 0 / 0.7);
+  }
+}
+
+/* ---- Explicit overrides printed by the theme toggle (win via specificity) ---- */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f6f5f2;
+  --surface: #ffffff;
+  --surface-2: #efece6;
+  --ink: #241d16;
+  --strong: #120d08;
+  --muted: #6a6156;
+  --faint: #948a7d;
+  --line: #e4dfd7;
+  --accent: #a8521c;
+  --accent-solid: #e67423;
+  --btn-fg: #251206;
+  --pass: #1c9a5f;
+  --fail: #cf3f3a;
+  --warn: #b0840f;
+  --shadow: 0 1px 2px rgb(18 13 8 / 0.04), 0 8px 24px -12px rgb(18 13 8 / 0.12);
+  --shadow-lg: 0 2px 4px rgb(18 13 8 / 0.05), 0 24px 60px -20px rgb(18 13 8 / 0.22);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #131009;
+  --surface: #1c1710;
+  --surface-2: #231d14;
+  --ink: #ece5da;
+  --strong: #fbf6ee;
+  --muted: #a79b8b;
+  --faint: #6f6557;
+  --line: #2e271d;
+  --accent: #eb8c4e;
+  --accent-solid: #e67423;
+  --btn-fg: #241206;
+  --pass: #37d389;
+  --fail: #ff6d68;
+  --warn: #e9c04a;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 10px 30px -12px rgb(0 0 0 / 0.6);
+  --shadow-lg: 0 2px 6px rgb(0 0 0 / 0.4), 0 30px 70px -20px rgb(0 0 0 / 0.7);
+}
+
+/* ============================================================================
+   Base
+   ============================================================================ */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    border-color: var(--line);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    /* offset for sticky header when jumping to #anchors */
+    scroll-padding-top: 5.5rem;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.65;
+    font-size: 1rem;
+    /* `clip` prevents accidental horizontal scroll WITHOUT breaking sticky. */
+    overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--strong);
+    font-weight: 780;
+    letter-spacing: -0.021em;
+    line-height: 1.08;
+    text-wrap: balance;
+  }
+
+  h2 {
+    letter-spacing: -0.02em;
+    line-height: 1.12;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  strong {
+    color: var(--strong);
+    font-weight: 680;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent-solid);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--accent-solid) 26%, transparent);
+    color: var(--strong);
+  }
+
+  img,
+  svg,
+  video {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+}
+
+/* ============================================================================
+   Reusable component classes
+   ============================================================================ */
+@layer components {
+  .container {
+    width: 100%;
+    max-width: 74rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+  @media (min-width: 768px) {
+    .container {
+      padding-inline: 2rem;
+    }
+  }
+
+  .measure {
+    max-width: 65ch;
+  }
+
+  /* Eyebrow / labels — mono, uppercase, wide tracking */
+  .eyebrow {
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .label {
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .mono {
+    font-family: var(--mono);
+    font-feature-settings: "ss01", "zero";
+  }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 620;
+    font-size: 0.95rem;
+    line-height: 1;
+    padding: 0.72rem 1.15rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: transform 0.14s ease, background-color 0.14s ease,
+      border-color 0.14s ease, box-shadow 0.14s ease, color 0.14s ease;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .btn:active {
+    transform: translateY(1px);
+  }
+
+  .btn-primary {
+    background-color: var(--accent-solid);
+    color: var(--btn-fg);
+    box-shadow: 0 1px 0 rgb(255 255 255 / 0.15) inset,
+      0 8px 20px -10px color-mix(in srgb, var(--accent-solid) 70%, transparent);
+  }
+  .btn-primary:hover {
+    background-color: color-mix(in srgb, var(--accent-solid) 88%, #000);
+  }
+
+  .btn-ghost {
+    background-color: transparent;
+    color: var(--strong);
+    border-color: var(--line);
+  }
+  .btn-ghost:hover {
+    border-color: var(--accent-solid);
+    color: var(--accent);
+  }
+
+  .btn-block {
+    width: 100%;
+  }
+
+  /* Surfaces */
+  .card {
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .panel {
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+  }
+
+  /* Chips (mono tokens) */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 0.34rem 0.6rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background-color: var(--surface-2);
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .chip-accent {
+    color: var(--accent);
+    border-color: var(--accent-line);
+    background-color: var(--accent-soft);
+  }
+  .chip-pass {
+    color: var(--pass);
+    border-color: color-mix(in srgb, var(--pass) 42%, var(--line));
+    background-color: var(--pass-soft);
+  }
+  .chip-fail {
+    color: var(--fail);
+    border-color: color-mix(in srgb, var(--fail) 42%, var(--line));
+    background-color: var(--fail-soft);
+  }
+  .chip-warn {
+    color: var(--warn);
+    border-color: color-mix(in srgb, var(--warn) 42%, var(--line));
+    background-color: var(--warn-soft);
+  }
+
+  /* Section rhythm */
+  .section {
+    padding-block: 4.5rem;
+  }
+  @media (min-width: 768px) {
+    .section {
+      padding-block: 6rem;
+    }
+  }
+
+  /* Data tables / panels never cause page scroll */
+  .scroll-x {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Field styling for forms */
+  .field-label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--strong);
+    margin-bottom: 0.4rem;
+  }
+  .field {
+    width: 100%;
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 0.7rem 0.85rem;
+    font-size: 0.95rem;
+    color: var(--ink);
+    font-family: var(--sans);
+    transition: border-color 0.14s ease, box-shadow 0.14s ease;
+  }
+  .field::placeholder {
+    color: var(--faint);
+  }
+  .field:focus {
+    outline: none;
+    border-color: var(--accent-solid);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  textarea.field {
+    min-height: 8rem;
+    resize: vertical;
+  }
+
+  /* Prose — markdown blog content */
+  .prose {
+    color: var(--ink);
+    font-size: 1.05rem;
+    line-height: 1.75;
+    max-width: 65ch;
+  }
+  .prose > * + * {
+    margin-top: 1.15rem;
+  }
+  .prose h2 {
+    font-size: 1.5rem;
+    margin-top: 2.25rem;
+  }
+  .prose h3 {
+    font-size: 1.2rem;
+    margin-top: 1.75rem;
+  }
+  .prose a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .prose ul,
+  .prose ol {
+    padding-left: 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .prose li {
+    list-style: disc;
+  }
+  .prose ol li {
+    list-style: decimal;
+  }
+  .prose code {
+    font-family: var(--mono);
+    font-size: 0.88em;
+    background-color: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 0.1em 0.35em;
+  }
+  .prose pre {
+    background-color: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1rem 1.1rem;
+    overflow-x: auto;
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+  .prose pre code {
+    background: none;
+    border: none;
+    padding: 0;
+  }
+  .prose blockquote {
+    border-left: 3px solid var(--accent-line);
+    padding-left: 1rem;
+    color: var(--muted);
+  }
+}
+
+/* ============================================================================
+   Motion — subtle reveal-on-scroll, honoring reduced-motion
+   ============================================================================ */
+/* Progressive enhancement: only hide content once JS is confirmed (the inline
+   head script adds `.js` to <html> before paint). Without JS, .reveal elements
+   stay fully visible — no blank page if scripts fail or are disabled. */
+:root.js .reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+:root.js .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* ============================================================================
+   Theme toggle — icon visibility follows the effective theme
+   ============================================================================ */
+[data-theme-toggle] .icon-sun {
+  display: none;
+}
+[data-theme-toggle] .icon-moon {
+  display: block;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) [data-theme-toggle] .icon-sun {
+    display: block;
+  }
+  :root:not([data-theme]) [data-theme-toggle] .icon-moon {
+    display: none;
+  }
+}
+:root[data-theme="dark"] [data-theme-toggle] .icon-sun {
+  display: block;
+}
+:root[data-theme="dark"] [data-theme-toggle] .icon-moon {
+  display: none;
+}
+:root[data-theme="light"] [data-theme-toggle] .icon-sun {
+  display: none;
+}
+:root[data-theme="light"] [data-theme-toggle] .icon-moon {
+  display: block;
+}
+
+/* ============================================================================
+   Brand beacon — a soft pulsing signal in the accent colour
+   ============================================================================ */
+.beacon {
+  position: relative;
+  display: inline-flex;
+  width: 0.72rem;
+  height: 0.72rem;
+  flex: none;
+}
+.beacon::before,
+.beacon::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background-color: var(--accent-solid);
+}
+.beacon::after {
+  animation: beacon-pulse 2.6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+.beacon::before {
+  inset: 22%;
+  box-shadow: 0 0 8px 1px color-mix(in srgb, var(--accent-solid) 75%, transparent);
+}
+@keyframes beacon-pulse {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.7;
+  }
+  70%,
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .beacon::after {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* Utility: accent text used for highlighted words in headings */
+.text-accent-brand {
+  color: var(--accent);
+}
+

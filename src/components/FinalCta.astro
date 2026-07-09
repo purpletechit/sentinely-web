@@ -1,0 +1,60 @@
+---
+import { localizePath, useTranslations, type Lang } from '../i18n/utils';
+import { APP_SIGNUP_URL } from '../config';
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+const contactHref = localizePath('/contact', lang);
+---
+
+<section class="section final-cta">
+  <div class="container">
+    <div class="cta-panel reveal">
+      <h2 class="cta-title">{t('finalCta.heading')}</h2>
+      <p class="cta-sub measure">{t('finalCta.sub')}</p>
+      <div class="cta-actions">
+        <a href={APP_SIGNUP_URL} class="btn btn-primary">{t('finalCta.primary')}</a>
+        <a href={contactHref} class="btn btn-ghost">{t('finalCta.secondary')}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-panel {
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    padding: 3.5rem 1.5rem;
+    border: 1px solid var(--accent-line);
+    border-radius: var(--radius-lg);
+    background:
+      radial-gradient(80% 120% at 50% 0%, var(--accent-soft), transparent 65%),
+      var(--surface);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.1rem;
+  }
+  .cta-title {
+    font-size: clamp(1.6rem, 1.1rem + 2.4vw, 2.6rem);
+    max-width: 20ch;
+  }
+  .cta-sub {
+    color: var(--muted);
+    font-size: 1.05rem;
+    margin-inline: auto;
+  }
+  .cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 0.6rem;
+  }
+  @media (min-width: 700px) {
+    .cta-panel {
+      padding: 4.5rem 2rem;
+    }
+  }
+</style>

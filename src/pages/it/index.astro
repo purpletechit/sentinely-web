@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HomeSections from '../../components/HomeSections.astro';
+import { useTranslations, type Lang } from '../../i18n/utils';
+
+const lang = (Astro.currentLocale ?? 'it') as Lang;
+const t = useTranslations(lang);
+---
+
+<BaseLayout title={t('pages.home.title')} description={t('pages.home.description')}>
+  <HomeSections />
+</BaseLayout>

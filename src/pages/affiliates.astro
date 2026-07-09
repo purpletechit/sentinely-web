@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AffiliatesBody from '../components/pages/AffiliatesBody.astro';
+import { useTranslations, type Lang } from '../i18n/utils';
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+---
+
+<BaseLayout title={t('pages.affiliates.title')} description={t('pages.affiliates.description')}>
+  <AffiliatesBody />
+</BaseLayout>

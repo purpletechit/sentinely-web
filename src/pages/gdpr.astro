@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LegalBody from '../components/pages/LegalBody.astro';
+import { useTranslations, type Lang } from '../i18n/utils';
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+---
+
+<BaseLayout title={t('pages.gdpr.title')} description={t('pages.gdpr.description')}>
+  <LegalBody doc="gdpr" />
+</BaseLayout>

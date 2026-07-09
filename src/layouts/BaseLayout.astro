@@ -1,0 +1,173 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { alternatePath, useTranslations, type Lang } from '../i18n/utils';
+import { SITE_ORIGIN, OG_IMAGE } from '../config';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  noindex?: boolean;
+}
+
+const { title, description, image = OG_IMAGE, noindex = false } = Astro.props;
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+
+const site = Astro.site ?? new URL(SITE_ORIGIN);
+const pathname = Astro.url.pathname;
+const canonicalPath = pathname.replace(/\/+$/, '') || '/';
+
+const canonicalURL = new URL(canonicalPath, site);
+const enURL = new URL(alternatePath(pathname, 'en'), site);
+const itURL = new URL(alternatePath(pathname, 'it'), site);
+const ogImageURL = new URL(image, site);
+
+const ogLocale = lang === 'it' ? 'it_IT' : 'en_US';
+const ogLocaleAlt = lang === 'it' ? 'en_US' : 'it_IT';
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <!-- Language alternates -->
+    <link rel="alternate" hreflang="en" href={enURL} />
+    <link rel="alternate" hreflang="it" href={itURL} />
+    <link rel="alternate" hreflang="x-default" href={enURL} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={t('site.name')} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={ogImageURL} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={ogLocale} />
+    <meta property="og:locale:alternate" content={ogLocaleAlt} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL} />
+
+    <!-- Icons -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f6f5f2" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#131009" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Before first paint: mark JS on (gates the reveal animation so no-JS
+         visitors always see content) and apply the stored theme (no FOUC). -->
+    <script is:inline>
+      (function () {
+        document.documentElement.classList.add('js');
+        try {
+          var stored = localStorage.getItem('theme');
+          if (stored === 'light' || stored === 'dark') {
+            document.documentElement.setAttribute('data-theme', stored);
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <a href="#main" class="skip-link">{t('common.skipToContent')}</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+
+    <style>
+      .skip-link {
+        position: fixed;
+        top: 0.75rem;
+        left: 0.75rem;
+        z-index: 100;
+        transform: translateY(-150%);
+        background-color: var(--accent-solid);
+        color: var(--btn-fg);
+        font-weight: 600;
+        font-size: 0.9rem;
+        padding: 0.6rem 0.9rem;
+        border-radius: var(--radius-sm);
+        transition: transform 0.16s ease;
+      }
+      .skip-link:focus {
+        transform: translateY(0);
+      }
+      #main {
+        display: block;
+      }
+    </style>
+
+    <script>
+      // Theme toggle — delegated so it works for every [data-theme-toggle] button.
+      document.addEventListener('click', (event) => {
+        const target = event.target as HTMLElement;
+        const btn = target.closest('[data-theme-toggle]');
+        if (!btn) return;
+        const root = document.documentElement;
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const current = root.getAttribute('data-theme') || (prefersDark ? 'dark' : 'light');
+        const next = current === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        try {
+          localStorage.setItem('theme', next);
+        } catch (e) {
+          /* storage unavailable — theme still applies for the session */
+        }
+      });
+
+      // Reveal-on-scroll — subtle, and skipped for reduced-motion users.
+      const revealEls = document.querySelectorAll<HTMLElement>('.reveal');
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const reveal = (el: Element) => el.classList.add('is-visible');
+      if (reduce || !('IntersectionObserver' in window)) {
+        revealEls.forEach(reveal);
+      } else {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                reveal(entry.target);
+                io.unobserve(entry.target);
+              }
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.06 },
+        );
+        revealEls.forEach((el) => io.observe(el));
+
+        // Reveal above-the-fold content right after first paint (protects LCP and
+        // guarantees visibility even if the observer's first callback is delayed).
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => {
+            revealEls.forEach((el) => {
+              const r = el.getBoundingClientRect();
+              if (r.top < window.innerHeight && r.bottom > 0) reveal(el);
+            });
+          }),
+        );
+      }
+    </script>
+  </body>
+</html>

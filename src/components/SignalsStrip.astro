@@ -1,0 +1,56 @@
+---
+import { signals } from '../data/signals';
+import { useTranslations, type Lang } from '../i18n/utils';
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+---
+
+<section class="signals-strip">
+  <div class="container signals-inner reveal">
+    <h2 class="signals-heading">{t('signals.heading')}</h2>
+    <ul class="signals-chips" aria-label={t('signals.heading')}>
+      {signals.map((sig) => (
+        <li class="chip signal-chip mono">{sig}</li>
+      ))}
+    </ul>
+    <p class="signals-sub measure">{t('signals.sub')}</p>
+  </div>
+</section>
+
+<style>
+  .signals-strip {
+    border-block: 1px solid var(--line);
+    background-color: var(--surface-2);
+    padding-block: 2.75rem;
+  }
+  .signals-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.25rem;
+  }
+  .signals-heading {
+    font-size: clamp(1.15rem, 0.9rem + 1vw, 1.5rem);
+    font-weight: 700;
+    color: var(--strong);
+    max-width: 30ch;
+  }
+  .signals-chips {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.55rem;
+  }
+  .signal-chip {
+    background-color: var(--surface);
+    color: var(--ink);
+    letter-spacing: 0.05em;
+  }
+  .signals-sub {
+    color: var(--muted);
+    font-size: 0.98rem;
+  }
+</style>

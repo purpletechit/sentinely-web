@@ -1,0 +1,80 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import Icon from './Icon.astro';
+import { useTranslations, type Lang } from '../i18n/utils';
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+
+type Card = { title: string; body: string };
+const cards = t('problem.cards') as Card[];
+const icons = ['eye-off', 'mail-x', 'lock-open'];
+---
+
+<section class="section problem">
+  <div class="container">
+    <SectionHeading eyebrow={t('problem.eyebrow')} title={t('problem.heading')} sub={t('problem.sub')} />
+    <div class="problem-grid">
+      {cards.map((card, i) => (
+        <article class="problem-card reveal" style={`transition-delay:${i * 70}ms`}>
+          <span class="problem-icon" aria-hidden="true">
+            <Icon name={icons[i] ?? 'eye-off'} size={20} />
+          </span>
+          <h3 class="problem-title">{card.title}</h3>
+          <p class="problem-body">{card.body}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .problem-grid {
+    margin-top: 2.75rem;
+    display: grid;
+    gap: 1.1rem;
+    grid-template-columns: 1fr;
+  }
+  .problem-card {
+    padding: 1.5rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    position: relative;
+    overflow: hidden;
+  }
+  .problem-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--fail), transparent);
+    opacity: 0.65;
+  }
+  .problem-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: var(--radius-sm);
+    background-color: var(--fail-soft);
+    color: var(--fail);
+    margin-bottom: 0.9rem;
+  }
+  .problem-title {
+    font-size: 1.08rem;
+    font-weight: 700;
+    color: var(--strong);
+    margin-bottom: 0.5rem;
+  }
+  .problem-body {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  @media (min-width: 720px) {
+    .problem-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

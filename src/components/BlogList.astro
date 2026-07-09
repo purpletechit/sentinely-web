@@ -1,0 +1,106 @@
+---
+import { getCollection } from 'astro:content';
+import { localizePath, useTranslations, type Lang } from '../i18n/utils';
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
+);
+const fmt = new Intl.DateTimeFormat(lang === 'it' ? 'it-IT' : 'en-GB', { dateStyle: 'medium' });
+---
+
+{
+  posts.length === 0 ? (
+    <div class="blog-empty">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" aria-hidden="true">
+        <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.6" />
+        <path d="M3.5 7 12 13l8.5-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <p>{t('blog.empty')}</p>
+    </div>
+  ) : (
+    <ul class="blog-list">
+      {posts.map((post) => (
+        <li class="blog-item">
+          <a href={localizePath(`/blog/${post.id}`, lang)} class="blog-link">
+            <time class="mono blog-date" datetime={post.data.pubDate.toISOString()}>
+              {fmt.format(post.data.pubDate)}
+            </time>
+            <h2 class="blog-item-title">{post.data.title}</h2>
+            <p class="blog-item-desc">{post.data.description}</p>
+            <span class="blog-more">{t('blog.readMore')} →</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+<style>
+  .blog-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+    padding: 4rem 1.5rem;
+    border: 1px dashed var(--line);
+    border-radius: var(--radius-lg);
+    background-color: var(--surface);
+    color: var(--muted);
+  }
+  .blog-empty svg {
+    color: var(--faint);
+  }
+  .blog-empty p {
+    max-width: 40ch;
+    font-size: 1rem;
+  }
+  .blog-list {
+    list-style: none;
+    display: grid;
+    gap: 1.1rem;
+    grid-template-columns: 1fr;
+  }
+  .blog-link {
+    display: block;
+    padding: 1.6rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    transition: border-color 0.16s ease, box-shadow 0.16s ease;
+  }
+  .blog-link:hover {
+    border-color: var(--accent-line);
+    box-shadow: var(--shadow);
+  }
+  .blog-date {
+    color: var(--faint);
+    font-size: 0.75rem;
+  }
+  .blog-item-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--strong);
+    margin: 0.4rem 0 0.5rem;
+  }
+  .blog-item-desc {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  .blog-more {
+    display: inline-block;
+    margin-top: 0.8rem;
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  @media (min-width: 720px) {
+    .blog-list {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

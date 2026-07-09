@@ -1,0 +1,463 @@
+{
+  "site": {
+    "name": "Sentinely",
+    "tagline": "See every source sending as your domain.",
+    "defaultDescription": "Sentinely turns unreadable DMARC reports into a clear verdict, a daily digest with AI Insights, and the controls to stop spoofing and reach enforcement — for one domain or hundreds."
+  },
+  "common": {
+    "skipToContent": "Skip to content",
+    "themeToggle": "Toggle colour theme",
+    "langSwitch": "Switch language",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "soon": "soon",
+    "backToTop": "Back to top"
+  },
+  "nav": {
+    "features": "Features",
+    "how": "How it works",
+    "pricing": "Pricing",
+    "faq": "FAQ",
+    "contact": "Contact"
+  },
+  "cta": {
+    "login": "Log in",
+    "startTrial": "Start free trial",
+    "startFree": "Start free — no card",
+    "seeHow": "See how it works",
+    "contact": "Contact us",
+    "talkToSales": "Talk to sales",
+    "applyNow": "Apply now",
+    "sendMessage": "Send message"
+  },
+  "pages": {
+    "home": {
+      "title": "Sentinely — DMARC security & anti-spoofing, made legible",
+      "description": "Sentinely reads your DMARC reports for you: a clear verdict, a domain protection score, a daily digest with AI Insights, smart alerts and blocklist monitoring — for one domain or many."
+    },
+    "contact": {
+      "title": "Contact — Sentinely",
+      "description": "Questions about coverage, pricing or rolling Sentinely out across many domains? Talk to the team behind Sentinely, in English or Italian."
+    },
+    "affiliates": {
+      "title": "Affiliate program — Sentinely",
+      "description": "Refer Sentinely and earn 25% recurring commission on every renewal, plus a 15% discount coupon to pass on to the teams you refer."
+    },
+    "about": {
+      "title": "About — Sentinely",
+      "description": "Sentinely is email authentication made legible — a product of Purple IT s.r.l., built for IT and security teams and the agencies that protect email for many domains."
+    },
+    "privacy": {
+      "title": "Privacy Policy — Sentinely",
+      "description": "How Sentinely and Purple IT s.r.l. handle personal data and DMARC report data."
+    },
+    "terms": {
+      "title": "Terms of Service — Sentinely",
+      "description": "The terms governing use of Sentinely, a product of Purple IT s.r.l."
+    },
+    "gdpr": {
+      "title": "GDPR & DPA — Sentinely",
+      "description": "Sentinely's approach to GDPR, data processing and data residency in the EU."
+    },
+    "blog": {
+      "title": "Blog — Sentinely",
+      "description": "Notes on DMARC, email authentication, deliverability and keeping domains safe from spoofing."
+    }
+  },
+  "hero": {
+    "eyebrow": "DMARC security · anti-spoofing",
+    "h1Before": "See ",
+    "h1Highlight": "every source",
+    "h1After": " sending as your domain.",
+    "sub": "DMARC aggregate reports arrive as XML built for machines. Sentinely reads them for you and turns the noise into a clear verdict — plus the controls to act on it.",
+    "microStats": [
+      "1 DNS record to publish",
+      "24/7 spoofing watch",
+      "EN·IT alerts & digest"
+    ]
+  },
+  "verdict": {
+    "domain": "acme.com",
+    "policy": "p=reject",
+    "scoreLabel": "Protection score",
+    "grade": "A",
+    "score": "96",
+    "authenticated": "Authenticated",
+    "failLabel": "Fail",
+    "passShort": "PASS",
+    "failShort": "FAIL",
+    "authRate": "98.7%",
+    "failRate": "1.3%",
+    "bar": {
+      "pass": "Pass",
+      "quarantine": "Quarantine",
+      "fail": "Fail"
+    },
+    "table": {
+      "source": "Source",
+      "provider": "Provider",
+      "volume": "Volume",
+      "auth": "Auth"
+    },
+    "rows": [
+      { "ip": "66.102.0.15", "provider": "Google Workspace", "volume": "8,940", "status": "pass" },
+      { "ip": "168.245.10.20", "provider": "SendGrid", "volume": "2,310", "status": "pass" },
+      { "ip": "193.42.33.8", "provider": "Unknown host", "volume": "604", "status": "fail" }
+    ],
+    "alert": "Spoofing source detected — fails SPF & DKIM, listed on 1 blocklist",
+    "caption": "Live verdict for a monitored domain"
+  },
+  "signals": {
+    "heading": "Everything that decides if your domain is trusted",
+    "sub": "Sentinely watches the full stack of signals mailbox providers use to trust — or reject — your mail."
+  },
+  "problem": {
+    "eyebrow": "The problem",
+    "heading": "DMARC holds the evidence — in a format built for machines.",
+    "sub": "The reports that could tell you who's abusing your domain arrive as raw XML. Almost nobody reads them, so three things quietly go wrong.",
+    "cards": [
+      {
+        "title": "Impersonation goes unseen",
+        "body": "Anyone can send as your domain. Without DMARC visibility, spoofing and phishing run silent — until a customer or your brand gets burned."
+      },
+      {
+        "title": "Legit mail gets blocked",
+        "body": "A missing SPF include or a broken DKIM key quietly sends your real mail to spam, and the reports that explain why sit unread."
+      },
+      {
+        "title": "You never reach enforcement",
+        "body": "Staying at p=none feels safe, but it leaves the door open. Moving to reject without data is scary — so most domains never do."
+      }
+    ]
+  },
+  "features": {
+    "eyebrow": "What you get",
+    "heading": "A defense, not a data dump.",
+    "sub": "Sentinely turns raw reports into decisions: a score to track, a digest to read, and alerts that reach you before anyone else notices.",
+    "cards": [
+      {
+        "title": "Domain protection score",
+        "body": "A single 0–100 grade (A–F) that rolls SPF, DKIM, DMARC and alignment into one number you can watch over time."
+      },
+      {
+        "title": "Daily digest + AI Insights",
+        "body": "One readable email a day. Claude explains what changed and what to do about it — in English or Italian."
+      },
+      {
+        "title": "Threat & change alerts",
+        "body": "Get told the moment a new source starts spoofing you, authentication drops, or a critical record changes."
+      },
+      {
+        "title": "DNS & auth hardening",
+        "body": "Guided checks for SPF, DKIM, DMARC, BIMI and MTA-STS — with the exact records to publish, copy-ready."
+      },
+      {
+        "title": "Blocklist & reputation",
+        "body": "Continuous RBL/DNSBL, Geo-IP and PTR/rDNS monitoring, so a listing or bad sender never catches you off guard."
+      },
+      {
+        "title": "Built for many domains",
+        "body": "Multi-tenant from day one. Manage dozens of domains and clients from one workspace, cleanly separated."
+      }
+    ]
+  },
+  "how": {
+    "eyebrow": "How it works",
+    "heading": "One record in. Control out.",
+    "sub": "No agents, no gateway changes, no mail rerouting. You publish a single DMARC record and Sentinely does the reading.",
+    "steps": [
+      {
+        "title": "Publish your RUA",
+        "body": "Add one DMARC record pointing aggregate reports to Sentinely. That's the only change on your side."
+      },
+      {
+        "title": "We ingest & analyse",
+        "body": "We parse every aggregate report, resolve each source, and check authentication, alignment and blocklists — every day."
+      },
+      {
+        "title": "Take back control",
+        "body": "Read the verdict, fix what's weak, and move safely from p=none to enforcement (p=reject) with the data to back it."
+      }
+    ]
+  },
+  "digest": {
+    "eyebrow": "The daily digest",
+    "heading": "The one email that reads the reports for you.",
+    "sub": "Every morning, a digest that summarises what happened and tells you what matters — with AI Insights that explain the why, not just the numbers.",
+    "cardTitle": "Daily digest",
+    "domain": "acme.com",
+    "date": "Mon, 6 Jul 2026",
+    "scoreLabel": "Protection score",
+    "scoreValue": "A · 96",
+    "scoreDelta": "+2",
+    "kpis": [
+      { "label": "Authenticated", "value": "98.7%" },
+      { "label": "Volume", "value": "11,854" },
+      { "label": "New threats", "value": "1" }
+    ],
+    "insightLabel": "AI Insight",
+    "insightBody": "A new source, 193.42.33.8, sent 604 messages as acme.com and failed both SPF and DKIM. It's listed on one blocklist and matches none of your known senders — this looks like spoofing, not lost legitimate mail. No action needed on your side; keeping DMARC at p=reject ensures these are rejected.",
+    "footer": "Sentinely · Daily digest · EN/IT"
+  },
+  "pricing": {
+    "eyebrow": "Pricing",
+    "heading": "Start free. Scale by domains, not surprises.",
+    "sub": "A 14-day free trial on every plan. No card to start.",
+    "perMonth": "/mo",
+    "mostPopular": "Most popular",
+    "footnote": "Prices in EUR, excl. VAT. Introductory pricing — subject to confirmation.",
+    "tiers": {
+      "starter": {
+        "name": "Starter",
+        "tagline": "For a single domain getting to enforcement.",
+        "features": [
+          "1 domain",
+          "Daily DMARC aggregation",
+          "Protection score (A–F)",
+          "Email & in-app alerts",
+          "DNS & auth checks",
+          "EN/IT daily digest"
+        ],
+        "cta": "Start free trial"
+      },
+      "growth": {
+        "name": "Growth",
+        "tagline": "For teams protecting a handful of domains.",
+        "badge": "With AI Insights",
+        "features": [
+          "Up to 10 domains",
+          "Everything in Starter",
+          "AI Insights by Claude",
+          "Blocklist & reputation monitoring",
+          "Threat & change alerts",
+          "Priority support"
+        ],
+        "cta": "Start free trial"
+      },
+      "agency": {
+        "name": "Agency",
+        "tagline": "For MSPs and agencies running many tenants.",
+        "priceLabel": "Custom",
+        "features": [
+          "Unlimited domains",
+          "Multi-tenant workspaces",
+          "White-label (on the roadmap)",
+          "SSO (on the roadmap)",
+          "Dedicated support",
+          "Volume pricing"
+        ],
+        "cta": "Talk to sales"
+      }
+    }
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "heading": "Questions, answered.",
+    "items": [
+      {
+        "q": "Do I need to be a DMARC expert?",
+        "a": "No. Sentinely translates raw reports into plain-language verdicts and tells you exactly which record to publish. If you can edit a DNS entry, you're set."
+      },
+      {
+        "q": "Will it change my email or DNS?",
+        "a": "No. Sentinely is read-only: we only receive the DMARC reports you route to us. We recommend the records to publish, but you always make the change yourself."
+      },
+      {
+        "q": "How quickly will I see results?",
+        "a": "As soon as your RUA points to us, reports start flowing. Most domains get their first full digest within 24 hours."
+      },
+      {
+        "q": "Can I manage multiple domains or clients?",
+        "a": "Yes. Sentinely is multi-tenant by design — ideal for IT and security teams and for agencies or MSPs running email for many domains."
+      },
+      {
+        "q": "Where is my data stored, and for how long?",
+        "a": "DMARC report data is processed and stored in the EU and retained on a rolling window. See our GDPR/DPA page for the specifics."
+      },
+      {
+        "q": "Which languages are supported?",
+        "a": "The interface, alerts, daily digest and AI Insights are all available in both English and Italian."
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "See who's sending as your domain.",
+    "sub": "Start free — publish one DNS record and you'll have your first verdict within a day.",
+    "primary": "Start free trial",
+    "secondary": "Contact us"
+  },
+  "footer": {
+    "tagline": "Email authentication, made legible. A product of Purple IT s.r.l.",
+    "colProduct": "Product",
+    "colCompany": "Company",
+    "colLegal": "Legal",
+    "product": {
+      "features": "Features",
+      "how": "How it works",
+      "pricing": "Pricing",
+      "faq": "FAQ"
+    },
+    "company": {
+      "about": "About",
+      "blog": "Blog",
+      "affiliates": "Affiliates",
+      "contact": "Contact"
+    },
+    "legal": {
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "gdpr": "GDPR/DPA"
+    },
+    "legalBar": "© 2026 Purple IT s.r.l. — Sentinely · VAT IT01881930661 · Perugia (PG), Italy."
+  },
+  "company": {
+    "heading": "The company behind Sentinely",
+    "name": "Purple IT s.r.l.",
+    "addressLabel": "Registered office",
+    "address": "Perugia (PG), Italy",
+    "vatLabel": "VAT",
+    "vat": "IT01881930661",
+    "emailLabel": "Email",
+    "email": "info@sentinely.eu",
+    "note": "Sentinely is a product of Purple IT s.r.l. Reach us any time — we reply in English or Italian."
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "heading": "Talk to us.",
+    "sub": "Questions about coverage, pricing or a rollout across many domains? Send a note and we'll get back to you — in English or Italian.",
+    "formHeading": "Send a message",
+    "fields": {
+      "name": "Name",
+      "email": "Work email",
+      "company": "Company",
+      "message": "Message"
+    },
+    "placeholders": {
+      "name": "Jane Doe",
+      "email": "jane@company.com",
+      "company": "Company Ltd.",
+      "message": "Tell us about your domains and what you're trying to solve…"
+    },
+    "consent": "By sending this message you agree to be contacted about your request.",
+    "submit": "Send message"
+  },
+  "affiliates": {
+    "eyebrow": "Affiliate program",
+    "heading": "Refer Sentinely. Earn 25% on every renewal.",
+    "sub": "Send us the teams and agencies who need DMARC visibility. You earn recurring commission; they get a discount to start.",
+    "numbers": [
+      {
+        "value": "25%",
+        "label": "Recurring commission",
+        "detail": "On every renewal of the customers you refer — for as long as they stay."
+      },
+      {
+        "value": "15%",
+        "label": "Discount coupon",
+        "detail": "A coupon to pass on to the people you refer, so they save from day one."
+      }
+    ],
+    "stepsHeading": "How it works",
+    "steps": [
+      {
+        "title": "Apply",
+        "body": "Tell us how you plan to refer Sentinely using the form below. We approve good-fit partners quickly."
+      },
+      {
+        "title": "Share",
+        "body": "Get your referral link and a 15% coupon to share with your audience or clients."
+      },
+      {
+        "title": "Earn",
+        "body": "Earn 25% recurring commission on every renewal, for as long as your referrals stay with Sentinely."
+      }
+    ],
+    "formHeading": "Apply to the program",
+    "fields": {
+      "name": "Name",
+      "email": "Work email",
+      "company": "Company / website",
+      "plan": "How do you plan to refer Sentinely?"
+    },
+    "placeholders": {
+      "name": "Jane Doe",
+      "email": "jane@company.com",
+      "company": "company.com",
+      "plan": "Your audience, clients, or channels…"
+    },
+    "submit": "Apply now",
+    "terms": "Program terms: 25% recurring commission on every renewal of referred customers, plus a 15% discount coupon to pass on to them. Activation and details are handled through the form above."
+  },
+  "form": {
+    "required": "This field is required.",
+    "invalidEmail": "Please enter a valid email address.",
+    "sending": "Sending…",
+    "success": "Thanks — your message is on its way. We'll get back to you shortly.",
+    "successAffiliate": "Thanks for applying — we'll review your details and be in touch soon.",
+    "error": "Something went wrong sending your message. Please try again, or email info@sentinely.eu.",
+    "turnstileError": "Anti-bot check failed. Please reload the page and try again.",
+    "botField": "Leave this field empty"
+  },
+  "legal": {
+    "lastUpdated": "Last updated",
+    "lastUpdatedValue": "9 July 2026",
+    "placeholderNotice": "This page is a placeholder. The final, legally reviewed text will be published before go-live. For any question in the meantime, contact info@sentinely.eu.",
+    "contactHeading": "Data controller",
+    "privacy": {
+      "title": "Privacy Policy",
+      "intro": "This Privacy Policy explains how Purple IT s.r.l. (\"Sentinely\", \"we\") processes personal data when you visit this website, contact us, or use the Sentinely service.",
+      "sections": [
+        { "heading": "Who we are", "body": "Sentinely is a product of Purple IT s.r.l., Perugia (PG), Italy, VAT IT01881930661. We are the data controller for the personal data described here." },
+        { "heading": "What we collect", "body": "Website analytics kept to a minimum, the details you submit through our contact and affiliate forms, and — for customers — account data and the DMARC aggregate reports routed to the service." },
+        { "heading": "Why we process it", "body": "To answer your enquiries, provide and secure the service, comply with legal obligations, and communicate about your account. DMARC report data is processed to deliver the analysis, scoring and alerts you ask for." },
+        { "heading": "Your rights", "body": "You may request access, rectification, erasure, restriction or portability of your personal data, and object to certain processing. Contact info@sentinely.eu to exercise these rights." },
+        { "heading": "Retention & location", "body": "Data is processed and stored in the EU and retained no longer than necessary for the purposes above. See our GDPR/DPA page for processing details." }
+      ]
+    },
+    "terms": {
+      "title": "Terms of Service",
+      "intro": "These Terms govern access to and use of the Sentinely website and service, provided by Purple IT s.r.l. By using Sentinely you agree to these Terms.",
+      "sections": [
+        { "heading": "The service", "body": "Sentinely ingests DMARC aggregate reports and provides analysis, a protection score, alerts and a daily digest. Sentinely is a read-only analysis tool and does not send, filter or reroute your email." },
+        { "heading": "Accounts", "body": "You are responsible for the accuracy of the information you provide and for maintaining the security of your account and credentials." },
+        { "heading": "Acceptable use", "body": "You agree to use Sentinely only for domains you are authorised to manage, and not to misuse, disrupt or attempt to gain unauthorised access to the service." },
+        { "heading": "Plans & billing", "body": "Paid plans are billed as described at sign-up. Pricing shown on this site is indicative and may change before general availability." },
+        { "heading": "Liability", "body": "The service is provided \"as is\". To the extent permitted by law, Purple IT s.r.l. limits its liability as set out in the final Terms published before go-live." }
+      ]
+    },
+    "gdpr": {
+      "title": "GDPR & Data Processing",
+      "intro": "This page describes how Sentinely, a product of Purple IT s.r.l., approaches the GDPR and acts as a data processor for customer data, including DMARC aggregate reports.",
+      "sections": [
+        { "heading": "Roles", "body": "For customer account and report data processed on your behalf, Purple IT s.r.l. acts as data processor and you as data controller. For this website and our own communications, we are the controller." },
+        { "heading": "Data residency", "body": "Report data and account data are processed and stored within the European Union." },
+        { "heading": "Sub-processors", "body": "We use a limited set of vetted sub-processors (for hosting, email delivery and AI-generated insights). A current list is available on request and will be published here before go-live." },
+        { "heading": "Data Processing Agreement", "body": "A Data Processing Agreement (DPA) is available for customers. Request a copy at info@sentinely.eu." },
+        { "heading": "Security", "body": "We apply appropriate technical and organisational measures to protect personal data. Details are provided in the DPA and final documentation." }
+      ]
+    }
+  },
+  "about": {
+    "eyebrow": "About",
+    "heading": "Email authentication, made legible.",
+    "sub": "Sentinely exists because the evidence to stop spoofing already arrives in your inbox every day — trapped in XML nobody reads. We turn it into something a person can act on.",
+    "sections": [
+      {
+        "heading": "What we do",
+        "body": "We ingest DMARC aggregate reports, resolve every sending source, check authentication and reputation, and turn the result into a clear verdict, a protection score, smart alerts and a daily digest with AI Insights."
+      },
+      {
+        "heading": "Who it's for",
+        "body": "IT and security teams protecting their own domains, and the agencies and MSPs who protect email for many clients at once. Multi-tenant, EU-hosted, bilingual."
+      }
+    ]
+  },
+  "blog": {
+    "heading": "Blog",
+    "sub": "Notes on DMARC, email authentication and keeping domains safe from spoofing.",
+    "empty": "No posts yet — we're working on the first ones. Check back soon.",
+    "allPosts": "All posts",
+    "draftBadge": "Draft",
+    "readMore": "Read more"
+  }
+}

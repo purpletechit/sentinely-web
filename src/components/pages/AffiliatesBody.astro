@@ -1,0 +1,170 @@
+---
+import PageHero from '../PageHero.astro';
+import ContactForm from '../ContactForm.astro';
+import CompanyBlock from '../CompanyBlock.astro';
+import { useTranslations, type Lang } from '../../i18n/utils';
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+
+type NumberItem = { value: string; label: string; detail: string };
+type Step = { title: string; body: string };
+const numbers = t('affiliates.numbers') as NumberItem[];
+const steps = t('affiliates.steps') as Step[];
+---
+
+<PageHero eyebrow={t('affiliates.eyebrow')} title={t('affiliates.heading')} sub={t('affiliates.sub')} />
+
+<section class="section section-top">
+  <div class="container">
+    <div class="numbers-grid">
+      {numbers.map((n) => (
+        <div class="number-card reveal">
+          <p class="number-value mono">{n.value}</p>
+          <p class="number-label">{n.label}</p>
+          <p class="number-detail">{n.detail}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="section section-tight">
+  <div class="container">
+    <h2 class="block-heading">{t('affiliates.stepsHeading')}</h2>
+    <ol class="aff-steps">
+      {steps.map((step, i) => (
+        <li class="aff-step reveal" style={`transition-delay:${i * 80}ms`}>
+          <span class="aff-step-num mono">{String(i + 1).padStart(2, '0')}</span>
+          <h3 class="aff-step-title">{step.title}</h3>
+          <p class="aff-step-body">{step.body}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<section class="section section-tight">
+  <div class="container aff-form-grid">
+    <div class="aff-form-col">
+      <h2 class="block-heading">{t('affiliates.formHeading')}</h2>
+      <ContactForm type="affiliate" />
+      <p class="aff-terms">{t('affiliates.terms')}</p>
+    </div>
+    <CompanyBlock />
+  </div>
+</section>
+
+<style>
+  .section-top {
+    padding-top: 1rem;
+  }
+  .section-tight {
+    padding-block: 2.5rem;
+  }
+  .numbers-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .number-card {
+    padding: 2rem;
+    border: 1px solid var(--accent-line);
+    border-radius: var(--radius-lg);
+    background: radial-gradient(80% 100% at 0% 0%, var(--accent-soft), transparent 60%), var(--surface);
+  }
+  .number-value {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .number-label {
+    margin-top: 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--strong);
+  }
+  .number-detail {
+    margin-top: 0.4rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  .block-heading {
+    font-size: clamp(1.4rem, 1.1rem + 1.4vw, 1.9rem);
+    font-weight: 750;
+    color: var(--strong);
+    margin-bottom: 1.75rem;
+  }
+
+  .aff-steps {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.1rem;
+  }
+  .aff-step {
+    padding: 1.5rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+  }
+  .aff-step-num {
+    display: inline-block;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    padding: 0.2rem 0.55rem;
+    border: 1px solid var(--accent-line);
+    background-color: var(--accent-soft);
+    border-radius: 999px;
+    margin-bottom: 0.9rem;
+  }
+  .aff-step-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--strong);
+    margin-bottom: 0.45rem;
+  }
+  .aff-step-body {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .aff-form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    align-items: start;
+  }
+  .aff-terms {
+    margin-top: 1.5rem;
+    padding: 1rem 1.1rem;
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-2);
+    border: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+
+  @media (min-width: 720px) {
+    .numbers-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .aff-steps {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  @media (min-width: 880px) {
+    .aff-form-grid {
+      grid-template-columns: 1.5fr 1fr;
+      gap: 3.5rem;
+    }
+  }
+</style>

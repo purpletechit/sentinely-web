@@ -1,0 +1,84 @@
+---
+import { useTranslations, type Lang } from '../i18n/utils';
+import { CONTACT_EMAIL } from '../config';
+
+interface Props {
+  heading?: string;
+}
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+const { heading = t('company.heading') } = Astro.props;
+---
+
+<aside class="company card">
+  <h2 class="company-heading">{heading}</h2>
+  <dl class="company-list">
+    <div class="company-row">
+      <dt>{t('company.addressLabel')}</dt>
+      <dd><strong>{t('company.name')}</strong><br />{t('company.address')}</dd>
+    </div>
+    <div class="company-row">
+      <dt>{t('company.vatLabel')}</dt>
+      <dd class="mono">{t('company.vat')}</dd>
+    </div>
+    <div class="company-row">
+      <dt>{t('company.emailLabel')}</dt>
+      <dd><a href={`mailto:${CONTACT_EMAIL}`} class="company-email">{CONTACT_EMAIL}</a></dd>
+    </div>
+  </dl>
+  <p class="company-note">{t('company.note')}</p>
+</aside>
+
+<style>
+  .company {
+    padding: 1.6rem;
+    align-self: start;
+  }
+  .company-heading {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--strong);
+    margin-bottom: 1.1rem;
+  }
+  .company-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+  .company-row {
+    display: grid;
+    grid-template-columns: 7rem 1fr;
+    gap: 0.75rem;
+    align-items: start;
+  }
+  .company-row dt {
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.62rem;
+    font-weight: 600;
+    color: var(--faint);
+    padding-top: 0.2rem;
+  }
+  .company-row dd {
+    color: var(--ink);
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+  .company-email {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .company-email:hover {
+    text-decoration: underline;
+  }
+  .company-note {
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+</style>

@@ -1,0 +1,263 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+import LangSwitch from './LangSwitch.astro';
+import { localizePath, useTranslations, type Lang } from '../i18n/utils';
+import { APP_LOGIN_URL, APP_SIGNUP_URL } from '../config';
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+const homeHref = localizePath('/', lang);
+
+const nav = [
+  { href: `${homeHref}#features`, label: t('nav.features') },
+  { href: `${homeHref}#how`, label: t('nav.how') },
+  { href: `${homeHref}#pricing`, label: t('nav.pricing') },
+  { href: `${homeHref}#faq`, label: t('nav.faq') },
+  { href: localizePath('/contact', lang), label: t('nav.contact') },
+];
+---
+
+<header class="site-header" data-site-header>
+  <div class="container header-inner">
+    <a href={homeHref} class="brand" aria-label={t('site.name')}>
+      <span class="beacon" aria-hidden="true"></span>
+      <span class="brand-name">{t('site.name')}</span>
+    </a>
+
+    <nav class="nav-desktop" aria-label="Primary">
+      {nav.map((item) => <a href={item.href} class="nav-link">{item.label}</a>)}
+    </nav>
+
+    <div class="header-actions">
+      <LangSwitch />
+      <ThemeToggle />
+      <a href={APP_LOGIN_URL} class="btn btn-ghost btn-sm">{t('cta.login')}</a>
+      <a href={APP_SIGNUP_URL} class="btn btn-primary btn-sm">{t('cta.startTrial')}</a>
+    </div>
+
+    <div class="header-mobile">
+      <ThemeToggle />
+      <button
+        type="button"
+        class="menu-toggle"
+        data-menu-toggle
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label={t('common.openMenu')}
+      >
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true">
+          <path class="line-top" d="M4 7h16" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"></path>
+          <path class="line-mid" d="M4 12h16" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"></path>
+          <path class="line-bot" d="M4 17h16" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="mobile-menu" id="mobile-menu" hidden>
+    <nav class="mobile-nav" aria-label="Mobile">
+      {nav.map((item) => <a href={item.href} class="mobile-link">{item.label}</a>)}
+    </nav>
+    <div class="mobile-cta">
+      <a href={APP_LOGIN_URL} class="btn btn-ghost btn-block">{t('cta.login')}</a>
+      <a href={APP_SIGNUP_URL} class="btn btn-primary btn-block">{t('cta.startTrial')}</a>
+    </div>
+    <div class="mobile-lang">
+      <LangSwitch />
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background-color: color-mix(in srgb, var(--bg) 82%, transparent);
+    backdrop-filter: saturate(1.4) blur(12px);
+    -webkit-backdrop-filter: saturate(1.4) blur(12px);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+  }
+  .site-header[data-scrolled] {
+    border-bottom-color: var(--line);
+    background-color: color-mix(in srgb, var(--bg) 90%, transparent);
+  }
+  .header-inner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    height: 4rem;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-weight: 750;
+    font-size: 1.12rem;
+    letter-spacing: -0.02em;
+    color: var(--strong);
+    margin-right: auto;
+  }
+  .brand-name {
+    line-height: 1;
+  }
+
+  .nav-desktop {
+    display: none;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .nav-link {
+    color: var(--muted);
+    font-size: 0.92rem;
+    font-weight: 550;
+    padding: 0.5rem 0.7rem;
+    border-radius: var(--radius-sm);
+    transition: color 0.14s ease, background-color 0.14s ease;
+  }
+  .nav-link:hover {
+    color: var(--strong);
+    background-color: var(--surface-2);
+  }
+
+  .header-actions {
+    display: none;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .header-mobile {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .btn-sm {
+    padding: 0.5rem 0.85rem;
+    font-size: 0.88rem;
+  }
+
+  .menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+    background-color: transparent;
+    color: var(--strong);
+    cursor: pointer;
+  }
+  .menu-toggle:hover {
+    border-color: var(--accent-solid);
+    color: var(--accent);
+  }
+
+  .mobile-menu {
+    border-top: 1px solid var(--line);
+    background-color: var(--bg);
+    padding: 1rem 1.25rem 1.5rem;
+  }
+  .mobile-menu[hidden] {
+    display: none;
+  }
+  .mobile-nav {
+    display: flex;
+    flex-direction: column;
+  }
+  .mobile-link {
+    padding: 0.85rem 0.25rem;
+    font-size: 1rem;
+    font-weight: 550;
+    color: var(--ink);
+    border-bottom: 1px solid var(--line);
+  }
+  .mobile-link:hover {
+    color: var(--accent);
+  }
+  .mobile-cta {
+    display: grid;
+    gap: 0.6rem;
+    margin-top: 1.1rem;
+  }
+  .mobile-lang {
+    margin-top: 1.1rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Animate hamburger → close */
+  .site-header[data-open] .menu-toggle .line-top {
+    transform: translateY(5px) rotate(45deg);
+  }
+  .site-header[data-open] .menu-toggle .line-mid {
+    opacity: 0;
+  }
+  .site-header[data-open] .menu-toggle .line-bot {
+    transform: translateY(-5px) rotate(-45deg);
+  }
+  .menu-toggle svg path {
+    transform-origin: center;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  @media (min-width: 1024px) {
+    .nav-desktop {
+      display: flex;
+    }
+    .header-actions {
+      display: flex;
+    }
+    .header-mobile {
+      display: none;
+    }
+    .mobile-menu {
+      display: none !important;
+    }
+  }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-site-header]');
+  if (header) {
+    const toggle = header.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+    const menu = header.querySelector<HTMLElement>('#mobile-menu');
+
+    const setOpen = (open: boolean) => {
+      if (!toggle || !menu) return;
+      if (open) {
+        header.setAttribute('data-open', '');
+        menu.hidden = false;
+      } else {
+        header.removeAttribute('data-open');
+        menu.hidden = true;
+      }
+      toggle.setAttribute('aria-expanded', String(open));
+    };
+
+    toggle?.addEventListener('click', () => {
+      setOpen(!header.hasAttribute('data-open'));
+    });
+
+    menu?.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a')) setOpen(false);
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') setOpen(false);
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 1024) setOpen(false);
+    });
+
+    const onScroll = () => {
+      if (window.scrollY > 4) header.setAttribute('data-scrolled', '');
+      else header.removeAttribute('data-scrolled');
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+</script>

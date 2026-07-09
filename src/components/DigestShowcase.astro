@@ -1,0 +1,203 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import { useTranslations, type Lang } from '../i18n/utils';
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+
+type Kpi = { label: string; value: string };
+const kpis = t('digest.kpis') as Kpi[];
+---
+
+<section class="section digest">
+  <div class="container digest-grid">
+    <div class="digest-copy">
+      <SectionHeading eyebrow={t('digest.eyebrow')} title={t('digest.heading')} sub={t('digest.sub')} />
+    </div>
+
+    <div class="digest-mock reveal" aria-label={t('digest.cardTitle')}>
+      <div class="mock-bar" aria-hidden="true">
+        <span class="tl tl-red"></span>
+        <span class="tl tl-amber"></span>
+        <span class="tl tl-green"></span>
+      </div>
+      <div class="mock-body">
+        <div class="mock-head">
+          <div class="mock-from">
+            <span class="beacon" aria-hidden="true"></span>
+            <span class="mono">{t('digest.cardTitle')} · {t('digest.domain')}</span>
+          </div>
+          <span class="mono mock-date">{t('digest.date')}</span>
+        </div>
+
+        <div class="mock-score">
+          <div>
+            <p class="label">{t('digest.scoreLabel')}</p>
+            <p class="mock-score-value mono">{t('digest.scoreValue')}</p>
+          </div>
+          <span class="chip chip-pass chip-delta mono">▲ {t('digest.scoreDelta')}</span>
+        </div>
+
+        <div class="mock-kpis">
+          {kpis.map((kpi) => (
+            <div class="mock-kpi">
+              <span class="mono mock-kpi-value">{kpi.value}</span>
+              <span class="mock-kpi-label">{kpi.label}</span>
+            </div>
+          ))}
+        </div>
+
+        <div class="mock-insight">
+          <p class="insight-label">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden="true">
+              <path
+                d="M11 3.2 12.7 8 17.4 9.7 12.7 11.4 11 16.2 9.3 11.4 4.6 9.7 9.3 8 11 3.2Z"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linejoin="round"></path>
+            </svg>
+            {t('digest.insightLabel')}
+          </p>
+          <p class="insight-body">{t('digest.insightBody')}</p>
+        </div>
+
+        <p class="mock-footer mono">{t('digest.footer')}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .digest-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  .digest-mock {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background-color: var(--surface);
+    box-shadow: var(--shadow-lg);
+  }
+  .mock-bar {
+    display: flex;
+    gap: 0.4rem;
+    padding: 0.7rem 0.9rem;
+    background-color: var(--surface-2);
+    border-bottom: 1px solid var(--line);
+  }
+  .tl {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 999px;
+    background-color: var(--faint);
+    opacity: 0.6;
+  }
+  .mock-body {
+    padding: 1.35rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+  }
+  .mock-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .mock-from {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 650;
+    color: var(--strong);
+    font-size: 0.9rem;
+  }
+  .mock-date {
+    color: var(--faint);
+    font-size: 0.78rem;
+  }
+
+  .mock-score {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background-color: var(--surface-2);
+  }
+  .mock-score-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--strong);
+    margin-top: 0.15rem;
+  }
+  .chip-delta {
+    align-self: flex-start;
+  }
+
+  .mock-kpis {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
+  }
+  .mock-kpi {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.7rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+  }
+  .mock-kpi-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--strong);
+  }
+  .mock-kpi-label {
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  .mock-insight {
+    padding: 1rem 1.1rem;
+    border-radius: var(--radius);
+    background-color: var(--accent-soft);
+    border: 1px solid var(--accent-line);
+  }
+  .insight-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.66rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 0.55rem;
+  }
+  .insight-body {
+    color: var(--ink);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  .mock-footer {
+    color: var(--faint);
+    font-size: 0.72rem;
+    text-align: center;
+    padding-top: 0.25rem;
+  }
+
+  @media (min-width: 940px) {
+    .digest-grid {
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 3.5rem;
+    }
+  }
+</style>

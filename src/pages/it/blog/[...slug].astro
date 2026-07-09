@@ -1,0 +1,57 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { localizePath, useTranslations, type Lang } from '../../../i18n/utils';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props as { post: CollectionEntry<'blog'> };
+
+const lang = (Astro.currentLocale ?? 'it') as Lang;
+const t = useTranslations(lang);
+const { Content } = await render(post);
+const fmt = new Intl.DateTimeFormat(lang === 'it' ? 'it-IT' : 'en-GB', { dateStyle: 'long' });
+---
+
+<BaseLayout title={`${post.data.title} — Sentinely`} description={post.data.description}>
+  <article class="section">
+    <div class="container article-inner">
+      <a href={localizePath('/blog', lang)} class="back-link">← {t('blog.allPosts')}</a>
+      <h1 class="article-title">{post.data.title}</h1>
+      <time class="mono article-date" datetime={post.data.pubDate.toISOString()}>
+        {fmt.format(post.data.pubDate)}
+      </time>
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .article-inner {
+    max-width: 46rem;
+  }
+  .back-link {
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 550;
+  }
+  .back-link:hover {
+    color: var(--accent);
+  }
+  .article-title {
+    font-size: clamp(1.9rem, 1.4rem + 2.4vw, 2.7rem);
+    margin-top: 1rem;
+  }
+  .article-date {
+    display: block;
+    color: var(--faint);
+    font-size: 0.8rem;
+    margin-top: 0.8rem;
+    margin-bottom: 2rem;
+  }
+</style>
