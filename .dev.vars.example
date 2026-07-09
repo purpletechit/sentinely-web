@@ -1,0 +1,20 @@
+# Local dev secrets for `wrangler pages dev`. Copy to `.dev.vars` (gitignored)
+# and fill in. In production, set these in the Cloudflare Pages dashboard
+# (Settings → Environment variables & secrets) — NEVER commit real values.
+
+# --- Cloudflare Turnstile (anti-bot) ---
+# Server-side secret. Cloudflare test key "always passes" shown below for local dev.
+TURNSTILE_SECRET_KEY="1x0000000000000000000000000000000AA"
+
+# --- Email delivery: AWS SES (recommended) ---
+# The sentinely.eu identity is already verified for the product.
+AWS_ACCESS_KEY_ID=""
+AWS_SECRET_ACCESS_KEY=""
+AWS_REGION="eu-west-1"
+
+# Optional overrides (defaults shown):
+# MAIL_TO="info@sentinely.eu"
+# MAIL_FROM="Sentinely <noreply@sentinely.eu>"
+
+# --- Email delivery: Resend (fallback, used only if AWS SES creds are absent) ---
+# RESEND_API_KEY=""

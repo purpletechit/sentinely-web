@@ -1,0 +1,8 @@
+# Cloudflare Pages project config.
+# Used by `wrangler pages dev` (local) and `wrangler pages deploy` (manual deploy).
+# Secrets/vars are NOT stored here — set them in the Pages dashboard or via
+# `.dev.vars` locally (see .dev.vars.example).
+
+name = "sentinely-web"
+compatibility_date = "2024-11-01"
+pages_build_output_dir = "dist"
