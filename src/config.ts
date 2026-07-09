@@ -7,9 +7,11 @@
 export const SITE_ORIGIN = 'https://sentinely.eu';
 export const APP_URL = 'https://app.sentinely.eu';
 
-/** Where the app sign-up / trial flow starts. */
-export const APP_SIGNUP_URL = `${APP_URL}/register`;
-export const APP_LOGIN_URL = `${APP_URL}/login`;
+// CTA targets. Per the brief, all CTAs point at the app (https://app.sentinely.eu).
+// They default to the app root to avoid assuming sub-routes; if the app exposes
+// dedicated paths (e.g. /register, /login), point these there.
+export const APP_SIGNUP_URL = APP_URL;
+export const APP_LOGIN_URL = APP_URL;
 
 /** Company / contact details (Purple IT s.r.l.). */
 export const CONTACT_EMAIL = 'info@sentinely.eu';
