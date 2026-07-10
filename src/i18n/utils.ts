@@ -58,12 +58,18 @@ export function stripLocale(pathname: string): string {
   return p;
 }
 
+/** Ensure a trailing slash (root stays "/"). Matches trailingSlash: 'always'. */
+function withTrailingSlash(p: string): string {
+  if (p === '/') return '/';
+  return p.endsWith('/') ? p : `${p}/`;
+}
+
 /** Build the URL for a logical path (e.g. "/contact") in the given language. */
 export function localizePath(logicalPath: string, lang: Lang): string {
   let p = logicalPath.startsWith('/') ? logicalPath : `/${logicalPath}`;
   p = normalise(p);
-  if (lang === defaultLang) return p;
-  return p === '/' ? '/it' : `/it${p}`;
+  const localized = lang === defaultLang ? p : p === '/' ? '/it' : `/it${p}`;
+  return withTrailingSlash(localized);
 }
 
 /** Given the current pathname, return the equivalent path in the target language. */

@@ -10,7 +10,10 @@ const SITE = 'https://sentinely.eu';
 // https://astro.build/config
 export default defineConfig({
   site: SITE,
-  trailingSlash: 'never',
+  // Cloudflare Pages serves `directory`-format output with a trailing slash and
+  // 308-redirects the non-slash form. Match that so links/canonical/sitemap all
+  // use the trailing slash and never trigger a redirect hop.
+  trailingSlash: 'always',
   build: {
     format: 'directory',
   },

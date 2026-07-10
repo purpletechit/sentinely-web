@@ -2,7 +2,7 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { alternatePath, useTranslations, type Lang } from '../i18n/utils';
+import { localizePath, stripLocale, useTranslations, type Lang } from '../i18n/utils';
 import { SITE_ORIGIN, OG_IMAGE } from '../config';
 
 interface Props {
@@ -18,12 +18,13 @@ const lang = (Astro.currentLocale ?? 'en') as Lang;
 const t = useTranslations(lang);
 
 const site = Astro.site ?? new URL(SITE_ORIGIN);
-const pathname = Astro.url.pathname;
-const canonicalPath = pathname.replace(/\/+$/, '') || '/';
+// Derive URLs from the logical (locale-stripped) path so canonical + hreflang
+// always match the trailing-slash form Cloudflare Pages serves.
+const logicalPath = stripLocale(Astro.url.pathname);
 
-const canonicalURL = new URL(canonicalPath, site);
-const enURL = new URL(alternatePath(pathname, 'en'), site);
-const itURL = new URL(alternatePath(pathname, 'it'), site);
+const canonicalURL = new URL(localizePath(logicalPath, lang), site);
+const enURL = new URL(localizePath(logicalPath, 'en'), site);
+const itURL = new URL(localizePath(logicalPath, 'it'), site);
 const ogImageURL = new URL(image, site);
 
 const ogLocale = lang === 'it' ? 'it_IT' : 'en_US';
