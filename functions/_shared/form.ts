@@ -153,7 +153,10 @@ export async function handleForm(request: Request, env: Env, type: FormType): Pr
     const ip = request.headers.get('CF-Connecting-IP') ?? undefined;
     const token = clean(body.token, 3000);
     const result = await verifyTurnstile(env.TURNSTILE_SECRET_KEY, token, ip);
-    if (!result.success) return json(400, { ok: false, error: 'turnstile', codes: result.codes });
+    if (!result.success) {
+      if (result.codes.length) console.warn('[form] turnstile rejected:', result.codes.join(', '));
+      return json(400, { ok: false, error: 'turnstile' });
+    }
   }
 
   const label = type === 'affiliate' ? 'Affiliate application' : 'Contact message';
@@ -176,12 +179,10 @@ export async function handleForm(request: Request, env: Env, type: FormType): Pr
   try {
     await sendEmail(env, { subject, text, replyTo: email });
   } catch (err) {
-    // Never log message contents; only the failure reason.
-    const detail = err instanceof Error ? err.message : String(err);
-    console.error('[form] send failed:', detail);
-    // `detail` surfaces the provider error (e.g. SES region/verification) to aid
-    // setup debugging. It carries no user data — safe to remove once email works.
-    return json(502, { ok: false, error: 'send_failed', detail });
+    // Log the provider error server-side only (Cloudflare Functions logs); never
+    // expose internal details or message contents to the client.
+    console.error('[form] send failed:', err instanceof Error ? err.message : String(err));
+    return json(502, { ok: false, error: 'send_failed' });
   }
 
   return json(200, { ok: true });
