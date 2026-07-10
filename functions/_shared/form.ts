@@ -42,8 +42,12 @@ function cleanMultiline(value: unknown, max = 5000): string {
   return String(value ?? '').trim().slice(0, max);
 }
 
-async function verifyTurnstile(secret: string, token: string, ip?: string): Promise<boolean> {
-  if (!token) return false;
+async function verifyTurnstile(
+  secret: string,
+  token: string,
+  ip?: string,
+): Promise<{ success: boolean; codes: string[] }> {
+  if (!token) return { success: false, codes: ['missing-input-response'] };
   const form = new FormData();
   form.append('secret', secret);
   form.append('response', token);
@@ -54,10 +58,10 @@ async function verifyTurnstile(secret: string, token: string, ip?: string): Prom
       method: 'POST',
       body: form,
     });
-    const data = (await res.json()) as { success?: boolean };
-    return data.success === true;
+    const data = (await res.json()) as { success?: boolean; 'error-codes'?: string[] };
+    return { success: data.success === true, codes: data['error-codes'] ?? [] };
   } catch {
-    return false;
+    return { success: false, codes: ['siteverify-request-failed'] };
   }
 }
 
@@ -148,8 +152,8 @@ export async function handleForm(request: Request, env: Env, type: FormType): Pr
   if (env.TURNSTILE_SECRET_KEY) {
     const ip = request.headers.get('CF-Connecting-IP') ?? undefined;
     const token = clean(body.token, 3000);
-    const ok = await verifyTurnstile(env.TURNSTILE_SECRET_KEY, token, ip);
-    if (!ok) return json(400, { ok: false, error: 'turnstile' });
+    const result = await verifyTurnstile(env.TURNSTILE_SECRET_KEY, token, ip);
+    if (!result.success) return json(400, { ok: false, error: 'turnstile', codes: result.codes });
   }
 
   const label = type === 'affiliate' ? 'Affiliate application' : 'Contact message';
