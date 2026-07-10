@@ -6,3 +6,8 @@
 name = "sentinely-web"
 compatibility_date = "2024-11-01"
 pages_build_output_dir = "dist"
+
+# Plaintext runtime variables for the Pages Functions (non-secret).
+# The SES identity (sentinely.eu) is verified in us-east-1.
+[vars]
+AWS_REGION = "us-east-1"
