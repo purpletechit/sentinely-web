@@ -173,8 +173,11 @@ export async function handleForm(request: Request, env: Env, type: FormType): Pr
     await sendEmail(env, { subject, text, replyTo: email });
   } catch (err) {
     // Never log message contents; only the failure reason.
-    console.error('[form] send failed:', err instanceof Error ? err.message : String(err));
-    return json(502, { ok: false, error: 'send_failed' });
+    const detail = err instanceof Error ? err.message : String(err);
+    console.error('[form] send failed:', detail);
+    // `detail` surfaces the provider error (e.g. SES region/verification) to aid
+    // setup debugging. It carries no user data — safe to remove once email works.
+    return json(502, { ok: false, error: 'send_failed', detail });
   }
 
   return json(200, { ok: true });
