@@ -1,5 +1,6 @@
 ---
 import { useTranslations, type Lang } from '../i18n/utils';
+import { TURNSTILE_SITE_KEY, TURNSTILE_TEST_SITE_KEY } from '../config';
 
 interface Props {
   type: 'contact' | 'affiliate';
@@ -9,10 +10,12 @@ const { type } = Astro.props;
 const lang = (Astro.currentLocale ?? 'en') as Lang;
 const t = useTranslations(lang);
 
-// Build-time public site key. Falls back to Cloudflare's "always passes" TEST
-// key so the form works locally; production MUST set PUBLIC_TURNSTILE_SITE_KEY.
-const TEST_SITE_KEY = '1x00000000000000000000AA';
-const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || TEST_SITE_KEY;
+// Public Turnstile site key. An explicit PUBLIC_TURNSTILE_SITE_KEY env wins;
+// otherwise production uses the real committed key and local dev uses the
+// "always passes" test key so forms work without extra setup.
+const siteKey =
+  import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ||
+  (import.meta.env.DEV ? TURNSTILE_TEST_SITE_KEY : TURNSTILE_SITE_KEY);
 
 const prefix = type === 'affiliate' ? 'affiliates' : 'contact';
 const endpoint = type === 'affiliate' ? '/api/affiliate' : '/api/contact';
