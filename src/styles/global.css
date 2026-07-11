@@ -148,6 +148,10 @@
     scroll-behavior: smooth;
     /* offset for sticky header when jumping to #anchors */
     scroll-padding-top: 5.5rem;
+    /* Contain horizontal overflow at the root. `clip` doesn't create a scroll
+       container, so it won't break the sticky header — and putting it on <html>
+       rather than <body> avoids an iOS/iPadOS Safari phantom-scroll bug. */
+    overflow-x: clip;
   }
 
   body {
@@ -156,8 +160,6 @@
     font-family: var(--sans);
     line-height: 1.65;
     font-size: 1rem;
-    /* `clip` prevents accidental horizontal scroll WITHOUT breaking sticky. */
-    overflow-x: clip;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -357,10 +359,13 @@
     }
   }
 
-  /* Data tables / panels never cause page scroll */
+  /* Data tables / panels never cause page scroll. min-width:0 lets the wrapper
+     shrink inside flex/grid parents so wide content scrolls here, not the page. */
   .scroll-x {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    min-width: 0;
+    max-width: 100%;
   }
 
   /* Field styling for forms */
