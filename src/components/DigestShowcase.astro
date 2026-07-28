@@ -13,6 +13,7 @@ const kpis = t('digest.kpis') as Kpi[];
   <div class="container digest-grid">
     <div class="digest-copy">
       <SectionHeading eyebrow={t('digest.eyebrow')} title={t('digest.heading')} sub={t('digest.sub')} />
+      <p class="digest-addon reveal">{t('digest.addonNote')}</p>
     </div>
 
     <div class="digest-mock reveal" aria-label={t('digest.cardTitle')}>
@@ -68,6 +69,15 @@ const kpis = t('digest.kpis') as Kpi[];
 </section>
 
 <style>
+  .digest-addon {
+    margin-top: 1.5rem;
+    padding: 0.9rem 1.1rem;
+    border-left: 2px solid var(--accent-line);
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    max-width: 56ch;
+  }
   .digest-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr);

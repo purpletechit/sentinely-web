@@ -1,8 +1,8 @@
 {
   "site": {
     "name": "Sentinely",
-    "tagline": "Scopri ogni sorgente che invia a nome del tuo dominio.",
-    "defaultDescription": "Sentinely trasforma i report DMARC illeggibili in un verdetto chiaro, un digest quotidiano con AI Insights e i controlli per fermare lo spoofing e arrivare all'enforcement — per un dominio o per centinaia."
+    "tagline": "Sai chi spedisce a nome tuo, e se la tua posta arriva.",
+    "defaultDescription": "Sentinely legge i report DMARC che i provider di posta inviano già sul tuo dominio e li trasforma in un verdetto: ogni sorgente di invio riconosciuta, un punteggio di recapito, l'analisi dei record, il controllo delle blocklist, gli avvisi e il digest quotidiano."
   },
   "common": {
     "skipToContent": "Vai al contenuto",
@@ -14,6 +14,7 @@
     "backToTop": "Torna su"
   },
   "nav": {
+    "solutions": "Soluzioni",
     "features": "Funzionalità",
     "how": "Come funziona",
     "pricing": "Prezzi",
@@ -23,6 +24,7 @@
   "cta": {
     "login": "Accedi",
     "startTrial": "Inizia la prova gratuita",
+    "trial30": "Inizia la prova di 30 giorni",
     "startFree": "Inizia gratis — senza carta",
     "seeHow": "Scopri come funziona",
     "contact": "Contattaci",
@@ -32,12 +34,12 @@
   },
   "pages": {
     "home": {
-      "title": "Sentinely — Sicurezza DMARC e anti-spoofing, resi leggibili",
-      "description": "Sentinely legge i report DMARC al posto tuo: un verdetto chiaro, un punteggio di protezione del dominio, un digest quotidiano con AI Insights, alert intelligenti e monitoraggio delle blocklist — per uno o molti domini."
+      "title": "Sentinely — sai chi spedisce a nome tuo, e se la tua posta arriva",
+      "description": "Pubblichi un solo record DNS. Sentinely legge i tuoi report aggregati DMARC e restituisce un verdetto: ogni sorgente di invio riconosciuta, un punteggio di recapito 0–100, l'analisi di SPF/DKIM/DMARC/BIMI/MTA-STS, il monitoraggio delle blocklist, gli avvisi e il digest quotidiano. Con un piano gratuito."
     },
     "contact": {
       "title": "Contatti — Sentinely",
-      "description": "Domande su copertura, prezzi o sul rollout di Sentinely su molti domini? Parla con il team di Sentinely, in italiano o in inglese."
+      "description": "Domande su copertura, prezzi o sul rollout di Sentinely su molti domini e clienti? Parla con il team di Sentinely, in italiano o in inglese."
     },
     "affiliates": {
       "title": "Programma affiliati — Sentinely",
@@ -45,7 +47,7 @@
     },
     "about": {
       "title": "Chi siamo — Sentinely",
-      "description": "Sentinely è l'autenticazione email resa leggibile — un prodotto di Purple IT s.r.l., pensato per team IT e security e per le agenzie che proteggono l'email di molti domini."
+      "description": "Sentinely è l'autenticazione email resa leggibile — un prodotto di Purple IT s.r.l., pensato per i team marketing, per i team IT e security e per le agenzie che gestiscono l'email di molti clienti."
     },
     "privacy": {
       "title": "Informativa sulla privacy — Sentinely",
@@ -65,15 +67,15 @@
     }
   },
   "hero": {
-    "eyebrow": "Sicurezza DMARC · anti-spoofing",
-    "h1Before": "Scopri ",
-    "h1Highlight": "ogni sorgente",
-    "h1After": " che invia a nome del tuo dominio.",
-    "sub": "I report aggregati DMARC arrivano come XML pensato per le macchine. Sentinely li legge al posto tuo e trasforma il rumore in un verdetto chiaro — con i controlli per agire.",
+    "eyebrow": "Monitoraggio DMARC · recapito · anti-spoofing",
+    "h1Before": "Sai ",
+    "h1Highlight": "chi spedisce a nome tuo",
+    "h1After": " — e se la tua posta arriva.",
+    "sub": "Pubblichi un solo record DNS. Da lì in poi i provider di posta di tutto il mondo inviano a Sentinely i report DMARC del tuo dominio — chi ha spedito a nome tuo, da quale IP, quanti messaggi, se l'autenticazione è passata. Sentinely li legge e ti dà il verdetto.",
     "microStats": [
       "1 record DNS da pubblicare",
-      "Sorveglianza spoofing 24/7",
-      "Alert e digest EN·IT"
+      "Nessun agente, nessun gateway",
+      "Avvisi e digest EN·IT"
     ]
   },
   "verdict": {
@@ -104,8 +106,8 @@
       { "ip": "168.245.10.20", "provider": "SendGrid", "volume": "2.310", "status": "pass" },
       { "ip": "193.42.33.8", "provider": "Host sconosciuto", "volume": "604", "status": "fail" }
     ],
-    "alert": "Sorgente di spoofing rilevata — fallisce SPF e DKIM, presente in 1 blocklist",
-    "caption": "Verdetto in tempo reale per un dominio monitorato"
+    "alert": "Nuova sorgente — fallisce SPF e DKIM, presente in 1 blocklist",
+    "caption": "Esempio di verdetto per un dominio monitorato"
   },
   "signals": {
     "heading": "Tutto ciò che decide se il tuo dominio è affidabile",
@@ -114,76 +116,76 @@
   "problem": {
     "eyebrow": "Il problema",
     "heading": "Il DMARC contiene le prove — in un formato pensato per le macchine.",
-    "sub": "I report che potrebbero dirti chi abusa del tuo dominio arrivano come XML grezzo. Quasi nessuno li legge, così tre cose vanno storte in silenzio.",
+    "sub": "I report che potrebbero dirti chi spedisce a nome tuo, e se si autentica, arrivano come XML grezzo. Quasi nessuno li legge, così tre cose vanno storte in silenzio.",
     "cards": [
       {
-        "title": "L'impersonazione resta invisibile",
-        "body": "Chiunque può inviare a nome del tuo dominio. Senza la visibilità DMARC, spoofing e phishing agiscono in silenzio — finché un cliente o il tuo brand non ci rimette."
+        "title": "Non sai chi spedisce a nome tuo",
+        "body": "Lo spoofing agisce in silenzio, e con lui il tool dei form, il CRM o l'agenzia di cui nessuno ti ha parlato. Sono già tutti nei tuoi report, con il loro IP e i loro volumi."
       },
       {
-        "title": "La posta legittima viene bloccata",
-        "body": "Un include SPF mancante o una chiave DKIM rotta manda in silenzio la tua posta vera nello spam, e i report che spiegano il perché restano non letti."
+        "title": "La posta legittima fallisce in silenzio",
+        "body": "Un include SPF mancante o una chiave DKIM revocata manda la tua posta vera nello spam. E dal 2024 Google e Yahoo richiedono il DMARC a chi invia oltre 5.000 messaggi al giorno ai loro utenti."
       },
       {
         "title": "Non arrivi mai all'enforcement",
-        "body": "Restare su p=none sembra sicuro, ma lascia la porta aperta. Passare a reject senza dati fa paura — così la maggior parte dei domini non lo fa mai."
+        "body": "Restare su p=none sembra sicuro, ma lascia la porta aperta. Passare a reject senza conoscere ogni mittente legittimo è un azzardo — così la maggior parte dei domini non lo fa mai."
       }
     ]
   },
   "features": {
     "eyebrow": "Cosa ottieni",
-    "heading": "Una difesa, non un mucchio di dati.",
-    "sub": "Sentinely trasforma i report grezzi in decisioni: un punteggio da monitorare, un digest da leggere e alert che ti raggiungono prima che se ne accorga chiunque altro.",
+    "heading": "Un verdetto, non un mucchio di dati.",
+    "sub": "Sentinely trasforma i report aggregati grezzi in decisioni: un punteggio da seguire, sorgenti che puoi riconoscere, record che puoi correggere e avvisi che ti raggiungono prima che se ne accorga chiunque altro.",
     "cards": [
       {
-        "title": "Punteggio di protezione del dominio",
-        "body": "Un unico voto da 0 a 100 (A–F) che riunisce SPF, DKIM, DMARC e allineamento in un solo numero da seguire nel tempo."
+        "title": "Punteggio di recapito e protezione",
+        "body": "Un punteggio 0–100 con voto A–F per dominio, calcolato su autenticazione, policy, igiene e blocklist — con un indicatore di affidabilità finché i dati sono ancora pochi."
       },
       {
-        "title": "Digest quotidiano + AI Insights",
-        "body": "Una email leggibile al giorno. Claude spiega cosa è cambiato e cosa fare — in italiano o in inglese."
+        "title": "Ogni sorgente di invio, riconosciuta",
+        "body": "IP, hostname (rDNS/PTR), geolocalizzazione e organizzazione/ASN per ciascuna sorgente, con una linea netta fra i mittenti già noti e quelli che non hanno mai spedito per te."
       },
       {
-        "title": "Alert su minacce e modifiche",
-        "body": "Vieni avvisato nel momento in cui una nuova sorgente inizia a fare spoofing, l'autenticazione cala o un record critico cambia."
+        "title": "Record letti, non solo trovati",
+        "body": "SPF, DKIM, DMARC, BIMI, MTA-STS e TLS-RPT verificati per come sono scritti: tag DMARC fusi, rua senza mailto:, meccanismi SPF sconosciuti, il limite delle 10 ricerche. Con il record esatto da pubblicare."
       },
       {
-        "title": "Hardening di DNS e autenticazione",
-        "body": "Controlli guidati per SPF, DKIM, DMARC, BIMI e MTA-STS — con i record esatti da pubblicare, pronti da copiare."
+        "title": "Reputazione e blocklist",
+        "body": "Controllo continuo su DNSBL/RBL degli IP che spediscono per il tuo dominio, con esito a tre stati — elencato, pulito o non verificabile — così l'incertezza non viene mai letta come sicurezza."
       },
       {
-        "title": "Blocklist e reputazione",
-        "body": "Monitoraggio continuo di RBL/DNSBL, Geo-IP e PTR/rDNS, così una segnalazione o un mittente scorretto non ti coglie di sorpresa."
+        "title": "Avvisi e digest quotidiano",
+        "body": "Una nuova sorgente, un'anomalia di volume rispetto alla media dei 7 giorni, un tasso di fallimento alto, posta messa in quarantena o rifiutata. Più un digest per dominio ogni mattina, nella lingua di chi lo riceve."
       },
       {
-        "title": "Pensato per molti domini",
-        "body": "Multi-tenant dal primo giorno. Gestisci decine di domini e clienti da un unico spazio, ben separati."
+        "title": "Multi-tenant, white-label, API",
+        "body": "Uno spazio separato per ogni cliente con accesso per-dominio, il tuo nome, colore, logo e footer su applicazione, email e PDF, e un'API REST in sola lettura con chiave per tenant."
       }
     ]
   },
   "how": {
     "eyebrow": "Come funziona",
     "heading": "Un record in ingresso. Il controllo in uscita.",
-    "sub": "Nessun agente, nessuna modifica al gateway, nessun reindirizzamento della posta. Pubblichi un solo record DMARC e Sentinely fa la lettura.",
+    "sub": "Nessun agente, nessuna modifica al gateway, nessuna deviazione della posta. Pubblichi un solo record DMARC e Sentinely fa la lettura.",
     "steps": [
       {
         "title": "Pubblica il tuo RUA",
-        "body": "Aggiungi un record DMARC che invia i report aggregati a Sentinely. È l'unica modifica dalla tua parte."
+        "body": "Aggiungi un record DMARC che indirizza i report aggregati a un indirizzo Sentinely. È l'unica modifica dalla tua parte — oppure spingi tu stesso i report tramite un webhook HTTP firmato."
       },
       {
-        "title": "Ingeriamo e analizziamo",
-        "body": "Analizziamo ogni report aggregato, risolviamo ciascuna sorgente e verifichiamo autenticazione, allineamento e blocklist — ogni giorno."
+        "title": "Ingeriamo e riconosciamo",
+        "body": "XML, GZIP e ZIP analizzati e deduplicati. Ogni sorgente risolta in IP, host, posizione e organizzazione, poi verificata su autenticazione, allineamento e blocklist."
       },
       {
-        "title": "Riprendi il controllo",
-        "body": "Leggi il verdetto, correggi i punti deboli e passa in sicurezza da p=none all'enforcement (p=reject), con i dati a supporto."
+        "title": "Leggi il verdetto e agisci",
+        "body": "Correggi i punti deboli con il record che ti forniamo, mantieni autenticate le tue campagne e passa da p=none all'enforcement con i dati a sostegno della decisione."
       }
     ]
   },
   "digest": {
     "eyebrow": "Il digest quotidiano",
     "heading": "L'unica email che legge i report al posto tuo.",
-    "sub": "Ogni mattina, un digest che riassume cosa è successo e ti dice cosa conta davvero — con AI Insights che spiegano il perché, non solo i numeri.",
+    "sub": "Ogni mattina, un digest per dominio che riassume cosa è successo e cosa conta davvero — nella lingua di chi lo riceve.",
     "cardTitle": "Digest quotidiano",
     "domain": "acme.com",
     "date": "Lun, 6 lug 2026",
@@ -193,60 +195,107 @@
     "kpis": [
       { "label": "Autenticate", "value": "98,7%" },
       { "label": "Volume", "value": "11.854" },
-      { "label": "Nuove minacce", "value": "1" }
+      { "label": "Nuove sorgenti", "value": "1" }
     ],
     "insightLabel": "AI Insight",
     "insightBody": "Una nuova sorgente, 193.42.33.8, ha inviato 604 messaggi a nome di acme.com fallendo sia SPF sia DKIM. È presente in una blocklist e non corrisponde a nessuno dei tuoi mittenti noti: sembra spoofing, non posta legittima persa. Nessuna azione richiesta da parte tua; mantenere il DMARC su p=reject garantisce che questi messaggi vengano rifiutati.",
-    "footer": "Sentinely · Digest quotidiano · EN/IT"
+    "footer": "Sentinely · Digest quotidiano · EN/IT",
+    "addonNote": "Gli AI Insights — Claude che spiega perché è successo qualcosa, non solo i numeri — sono un add-on opzionale su tutti i piani a pagamento, e sono attivi per tutta la prova di 30 giorni."
   },
   "pricing": {
     "eyebrow": "Prezzi",
-    "heading": "Inizia gratis. Cresci per domini, non per sorprese.",
-    "sub": "14 giorni di prova gratuita su ogni piano. Nessuna carta per iniziare.",
+    "heading": "Tutti i piani e tutti i limiti, in una pagina.",
+    "sub": "L'annuale equivale a dieci mensilità — due mesi gratis. Prezzi in EUR, IVA esclusa.",
     "perMonth": "/mese",
+    "perYear": "/anno",
     "mostPopular": "Più scelto",
-    "footnote": "Prezzi in EUR, IVA esclusa. Prezzi introduttivi — soggetti a conferma.",
-    "tiers": {
-      "starter": {
-        "name": "Starter",
-        "tagline": "Per un singolo dominio che punta all'enforcement.",
+    "billing": {
+      "label": "Periodo di fatturazione",
+      "monthly": "Mensile",
+      "annual": "Annuale",
+      "save": "2 mesi gratis"
+    },
+    "annualNote": "Dieci mensilità da {price} — due mesi gratis.",
+    "monthlyNote": "{price} all'anno a questo ritmo.",
+    "free": {
+      "name": "Free",
+      "price": "€0",
+      "forever": "per sempre",
+      "tagline": "Un dominio, monitorato per sempre. Non è una prova — è un piano vero, senza scadenza e senza carta.",
+      "cta": "Inizia gratis"
+    },
+    "trial": {
+      "title": "Ogni piano a pagamento inizia con 30 giorni di prova.",
+      "body": "Tutto attivo — 3 domini, 3 utenti, 10.000 messaggi al mese, AI Insights e white-label inclusi. Nessuna carta. Alla fine passi automaticamente al piano Free: niente viene bloccato e i tuoi dati restano consultabili.",
+      "cta": "Inizia la prova di 30 giorni"
+    },
+    "table": {
+      "heading": "Confronta tutti i limiti",
+      "sub": "Lo stesso catalogo su cui fattura l'applicazione.",
+      "caption": "Confronto dei piani Sentinely",
+      "plan": "Piano",
+      "monthly": "Mese",
+      "annual": "Anno",
+      "domains": "Domini",
+      "users": "Utenti",
+      "history": "Storico",
+      "messages": "Messaggi / mese",
+      "aiInsights": "AI Insights",
+      "whiteLabel": "White-label",
+      "unlimited": "Illimitati",
+      "days": "{n} giorni",
+      "included": "Incluso",
+      "notAvailable": "—",
+      "addonPrice": "+{price}/mese",
+      "free": "Free",
+      "trial": "Prova · 30 giorni"
+    },
+    "extraDomain": "Domini aggiuntivi a {price}/mese ciascuno",
+    "aiAddon": "AI Insights disponibili come add-on",
+    "whiteLabelIncluded": "White-label incluso — applicazione, email e PDF",
+    "whiteLabelFrom": "Il white-label è incluso nel piano Business ed è disponibile come add-on a partire da {price}/mese su tutti i piani a pagamento.",
+    "whiteLabelStarterL": "Il white-label è incluso nel piano Business ed è disponibile come add-on su Starter L a {price}/mese.",
+    "footnote": "Prezzi in EUR, IVA esclusa. Il pagamento avviene tramite Stripe. Gli AI Insights sono un add-on opzionale su tutti i piani a pagamento per scelta: non sono inclusi in nessuno. Ti servono più di 100 domini? Parliamone.",
+    "plans": {
+      "starterS": {
+        "name": "Starter S",
+        "tagline": "Un dominio, portato fino all'enforcement.",
         "features": [
-          "1 dominio",
-          "Aggregazione DMARC quotidiana",
-          "Punteggio di protezione (A–F)",
-          "Alert via email e in-app",
-          "Controlli DNS e autenticazione",
-          "Digest quotidiano EN/IT"
+          "Tutto di Free, con dieci volte il volume",
+          "Analisi completa di record, DKIM e blocklist",
+          "AI Insights disponibili come add-on"
         ],
-        "cta": "Inizia la prova gratuita"
+        "cta": "Inizia la prova di 30 giorni"
       },
-      "growth": {
-        "name": "Growth",
-        "tagline": "Per team che proteggono alcuni domini.",
-        "badge": "Con AI Insights",
+      "starterM": {
+        "name": "Starter M",
+        "tagline": "Qualche dominio e il team che ci lavora attorno.",
         "features": [
-          "Fino a 10 domini",
-          "Tutto di Starter",
-          "AI Insights con Claude",
-          "Monitoraggio blocklist e reputazione",
-          "Alert su minacce e modifiche",
-          "Supporto prioritario"
+          "Tutto di Starter S",
+          "60 giorni di storico, per vedere cosa è cambiato",
+          "AI Insights disponibili come add-on"
         ],
-        "cta": "Inizia la prova gratuita"
+        "cta": "Inizia la prova di 30 giorni"
       },
-      "agency": {
-        "name": "Agency",
-        "tagline": "Per MSP e agenzie che gestiscono molti tenant.",
-        "priceLabel": "Su misura",
+      "starterL": {
+        "name": "Starter L",
+        "tagline": "Abbastanza domini da essere il lavoro di qualcuno.",
         "features": [
-          "Domini illimitati",
-          "Spazi multi-tenant",
-          "White-label (in roadmap)",
-          "SSO (in roadmap)",
-          "Supporto dedicato",
-          "Prezzi a volume"
+          "Tutto di Starter M",
+          "180 giorni di storico",
+          "AI Insights e white-label come add-on"
         ],
-        "cta": "Parla con noi"
+        "cta": "Inizia la prova di 30 giorni"
+      },
+      "business": {
+        "name": "Business",
+        "tagline": "Molti clienti, il tuo marchio su tutto.",
+        "features": [
+          "Tutto di Starter L",
+          "Utenti illimitati e messaggi illimitati",
+          "White-label incluso — applicazione, email e PDF"
+        ],
+        "cta": "Inizia la prova di 30 giorni"
       }
     }
   },
@@ -256,39 +305,48 @@
     "items": [
       {
         "q": "Devo essere un esperto di DMARC?",
-        "a": "No. Sentinely traduce i report grezzi in verdetti in linguaggio chiaro e ti dice esattamente quale record pubblicare. Se sai modificare un record DNS, sei a posto."
+        "a": "No. Sentinely traduce i report aggregati grezzi in verdetti in linguaggio chiaro e ti dice esattamente quale record pubblicare. Se sai modificare un record DNS, sei a posto."
       },
       {
         "q": "Modifica la mia email o il mio DNS?",
-        "a": "No. Sentinely è in sola lettura: riceviamo solo i report DMARC che ci indirizzi. Consigliamo i record da pubblicare, ma la modifica la fai sempre tu."
+        "a": "No. Sentinely riceve soltanto i report DMARC che gli indirizzi. Non pubblica né modifica mai i tuoi record DNS: calcola il record esatto che ti serve e te lo mostra — la pubblicazione resta tua."
+      },
+      {
+        "q": "Che differenza c'è fra il piano Free e la prova?",
+        "a": "Free è un piano vero e perpetuo: un dominio, un utente, 1.000 messaggi al mese, 30 giorni di storico, senza carta e senza scadenza. La prova di 30 giorni è invece la porta d'ingresso ai piani a pagamento — tre domini, 10.000 messaggi al mese e ogni funzione e add-on attivi. Alla fine della prova passi automaticamente a Free: niente viene bloccato e i tuoi dati restano consultabili."
       },
       {
         "q": "Quanto in fretta vedrò i risultati?",
-        "a": "Non appena il tuo RUA punta a noi, i report iniziano ad arrivare. La maggior parte dei domini riceve il primo digest completo entro 24 ore."
+        "a": "Non appena il tuo RUA punta a noi, i report iniziano ad arrivare. I provider di posta inviano i report aggregati all'incirca una volta al giorno, quindi la maggior parte dei domini ottiene il primo verdetto completo e il primo digest entro 24 ore."
       },
       {
-        "q": "Posso gestire più domini o clienti?",
-        "a": "Sì. Sentinely è multi-tenant per progettazione — ideale per team IT e security e per agenzie o MSP che gestiscono l'email di molti domini."
+        "q": "Ingerite anche i report forensic (RUF)?",
+        "a": "No — solo quelli aggregati. Questo significa che Sentinely non conserva mai copie dei singoli messaggi: lavora sui conteggi, sulle sorgenti e sugli esiti di autenticazione che i provider riportano in forma aggregata."
       },
       {
-        "q": "Dove sono conservati i dati, e per quanto?",
-        "a": "I dati dei report DMARC sono trattati e conservati nell'UE, mantenuti su una finestra mobile. Trovi i dettagli nella pagina GDPR/DPA."
+        "q": "Posso gestire più domini e più clienti?",
+        "a": "Sì. Sentinely è multi-tenant dal primo giorno: spazi separati per ciascun cliente, accesso per-dominio assegnabile ai singoli utenti, personalizzazione white-label su applicazione, email e PDF, e un'API REST in sola lettura con chiave per tenant."
       },
       {
-        "q": "Quali lingue sono supportate?",
-        "a": "Interfaccia, alert, digest quotidiano e AI Insights sono disponibili sia in italiano sia in inglese."
+        "q": "Cosa non fa Sentinely?",
+        "a": "Non è un gateway di posta: non instrada, non filtra e non blocca la posta, e non sostituisce il tuo SEG o antispam. Non fa inbox placement testing, seed list o monitoraggio di spam trap, e non valida i certificati VMC di BIMI. Non offre SSO/SAML, e il white-label non porta l'applicazione su un tuo dominio. Il punteggio è una lettura dei dati DMARC ricevuti: non è una garanzia di consegna in inbox."
+      },
+      {
+        "q": "Dove sono conservati i dati, e in quali lingue lavorate?",
+        "a": "I dati dei report DMARC sono trattati e conservati nell'UE e mantenuti su una finestra mobile — trovi i dettagli nella pagina GDPR/DPA. Interfaccia, avvisi, digest quotidiano e AI Insights sono disponibili sia in italiano sia in inglese."
       }
     ]
   },
   "finalCta": {
-    "heading": "Scopri chi invia a nome del tuo dominio.",
-    "sub": "Inizia gratis — pubblica un record DNS e avrai il primo verdetto entro un giorno.",
-    "primary": "Inizia la prova gratuita",
+    "heading": "Scopri cosa viene davvero spedito a nome tuo.",
+    "sub": "Pubblica un record DNS e il primo verdetto arriva entro un giorno. La prova di 30 giorni ha tutto attivo — senza carta.",
+    "primary": "Inizia la prova di 30 giorni",
     "secondary": "Contattaci"
   },
   "footer": {
     "tagline": "Autenticazione email, resa leggibile. Un prodotto di Purple IT s.r.l.",
     "colProduct": "Prodotto",
+    "colSolutions": "Soluzioni",
     "colCompany": "Azienda",
     "colLegal": "Legale",
     "product": {
@@ -324,7 +382,7 @@
   "contact": {
     "eyebrow": "Contatti",
     "heading": "Parliamone.",
-    "sub": "Domande su copertura, prezzi o un rollout su molti domini? Scrivici e ti risponderemo — in italiano o in inglese.",
+    "sub": "Domande su copertura, prezzi, un rollout su molti domini o volumi oltre il piano Business? Scrivici e ti risponderemo — in italiano o in inglese.",
     "formHeading": "Invia un messaggio",
     "fields": {
       "name": "Nome",
@@ -340,6 +398,220 @@
     },
     "consent": "Inviando questo messaggio accetti di essere contattato in merito alla tua richiesta.",
     "submit": "Invia messaggio"
+  },
+  "solutions": {
+    "menuLabel": "Soluzioni",
+    "menuHint": "Un solo prodotto. Tre modi di leggere le stesse prove.",
+    "marketing": {
+      "nav": "Email marketing e DEM",
+      "navHint": "Arriva in inbox. Scopri ogni ESP che spedisce a nome tuo.",
+      "short": "Email marketing",
+      "meta": {
+        "title": "DMARC per email marketing e DEM — Sentinely",
+        "description": "Scopri quali ESP spediscono a nome del tuo dominio, se le tue campagne si autenticano e cosa si è rotto dopo un cambio di piattaforma. Google e Yahoo richiedono il DMARC oltre i 5.000 messaggi al giorno: Sentinely ti dice a che punto sei."
+      },
+      "eyebrow": "Per email marketing e DEM",
+      "title": "Arriva in inbox. E scopri chi altro spedisce a nome tuo.",
+      "sub": "Gmail, Outlook, Yahoo e gli altri riportano già ogni messaggio inviato a nome tuo. Sentinely legge quei report, così vedi quali piattaforme spediscono per te, quali di esse si autenticano e cosa è cambiato dopo una migrazione.",
+      "problem": {
+        "eyebrow": "Il problema",
+        "heading": "Il volume non è la parte difficile. Non saperlo lo è.",
+        "sub": "Gli strumenti di campagna ti dicono cosa hai inviato. Non ti dicono cosa ne hanno fatto i provider di posta, né chi altro sta spedendo con il tuo nome.",
+        "cards": [
+          {
+            "title": "Google e Yahoo lo richiedono già",
+            "body": "Dal 2024 chi invia oltre 5.000 messaggi al giorno verso utenti Gmail o Yahoo deve pubblicare il DMARC e mantenere l'autenticazione valida. Sentinely ti dice se lo stai davvero facendo."
+          },
+          {
+            "title": "Mittenti che non hai mai approvato",
+            "body": "Un tool per i form da una parte, un CRM dall'altra, un'agenzia che ha continuato a spedire dopo la fine del contratto. Ognuno compare nei tuoi report aggregati con il suo IP, il suo host e il suo volume."
+          },
+          {
+            "title": "Hai cambiato piattaforma e qualcosa si è rotto",
+            "body": "Una migrazione che ha dimenticato un selettore DKIM o un include SPF fallisce in silenzio. L'engagement te lo dice dopo settimane; i report aggregati la mattina dopo."
+          }
+        ]
+      },
+      "value": {
+        "eyebrow": "Cosa ottieni",
+        "heading": "Le stesse prove, lette in termini di campagna.",
+        "sub": "Tutto quello che segue esce dai report aggregati DMARC che il tuo dominio già riceve.",
+        "cards": [
+          {
+            "title": "Ogni piattaforma, riconosciuta",
+            "body": "IP, hostname, geolocalizzazione e organizzazione per ciascuna sorgente di invio — e un segno chiaro su quelle che non hanno mai spedito per te prima d'ora."
+          },
+          {
+            "title": "Tasso di autenticazione per sorgente",
+            "body": "Allineamento SPF e DKIM, tassi di conformità e di fallimento, calcolati su ciò che i provider hanno effettivamente fatto del messaggio, non su ciò che dichiarano i tuoi record."
+          },
+          {
+            "title": "Un punteggio di recapito da seguire",
+            "body": "Da 0 a 100 con voto A–F, costruito su autenticazione, policy, igiene e blocklist, con un indicatore di affidabilità finché i dati sono ancora pochi."
+          },
+          {
+            "title": "Storico attraverso un cambio di piattaforma",
+            "body": "Fino a 180 giorni. Confronta le settimane prima e dopo una migrazione e vedi esattamente quale sorgente ha smesso di autenticarsi, e quando."
+          },
+          {
+            "title": "Blocklist sotto controllo",
+            "body": "Verifica continua su DNSBL/RBL degli IP che spediscono per il tuo dominio, con esito a tre stati, così \"non verificabile\" non viene mai letto come \"pulito\"."
+          },
+          {
+            "title": "Il record da pubblicare, già scritto",
+            "body": "Un record SPF oltre il limite delle 10 ricerche, un tag DMARC fuso al successivo per un punto e virgola mancante, una chiave DKIM revocata. Sentinely lo trova e ti consegna il record esatto."
+          }
+        ]
+      },
+      "note": {
+        "heading": "Cosa non è",
+        "body": "Sentinely non fa inbox placement testing, seed list o monitoraggio di spam trap, e non può dirti in quale cartella è finito un singolo messaggio. Legge i report aggregati che i provider inviano sul tuo dominio — che è dove vivono l'identità del mittente, l'autenticazione e la policy. Il placement testing è un altro strumento; questo ti dice se la tua posta è autenticata e chi la sta spedendo."
+      },
+      "cta": {
+        "heading": "Scopri quali piattaforme spediscono a nome del tuo dominio.",
+        "sub": "Pubblica un record DNS. I primi report arrivano di solito entro un giorno — e la prova di 30 giorni ha tutto attivo."
+      }
+    },
+    "security": {
+      "nav": "IT e Sec Ops",
+      "navHint": "Ferma l'impersonificazione. Arriva a p=reject con i dati.",
+      "short": "IT e security",
+      "meta": {
+        "title": "Monitoraggio DMARC per IT e Sec Ops — Sentinely",
+        "description": "Riconosci ogni sorgente che spedisce a nome del tuo dominio, leggi i record SPF, DKIM, DMARC, BIMI, MTA-STS e TLS-RPT cercando errori di sintassi reali, e passa da p=none a p=reject senza bloccare la posta legittima."
+      },
+      "eyebrow": "Per IT e Sec Ops",
+      "title": "Ferma l'impersonificazione. Arriva a p=reject con i dati per dimostrare che è sicuro.",
+      "sub": "Le prove che ti servono per applicare il DMARC arrivano già ogni giorno, come XML che nessuno legge. Sentinely le legge, riconosce ogni mittente e ti mostra cosa si romperebbe prima che tu cambi la policy.",
+      "problem": {
+        "eyebrow": "Il problema",
+        "heading": "Anche restare su p=none è una decisione.",
+        "sub": "È la decisione di lasciare il tuo dominio utilizzabile da chiunque, e di scoprirlo da chi ha ricevuto il phishing.",
+        "cards": [
+          {
+            "title": "Chiunque può spedire a nome tuo",
+            "body": "Finché il DMARC non è applicato, il tuo dominio è un'identità gratuita. Il phishing spedito da lì arriva con il tuo nome sopra, e la prima notizia te la dà chi lo ha ricevuto."
+          },
+          {
+            "title": "L'enforcement senza dati è un azzardo",
+            "body": "Passa a p=reject prima di conoscere ogni mittente legittimo e bloccherai le tue fatture, i tuoi ticket o le comunicazioni del personale. Per questo la maggior parte dei domini non si muove mai."
+          },
+          {
+            "title": "L'autenticazione rotta si nasconde in bella vista",
+            "body": "Una chiave DKIM revocata, un record SPF oltre il limite delle 10 ricerche, termini messi dopo \"all\" che non verranno mai valutati. Pubblicati, presenti, e silenziosamente fallimentari."
+          }
+        ]
+      },
+      "value": {
+        "eyebrow": "Cosa ottieni",
+        "heading": "Prove sufficienti per cambiare la policy.",
+        "sub": "In sola lettura, dai report aggregati che il tuo dominio già riceve. Niente da installare, niente sul percorso della posta.",
+        "cards": [
+          {
+            "title": "Ogni sorgente risolta",
+            "body": "IP, hostname (rDNS/PTR), geolocalizzazione e organizzazione/ASN per ciascun mittente, più una linea netta fra le sorgenti che già conosci e quelle che non hanno mai spedito per il tuo dominio."
+          },
+          {
+            "title": "Record letti nella sintassi",
+            "body": "SPF, DKIM, DMARC, BIMI, MTA-STS e TLS-RPT verificati per come sono scritti: tag DMARC fusi, rua o ruf senza mailto:, sp e pct non validi, meccanismi SPF sconosciuti, ip4/ip6 non validi, ptr deprecato, il limite delle 10 ricerche."
+          },
+          {
+            "title": "Un punteggio di protezione con un voto",
+            "body": "Da 0 a 100 e A–F su autenticazione, policy, igiene e blocklist, con un indicatore di affidabilità finché i dati non bastano per esserne certi."
+          },
+          {
+            "title": "Avvisi con soglia di severità",
+            "body": "Sorgente mai vista prima, anomalia di volume rispetto alla media dei 7 giorni, tasso di fallimento alto, posta messa in quarantena o rifiutata da una sorgente nota. Configurabile per destinatario e per dominio."
+          },
+          {
+            "title": "Monitoraggio delle blocklist",
+            "body": "Verifica continua su DNSBL/RBL di ogni IP che spedisce per il dominio, con esito a tre stati — elencato, pulito o non verificabile."
+          },
+          {
+            "title": "Un avviso quando i report si fermano",
+            "body": "Un dominio che smette all'improvviso di ricevere report aggregati di solito significa una configurazione rotta, non cielo sereno. Sentinely te lo dice, invece di lasciare che il silenzio somigli a un successo."
+          }
+        ]
+      },
+      "note": {
+        "heading": "Cosa non è",
+        "body": "Sentinely non instrada, non filtra e non blocca la posta: non è un gateway e non sostituisce il tuo SEG o antispam. Ingerisce solo i report aggregati (RUA), mai i forensic/RUF, quindi al suo interno non esistono copie dei singoli messaggi. Non valida i certificati VMC di BIMI e non offre SSO/SAML. E non pubblica né modifica mai il tuo DNS: calcola il record e te lo mostra, la pubblicazione resta tua."
+      },
+      "cta": {
+        "heading": "Scopri chi spedisce a nome del tuo dominio.",
+        "sub": "Un record DNS, e il primo verdetto arriva entro un giorno. La prova di 30 giorni ha tutto attivo — senza carta."
+      }
+    },
+    "agencies": {
+      "nav": "Agenzie e MSP",
+      "navHint": "Molti clienti, il tuo marchio, un'unica API.",
+      "short": "Agenzie e MSP",
+      "meta": {
+        "title": "DMARC per agenzie, MSP e consulenti — Sentinely",
+        "description": "Multi-tenant dal primo giorno: uno spazio separato per ogni cliente, accesso per-dominio, il tuo nome, colore, logo e footer su applicazione, email e PDF, e un'API REST in sola lettura con chiave per tenant."
+      },
+      "eyebrow": "Per agenzie, MSP e consulenti",
+      "title": "Molti clienti. Molti domini. Un posto solo, con il tuo nome sopra.",
+      "sub": "Sentinely è multi-tenant dal primo giorno: uno spazio separato per ogni cliente, accesso per-dominio per ciascun utente, e il tuo marchio applicato all'applicazione, alle email e ai report PDF.",
+      "problem": {
+        "eyebrow": "Il problema",
+        "heading": "Il lavoro scala. È la rendicontazione che non lo fa.",
+        "sub": "Gestire l'autenticazione email per altri è soprattutto un problema amministrativo, e quasi tutti gli strumenti sono pensati per un'azienda che guarda sé stessa.",
+        "cards": [
+          {
+            "title": "Ogni cliente è un accesso a parte",
+            "body": "Domini sparsi su account di cui nessuno ha una vista completa, e un report mensile che metti insieme a mano a colpi di screenshot."
+          },
+          {
+            "title": "Il report porta il nome di qualcun altro",
+            "body": "Il lavoro e la raccomandazione li hai scritti tu, e il PDF che arriva al cliente ha in cima il logo di un altro fornitore."
+          },
+          {
+            "title": "L'onboarding si mangia il margine",
+            "body": "Se attivare un cliente richiede una giornata fra installazioni di agenti e modifiche al gateway, l'ingaggio è in perdita prima ancora di iniziare."
+          }
+        ]
+      },
+      "value": {
+        "eyebrow": "Cosa ottieni",
+        "heading": "Costruito per farlo sui domini di altri.",
+        "sub": "Non uno strumento single-tenant con un menu a tendina dei clienti aggiunto sopra.",
+        "cards": [
+          {
+            "title": "Uno spazio separato per ogni cliente",
+            "body": "Molti domini e molti clienti tenuti davvero distinti, con accesso per-dominio assegnabile ai singoli utenti — così il personale del cliente vede il proprio dominio e nient'altro."
+          },
+          {
+            "title": "Il tuo marchio, dall'inizio alla fine",
+            "body": "Nome, colore, logo e footer applicati all'applicazione, alle email di avviso e di digest e ai report PDF esportati."
+          },
+          {
+            "title": "Un'API REST in sola lettura",
+            "body": "Una /api/public/v1 pubblica con chiave per tenant su domini, avvisi e report, documentata via Swagger — così i dati possono vivere nella tua dashboard o in quella del cliente."
+          },
+          {
+            "title": "Report che un cliente può leggere",
+            "body": "Export PDF, più un digest quotidiano per dominio consegnato nella lingua di ciascun destinatario, italiano o inglese, con soglia di severità impostata per destinatario."
+          },
+          {
+            "title": "L'onboarding è un record DNS",
+            "body": "Nessun agente, nessuna modifica al gateway, nessuna deviazione della posta. Consegna al cliente il record rua= da pubblicare — oppure spingi tu i report tramite un webhook HTTP firmato. Il primo report arriva entro un giorno."
+          },
+          {
+            "title": "Domini esterni gestiti",
+            "body": "Quando i report riguardano un dominio di terzi, Sentinely gestisce automaticamente il record di consenso previsto dallo standard, invece di lasciartelo rincorrere."
+          }
+        ]
+      },
+      "note": {
+        "heading": "I limiti, detti chiaramente",
+        "body": "Il white-label copre il tuo nome, colore, logo e footer su applicazione, email e PDF — non porta l'applicazione su un tuo dominio: resta su un dominio Sentinely. Non c'è SSO/SAML. E Sentinely non pubblica mai il DNS al posto di un cliente: ti dà il record esatto, e a pubblicarlo siete tu o il cliente."
+      },
+      "cta": {
+        "heading": "Gestisci l'autenticazione email di ogni cliente da un posto solo.",
+        "sub": "Inizia con la prova di 30 giorni — white-label e AI Insights sono attivi per tutta la durata — oppure parliamo dei volumi."
+      }
+    }
   },
   "affiliates": {
     "eyebrow": "Programma affiliati",
@@ -409,7 +681,7 @@
       "sections": [
         { "heading": "Chi siamo", "body": "Sentinely è un prodotto di Purple IT s.r.l., Perugia (PG), Italia, P.IVA IT01881930661. Siamo il titolare del trattamento dei dati personali qui descritti." },
         { "heading": "Cosa raccogliamo", "body": "Analisi del sito ridotte al minimo, i dati che invii tramite i form di contatto e affiliazione e — per i clienti — i dati dell'account e i report aggregati DMARC indirizzati al servizio." },
-        { "heading": "Perché li trattiamo", "body": "Per rispondere alle tue richieste, fornire e proteggere il servizio, adempiere agli obblighi di legge e comunicare in merito al tuo account. I dati dei report DMARC sono trattati per fornire l'analisi, il punteggio e gli alert che richiedi." },
+        { "heading": "Perché li trattiamo", "body": "Per rispondere alle tue richieste, fornire e proteggere il servizio, adempiere agli obblighi di legge e comunicare in merito al tuo account. I dati dei report DMARC sono trattati per fornire l'analisi, il punteggio e gli avvisi che richiedi." },
         { "heading": "I tuoi diritti", "body": "Puoi richiedere accesso, rettifica, cancellazione, limitazione o portabilità dei tuoi dati personali e opporti a determinati trattamenti. Scrivi a info@sentinely.eu per esercitare questi diritti." },
         { "heading": "Conservazione e luogo", "body": "I dati sono trattati e conservati nell'UE e mantenuti non oltre il necessario per le finalità sopra indicate. Vedi la pagina GDPR/DPA per i dettagli del trattamento." }
       ]
@@ -418,10 +690,10 @@
       "title": "Termini di servizio",
       "intro": "Questi Termini regolano l'accesso e l'uso del sito e del servizio Sentinely, forniti da Purple IT s.r.l. Usando Sentinely accetti questi Termini.",
       "sections": [
-        { "heading": "Il servizio", "body": "Sentinely ingerisce i report aggregati DMARC e fornisce analisi, un punteggio di protezione, alert e un digest quotidiano. Sentinely è uno strumento di analisi in sola lettura e non invia, filtra o reindirizza la tua email." },
+        { "heading": "Il servizio", "body": "Sentinely ingerisce i report aggregati DMARC e fornisce analisi, un punteggio di protezione, avvisi e un digest quotidiano. Sentinely è uno strumento di analisi in sola lettura: non invia, filtra o reindirizza la tua email, e non pubblica né modifica i tuoi record DNS." },
         { "heading": "Account", "body": "Sei responsabile dell'accuratezza delle informazioni che fornisci e della sicurezza del tuo account e delle credenziali." },
         { "heading": "Uso consentito", "body": "Ti impegni a usare Sentinely solo per domini che sei autorizzato a gestire e a non abusarne, comprometterne il funzionamento o tentare accessi non autorizzati." },
-        { "heading": "Piani e fatturazione", "body": "I piani a pagamento sono fatturati come indicato in fase di registrazione. I prezzi mostrati su questo sito sono indicativi e possono cambiare prima della disponibilità generale." },
+        { "heading": "Piani e fatturazione", "body": "I piani a pagamento sono fatturati come indicato in fase di registrazione e il pagamento avviene tramite Stripe. I prezzi mostrati su questo sito sono in EUR e IVA esclusa; l'annuale è addebitato come dieci mensilità." },
         { "heading": "Responsabilità", "body": "Il servizio è fornito \"così com'è\". Nei limiti consentiti dalla legge, Purple IT s.r.l. limita la propria responsabilità come indicato nei Termini definitivi pubblicati prima del go-live." }
       ]
     },
@@ -440,15 +712,19 @@
   "about": {
     "eyebrow": "Chi siamo",
     "heading": "Autenticazione email, resa leggibile.",
-    "sub": "Sentinely esiste perché le prove per fermare lo spoofing arrivano già ogni giorno nella tua casella — intrappolate in XML che nessuno legge. Noi le trasformiamo in qualcosa su cui una persona può agire.",
+    "sub": "Sentinely esiste perché le prove arrivano già ogni giorno — intrappolate in XML che nessuno legge. Noi le trasformiamo in qualcosa su cui una persona può agire.",
     "sections": [
       {
         "heading": "Cosa facciamo",
-        "body": "Ingeriamo i report aggregati DMARC, risolviamo ogni sorgente di invio, verifichiamo autenticazione e reputazione e trasformiamo il risultato in un verdetto chiaro, un punteggio di protezione, alert intelligenti e un digest quotidiano con AI Insights."
+        "body": "Pubblichi un solo record DNS. Da lì in poi i provider di posta di tutto il mondo ci inviano i report aggregati DMARC del tuo dominio. Noi li analizziamo, risolviamo ogni sorgente di invio, verifichiamo autenticazione, allineamento, sintassi dei record e blocklist, e restituiamo un verdetto: un punteggio 0–100 con un voto, avvisi, un digest quotidiano e report che puoi esportare."
       },
       {
         "heading": "Per chi è",
-        "body": "Team IT e security che proteggono i propri domini, e le agenzie e gli MSP che proteggono l'email di molti clienti insieme. Multi-tenant, hosting nell'UE, bilingue."
+        "body": "Team marketing che hanno bisogno che le loro campagne si autentichino e di sapere quali piattaforme spediscono a nome loro. Team IT e security che portano un dominio da p=none all'enforcement. E le agenzie, gli MSP e i consulenti che fanno entrambe le cose, per molti clienti insieme — multi-tenant, white-label, con un'API in sola lettura."
+      },
+      {
+        "heading": "Come ne parliamo",
+        "body": "Sentinely legge i report aggregati. Non è un gateway di posta, non testa il posizionamento in inbox e non tocca mai il tuo DNS. Preferiamo dirti cosa non fa piuttosto che fartelo scoprire dopo — perciò i limiti sono scritti accanto alle funzioni, in ogni pagina."
       }
     ]
   },

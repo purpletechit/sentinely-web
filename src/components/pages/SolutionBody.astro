@@ -1,0 +1,169 @@
+---
+import PageHero from '../PageHero.astro';
+import SectionHeading from '../SectionHeading.astro';
+import FeatureCard from '../FeatureCard.astro';
+import FinalCta from '../FinalCta.astro';
+import Icon from '../Icon.astro';
+import SignalsStrip from '../SignalsStrip.astro';
+import { useTranslations, type Lang } from '../../i18n/utils';
+import type { SegmentId } from '../../data/segments';
+
+interface Props {
+  segment: SegmentId;
+}
+
+const { segment } = Astro.props;
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+
+type Card = { title: string; body: string };
+
+const s = (key: string) => t(`solutions.${segment}.${key}`);
+
+const problemCards = s('problem.cards') as Card[];
+const valueCards = s('value.cards') as Card[];
+
+/** Icons follow the order of the value cards in the dictionaries. */
+const valueIcons: Record<SegmentId, string[]> = {
+  marketing: ['radar', 'mail', 'gauge', 'layers', 'mail-x', 'shield'],
+  security: ['radar', 'shield', 'gauge', 'bell', 'mail-x', 'eye-off'],
+  agencies: ['layers', 'sparkles', 'radar', 'mail', 'gauge', 'shield'],
+};
+const problemIcons = ['eye-off', 'mail-x', 'lock-open'];
+const icons = valueIcons[segment];
+---
+
+<PageHero eyebrow={s('eyebrow')} title={s('title')} sub={s('sub')} />
+
+<SignalsStrip />
+
+<section class="section">
+  <div class="container">
+    <SectionHeading eyebrow={s('problem.eyebrow')} title={s('problem.heading')} sub={s('problem.sub')} />
+    <div class="problem-grid">
+      {problemCards.map((card, i) => (
+        <article class="problem-card reveal" style={`transition-delay:${i * 70}ms`}>
+          <span class="problem-icon" aria-hidden="true">
+            <Icon name={problemIcons[i] ?? 'eye-off'} size={20} />
+          </span>
+          <h3 class="problem-title">{card.title}</h3>
+          <p class="problem-body">{card.body}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="section section-tight">
+  <div class="container">
+    <SectionHeading eyebrow={s('value.eyebrow')} title={s('value.heading')} sub={s('value.sub')} />
+    <div class="value-grid">
+      {valueCards.map((card, i) => (
+        <FeatureCard icon={icons[i] ?? 'shield'} title={card.title} body={card.body} delay={(i % 3) * 70} />
+      ))}
+    </div>
+
+    <!-- The limits sit next to the features on purpose: nothing here is sold
+         that the product doesn't do. -->
+    <aside class="limits panel reveal">
+      <h2 class="limits-heading">{s('note.heading')}</h2>
+      <p class="limits-body">{s('note.body')}</p>
+    </aside>
+  </div>
+</section>
+
+<FinalCta heading={s('cta.heading')} sub={s('cta.sub')} />
+
+<style>
+  .section-tight {
+    padding-top: 0;
+  }
+
+  .problem-grid {
+    margin-top: 2.75rem;
+    display: grid;
+    gap: 1.1rem;
+    grid-template-columns: 1fr;
+  }
+  .problem-card {
+    padding: 1.5rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    position: relative;
+    overflow: hidden;
+  }
+  .problem-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--fail), transparent);
+    opacity: 0.65;
+  }
+  .problem-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: var(--radius-sm);
+    background-color: var(--fail-soft);
+    color: var(--fail);
+    margin-bottom: 0.9rem;
+  }
+  .problem-title {
+    font-size: 1.08rem;
+    font-weight: 700;
+    color: var(--strong);
+    margin-bottom: 0.5rem;
+  }
+  .problem-body {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .value-grid {
+    margin-top: 2.75rem;
+    display: grid;
+    gap: 1.1rem;
+    grid-template-columns: 1fr;
+  }
+
+  .limits {
+    margin-top: 2rem;
+    padding: 1.75rem;
+  }
+  .limits-heading {
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--faint);
+    margin-bottom: 0.85rem;
+  }
+  .limits-body {
+    color: var(--muted);
+    font-size: 0.98rem;
+    line-height: 1.7;
+    max-width: 72ch;
+  }
+
+  @media (min-width: 720px) {
+    .problem-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  @media (min-width: 620px) {
+    .value-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 980px) {
+    .value-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

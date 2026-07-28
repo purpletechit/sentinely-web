@@ -2,6 +2,7 @@
 import ThemeToggle from './ThemeToggle.astro';
 import LangSwitch from './LangSwitch.astro';
 import { localizePath, useTranslations, type Lang } from '../i18n/utils';
+import { segments } from '../data/segments';
 import { APP_LOGIN_URL, APP_SIGNUP_URL } from '../config';
 
 const lang = (Astro.currentLocale ?? 'en') as Lang;
@@ -15,6 +16,12 @@ const nav = [
   { href: `${homeHref}#faq`, label: t('nav.faq') },
   { href: localizePath('/contact', lang), label: t('nav.contact') },
 ];
+
+const solutions = segments.map((segment) => ({
+  href: localizePath(segment.path, lang),
+  label: t(`solutions.${segment.id}.nav`) as string,
+  hint: t(`solutions.${segment.id}.navHint`) as string,
+}));
 ---
 
 <header class="site-header" data-site-header>
@@ -25,6 +32,30 @@ const nav = [
     </a>
 
     <nav class="nav-desktop" aria-label="Primary">
+      <div class="nav-group" data-nav-group>
+        <button
+          type="button"
+          class="nav-link nav-trigger"
+          id="solutions-trigger"
+          aria-expanded="false"
+          aria-controls="solutions-menu"
+          data-nav-trigger
+        >
+          {t('nav.solutions')}
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden="true">
+            <path d="m6 9.5 6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </button>
+        <div class="nav-panel" id="solutions-menu" aria-labelledby="solutions-trigger" data-nav-panel>
+          <p class="nav-panel-hint">{t('solutions.menuHint')}</p>
+          {solutions.map((item) => (
+            <a href={item.href} class="nav-panel-item">
+              <span class="npi-label">{item.label}</span>
+              <span class="npi-hint">{item.hint}</span>
+            </a>
+          ))}
+        </div>
+      </div>
       {nav.map((item) => <a href={item.href} class="nav-link">{item.label}</a>)}
     </nav>
 
@@ -56,6 +87,10 @@ const nav = [
 
   <div class="mobile-menu" id="mobile-menu" hidden>
     <nav class="mobile-nav" aria-label="Mobile">
+      <p class="mobile-group-label label">{t('nav.solutions')}</p>
+      {solutions.map((item) => (
+        <a href={item.href} class="mobile-link is-nested">{item.label}</a>
+      ))}
       {nav.map((item) => <a href={item.href} class="mobile-link">{item.label}</a>)}
     </nav>
     <div class="mobile-cta">
@@ -122,6 +157,86 @@ const nav = [
     background-color: var(--surface-2);
   }
 
+  /* ---- Solutions dropdown ---- */
+  .nav-group {
+    position: relative;
+  }
+  .nav-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.32rem;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    font-family: var(--sans);
+    font-size: 0.92rem;
+    font-weight: 550;
+  }
+  .nav-trigger svg {
+    transition: transform 0.16s ease;
+  }
+  .nav-panel {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    width: 22rem;
+    max-width: calc(100vw - 2rem);
+    padding: 0.8rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-0.4rem);
+    transition: opacity 0.16s ease, transform 0.16s ease, visibility 0.16s;
+  }
+  /* Hover opens it for pointers; keyboard and click go through [data-open],
+     which the script owns — see the dropdown block in <script> below. */
+  .nav-group:hover .nav-panel,
+  .nav-group[data-open] .nav-panel {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+  .nav-group:hover .nav-trigger svg,
+  .nav-group[data-open] .nav-trigger svg {
+    transform: rotate(180deg);
+  }
+  .nav-panel-hint {
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.62rem;
+    font-weight: 600;
+    color: var(--faint);
+    padding: 0.3rem 0.6rem 0.55rem;
+  }
+  .nav-panel-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.6rem;
+    border-radius: var(--radius-sm);
+    transition: background-color 0.14s ease;
+  }
+  .nav-panel-item:hover {
+    background-color: var(--surface-2);
+  }
+  .npi-label {
+    font-size: 0.92rem;
+    font-weight: 650;
+    color: var(--strong);
+  }
+  .npi-hint {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
   .header-actions {
     display: none;
     align-items: center;
@@ -176,6 +291,14 @@ const nav = [
   }
   .mobile-link:hover {
     color: var(--accent);
+  }
+  .mobile-group-label {
+    padding: 0.9rem 0.25rem 0.45rem;
+  }
+  .mobile-link.is-nested {
+    padding-left: 0.9rem;
+    font-weight: 500;
+    color: var(--muted);
   }
   .mobile-cta {
     display: grid;
@@ -245,8 +368,46 @@ const nav = [
       if ((e.target as HTMLElement).closest('a')) setOpen(false);
     });
 
+    // Solutions dropdown. CSS opens it on :hover for pointer users; [data-open]
+    // covers click and keyboard. Tabbing in opens it, tabbing out closes it, so
+    // the panel's links are reachable in order.
+    const group = header.querySelector<HTMLElement>('[data-nav-group]');
+    const trigger = group?.querySelector<HTMLButtonElement>('[data-nav-trigger]');
+
+    const setGroupOpen = (open: boolean) => {
+      if (!group || !trigger) return;
+      group.toggleAttribute('data-open', open);
+      trigger.setAttribute('aria-expanded', String(open));
+    };
+
+    trigger?.addEventListener('click', () => {
+      setGroupOpen(!group?.hasAttribute('data-open'));
+    });
+
+    // Set while Escape moves focus back to the trigger, so that programmatic
+    // refocus doesn't immediately reopen the panel it just closed.
+    let ignoreFocusIn = false;
+
+    group?.addEventListener('focusin', () => {
+      if (!ignoreFocusIn) setGroupOpen(true);
+    });
+    group?.addEventListener('focusout', (e) => {
+      if (!group.contains(e.relatedTarget as Node | null)) setGroupOpen(false);
+    });
+
+    document.addEventListener('click', (e) => {
+      if (group && !group.contains(e.target as Node)) setGroupOpen(false);
+    });
+
     window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') setOpen(false);
+      if (e.key !== 'Escape') return;
+      setOpen(false);
+      if (group?.hasAttribute('data-open')) {
+        ignoreFocusIn = true;
+        setGroupOpen(false);
+        trigger?.focus(); // fires focusin synchronously — guarded above
+        ignoreFocusIn = false;
+      }
     });
 
     window.addEventListener('resize', () => {

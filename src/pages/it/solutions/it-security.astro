@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import SolutionBody from '../../../components/pages/SolutionBody.astro';
+import { useTranslations, type Lang } from '../../../i18n/utils';
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+---
+
+<BaseLayout
+  title={t('solutions.security.meta.title')}
+  description={t('solutions.security.meta.description')}
+>
+  <SolutionBody segment="security" />
+</BaseLayout>

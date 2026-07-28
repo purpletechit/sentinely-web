@@ -1,8 +1,8 @@
 {
   "site": {
     "name": "Sentinely",
-    "tagline": "See every source sending as your domain.",
-    "defaultDescription": "Sentinely turns unreadable DMARC reports into a clear verdict, a daily digest with AI Insights, and the controls to stop spoofing and reach enforcement — for one domain or hundreds."
+    "tagline": "Know who sends as your domain, and whether your mail arrives.",
+    "defaultDescription": "Sentinely reads the DMARC reports mailbox providers already send about your domain and turns them into a verdict: every sending source named, a deliverability score, record analysis, blocklist watch, alerts and a daily digest."
   },
   "common": {
     "skipToContent": "Skip to content",
@@ -14,6 +14,7 @@
     "backToTop": "Back to top"
   },
   "nav": {
+    "solutions": "Solutions",
     "features": "Features",
     "how": "How it works",
     "pricing": "Pricing",
@@ -23,6 +24,7 @@
   "cta": {
     "login": "Log in",
     "startTrial": "Start free trial",
+    "trial30": "Start the 30-day trial",
     "startFree": "Start free — no card",
     "seeHow": "See how it works",
     "contact": "Contact us",
@@ -32,12 +34,12 @@
   },
   "pages": {
     "home": {
-      "title": "Sentinely — DMARC security & anti-spoofing, made legible",
-      "description": "Sentinely reads your DMARC reports for you: a clear verdict, a domain protection score, a daily digest with AI Insights, smart alerts and blocklist monitoring — for one domain or many."
+      "title": "Sentinely — see who sends as your domain, and whether your mail arrives",
+      "description": "Publish one DNS record. Sentinely reads your DMARC aggregate reports and returns a verdict: every sending source named, a 0–100 deliverability score, SPF/DKIM/DMARC/BIMI/MTA-STS analysis, blocklist monitoring, alerts and a daily digest. Free plan available."
     },
     "contact": {
       "title": "Contact — Sentinely",
-      "description": "Questions about coverage, pricing or rolling Sentinely out across many domains? Talk to the team behind Sentinely, in English or Italian."
+      "description": "Questions about coverage, pricing or rolling Sentinely out across many domains and clients? Talk to the team behind Sentinely, in English or Italian."
     },
     "affiliates": {
       "title": "Affiliate program — Sentinely",
@@ -45,7 +47,7 @@
     },
     "about": {
       "title": "About — Sentinely",
-      "description": "Sentinely is email authentication made legible — a product of Purple IT s.r.l., built for IT and security teams and the agencies that protect email for many domains."
+      "description": "Sentinely is email authentication made legible — a product of Purple IT s.r.l., built for marketing teams, IT and security teams, and the agencies that run email for many clients."
     },
     "privacy": {
       "title": "Privacy Policy — Sentinely",
@@ -65,14 +67,14 @@
     }
   },
   "hero": {
-    "eyebrow": "DMARC security · anti-spoofing",
-    "h1Before": "See ",
-    "h1Highlight": "every source",
-    "h1After": " sending as your domain.",
-    "sub": "DMARC aggregate reports arrive as XML built for machines. Sentinely reads them for you and turns the noise into a clear verdict — plus the controls to act on it.",
+    "eyebrow": "DMARC monitoring · deliverability · anti-spoofing",
+    "h1Before": "Know ",
+    "h1Highlight": "who sends as your domain",
+    "h1After": " — and whether your mail arrives.",
+    "sub": "Publish one DNS record. From then on, mailbox providers worldwide send Sentinely the DMARC reports for your domain — who sent as you, from which IP, how many messages, whether authentication passed. Sentinely reads them and gives you the verdict.",
     "microStats": [
       "1 DNS record to publish",
-      "24/7 spoofing watch",
+      "No agent, no gateway",
       "EN·IT alerts & digest"
     ]
   },
@@ -104,8 +106,8 @@
       { "ip": "168.245.10.20", "provider": "SendGrid", "volume": "2,310", "status": "pass" },
       { "ip": "193.42.33.8", "provider": "Unknown host", "volume": "604", "status": "fail" }
     ],
-    "alert": "Spoofing source detected — fails SPF & DKIM, listed on 1 blocklist",
-    "caption": "Live verdict for a monitored domain"
+    "alert": "New source — fails SPF & DKIM, listed on 1 blocklist",
+    "caption": "Example verdict for a monitored domain"
   },
   "signals": {
     "heading": "Everything that decides if your domain is trusted",
@@ -114,50 +116,50 @@
   "problem": {
     "eyebrow": "The problem",
     "heading": "DMARC holds the evidence — in a format built for machines.",
-    "sub": "The reports that could tell you who's abusing your domain arrive as raw XML. Almost nobody reads them, so three things quietly go wrong.",
+    "sub": "The reports that could tell you who sends as you, and whether they authenticate, arrive as raw XML. Almost nobody reads them, so three things quietly go wrong.",
     "cards": [
       {
-        "title": "Impersonation goes unseen",
-        "body": "Anyone can send as your domain. Without DMARC visibility, spoofing and phishing run silent — until a customer or your brand gets burned."
+        "title": "You don't know who sends as you",
+        "body": "Spoofing runs silent, and so does the form tool, the CRM or the agency nobody told you about. Every one of them is already in your reports, with its IP and its volume."
       },
       {
-        "title": "Legit mail gets blocked",
-        "body": "A missing SPF include or a broken DKIM key quietly sends your real mail to spam, and the reports that explain why sit unread."
+        "title": "Legitimate mail quietly fails",
+        "body": "A missing SPF include or a revoked DKIM key sends your real mail to spam. Since 2024 Google and Yahoo also require DMARC from anyone sending over 5,000 messages a day to their users."
       },
       {
         "title": "You never reach enforcement",
-        "body": "Staying at p=none feels safe, but it leaves the door open. Moving to reject without data is scary — so most domains never do."
+        "body": "Staying at p=none feels safe, but it leaves the door open. Moving to reject without knowing every legitimate sender is a gamble — so most domains never move."
       }
     ]
   },
   "features": {
     "eyebrow": "What you get",
-    "heading": "A defense, not a data dump.",
-    "sub": "Sentinely turns raw reports into decisions: a score to track, a digest to read, and alerts that reach you before anyone else notices.",
+    "heading": "A verdict, not a data dump.",
+    "sub": "Sentinely turns raw aggregate reports into decisions: a score to track, sources you can name, records you can fix, and alerts that reach you before anyone else notices.",
     "cards": [
       {
-        "title": "Domain protection score",
-        "body": "A single 0–100 grade (A–F) that rolls SPF, DKIM, DMARC and alignment into one number you can watch over time."
+        "title": "Deliverability & protection score",
+        "body": "A 0–100 score with an A–F grade per domain, built from authentication, policy, hygiene and blocklist status — with a confidence indicator while the data is still thin."
       },
       {
-        "title": "Daily digest + AI Insights",
-        "body": "One readable email a day. Claude explains what changed and what to do about it — in English or Italian."
+        "title": "Every sending source, named",
+        "body": "IP, hostname (rDNS/PTR), geolocation and organisation/ASN for each source, plus a clear line between senders you've seen before and ones that have never sent for you."
       },
       {
-        "title": "Threat & change alerts",
-        "body": "Get told the moment a new source starts spoofing you, authentication drops, or a critical record changes."
+        "title": "Records read, not just found",
+        "body": "SPF, DKIM, DMARC, BIMI, MTA-STS and TLS-RPT checked for how they're written: fused DMARC tags, rua without mailto:, unknown SPF mechanisms, the 10-lookup limit. With the exact record to publish."
       },
       {
-        "title": "DNS & auth hardening",
-        "body": "Guided checks for SPF, DKIM, DMARC, BIMI and MTA-STS — with the exact records to publish, copy-ready."
+        "title": "Reputation & blocklist watch",
+        "body": "Continuous DNSBL/RBL checks on the IPs sending for your domain, with a three-state result — listed, clean, or not checkable — so uncertainty never reads as safety."
       },
       {
-        "title": "Blocklist & reputation",
-        "body": "Continuous RBL/DNSBL, Geo-IP and PTR/rDNS monitoring, so a listing or bad sender never catches you off guard."
+        "title": "Alerts and a daily digest",
+        "body": "A new source, a volume anomaly against the 7-day average, a high failure rate, mail quarantined or rejected. Plus one digest per domain each morning, in each recipient's language."
       },
       {
-        "title": "Built for many domains",
-        "body": "Multi-tenant from day one. Manage dozens of domains and clients from one workspace, cleanly separated."
+        "title": "Multi-tenant, white-label, API",
+        "body": "A separate space per client with per-domain access, your name, colour, logo and footer on the app, emails and PDFs, and a read-only REST API with a per-tenant key."
       }
     ]
   },
@@ -168,22 +170,22 @@
     "steps": [
       {
         "title": "Publish your RUA",
-        "body": "Add one DMARC record pointing aggregate reports to Sentinely. That's the only change on your side."
+        "body": "Add one DMARC record pointing aggregate reports at a Sentinely address. That's the only change on your side — or push the reports yourself over a signed HTTP webhook."
       },
       {
-        "title": "We ingest & analyse",
-        "body": "We parse every aggregate report, resolve each source, and check authentication, alignment and blocklists — every day."
+        "title": "We ingest & identify",
+        "body": "XML, GZIP and ZIP parsed and de-duplicated. Every source resolved to an IP, host, location and organisation, then checked for authentication, alignment and blocklist status."
       },
       {
-        "title": "Take back control",
-        "body": "Read the verdict, fix what's weak, and move safely from p=none to enforcement (p=reject) with the data to back it."
+        "title": "Read the verdict, act",
+        "body": "Fix what's weak with the record we hand you, keep your campaigns authenticated, and move from p=none to enforcement with the data to back the decision."
       }
     ]
   },
   "digest": {
     "eyebrow": "The daily digest",
     "heading": "The one email that reads the reports for you.",
-    "sub": "Every morning, a digest that summarises what happened and tells you what matters — with AI Insights that explain the why, not just the numbers.",
+    "sub": "Every morning, a digest per domain that summarises what happened and what matters — in each recipient's own language.",
     "cardTitle": "Daily digest",
     "domain": "acme.com",
     "date": "Mon, 6 Jul 2026",
@@ -193,60 +195,107 @@
     "kpis": [
       { "label": "Authenticated", "value": "98.7%" },
       { "label": "Volume", "value": "11,854" },
-      { "label": "New threats", "value": "1" }
+      { "label": "New sources", "value": "1" }
     ],
     "insightLabel": "AI Insight",
     "insightBody": "A new source, 193.42.33.8, sent 604 messages as acme.com and failed both SPF and DKIM. It's listed on one blocklist and matches none of your known senders — this looks like spoofing, not lost legitimate mail. No action needed on your side; keeping DMARC at p=reject ensures these are rejected.",
-    "footer": "Sentinely · Daily digest · EN/IT"
+    "footer": "Sentinely · Daily digest · EN/IT",
+    "addonNote": "AI Insights — Claude explaining why something happened, not just the numbers — is an optional add-on on every paid plan, and switched on throughout the 30-day trial."
   },
   "pricing": {
     "eyebrow": "Pricing",
-    "heading": "Start free. Scale by domains, not surprises.",
-    "sub": "A 14-day free trial on every plan. No card to start.",
+    "heading": "Every plan and every limit, on one page.",
+    "sub": "Annual billing is ten monthly instalments — two months free. Prices in EUR, excluding VAT.",
     "perMonth": "/mo",
+    "perYear": "/yr",
     "mostPopular": "Most popular",
-    "footnote": "Prices in EUR, excl. VAT. Introductory pricing — subject to confirmation.",
-    "tiers": {
-      "starter": {
-        "name": "Starter",
-        "tagline": "For a single domain getting to enforcement.",
+    "billing": {
+      "label": "Billing period",
+      "monthly": "Monthly",
+      "annual": "Annual",
+      "save": "2 months free"
+    },
+    "annualNote": "Ten instalments of {price} — two months free.",
+    "monthlyNote": "{price} a year at this rate.",
+    "free": {
+      "name": "Free",
+      "price": "€0",
+      "forever": "forever",
+      "tagline": "One domain, monitored for good. Not a trial — a real plan with no end date and no card.",
+      "cta": "Start free"
+    },
+    "trial": {
+      "title": "Every paid plan starts with a 30-day trial.",
+      "body": "Everything switched on — 3 domains, 3 users, 10,000 messages a month, AI Insights and white-label included. No card. When it ends you move to the Free plan automatically: nothing is locked and your data stays readable.",
+      "cta": "Start the 30-day trial"
+    },
+    "table": {
+      "heading": "Compare every limit",
+      "sub": "The same catalogue the application bills from.",
+      "caption": "Sentinely plan comparison",
+      "plan": "Plan",
+      "monthly": "Monthly",
+      "annual": "Annual",
+      "domains": "Domains",
+      "users": "Users",
+      "history": "History",
+      "messages": "Messages / month",
+      "aiInsights": "AI Insights",
+      "whiteLabel": "White-label",
+      "unlimited": "Unlimited",
+      "days": "{n} days",
+      "included": "Included",
+      "notAvailable": "—",
+      "addonPrice": "+{price}/mo",
+      "free": "Free",
+      "trial": "Trial · 30 days"
+    },
+    "extraDomain": "Extra domains at {price}/mo each",
+    "aiAddon": "AI Insights available as an add-on",
+    "whiteLabelIncluded": "White-label included — app, emails and PDFs",
+    "whiteLabelFrom": "White-label is included in Business, and available as an add-on from {price}/mo on every paid plan.",
+    "whiteLabelStarterL": "White-label is included in Business, and available as an add-on on Starter L for {price}/mo.",
+    "footnote": "Prices in EUR, excluding VAT. Payment is handled by Stripe. AI Insights is an optional add-on on every paid plan by design — it isn't bundled into any of them. Need more than 100 domains? Talk to us.",
+    "plans": {
+      "starterS": {
+        "name": "Starter S",
+        "tagline": "One domain, taken all the way to enforcement.",
         "features": [
-          "1 domain",
-          "Daily DMARC aggregation",
-          "Protection score (A–F)",
-          "Email & in-app alerts",
-          "DNS & auth checks",
-          "EN/IT daily digest"
+          "Everything in Free, at ten times the volume",
+          "Full record, DKIM and blocklist analysis",
+          "AI Insights available as an add-on"
         ],
-        "cta": "Start free trial"
+        "cta": "Start the 30-day trial"
       },
-      "growth": {
-        "name": "Growth",
-        "tagline": "For teams protecting a handful of domains.",
-        "badge": "With AI Insights",
+      "starterM": {
+        "name": "Starter M",
+        "tagline": "A handful of domains and the team around them.",
         "features": [
-          "Up to 10 domains",
-          "Everything in Starter",
-          "AI Insights by Claude",
-          "Blocklist & reputation monitoring",
-          "Threat & change alerts",
-          "Priority support"
+          "Everything in Starter S",
+          "60 days of history, to see what changed",
+          "AI Insights available as an add-on"
         ],
-        "cta": "Start free trial"
+        "cta": "Start the 30-day trial"
       },
-      "agency": {
-        "name": "Agency",
-        "tagline": "For MSPs and agencies running many tenants.",
-        "priceLabel": "Custom",
+      "starterL": {
+        "name": "Starter L",
+        "tagline": "Enough domains to be somebody's day job.",
         "features": [
-          "Unlimited domains",
-          "Multi-tenant workspaces",
-          "White-label (on the roadmap)",
-          "SSO (on the roadmap)",
-          "Dedicated support",
-          "Volume pricing"
+          "Everything in Starter M",
+          "180 days of history",
+          "AI Insights and white-label as add-ons"
         ],
-        "cta": "Talk to sales"
+        "cta": "Start the 30-day trial"
+      },
+      "business": {
+        "name": "Business",
+        "tagline": "Many clients, your brand on all of it.",
+        "features": [
+          "Everything in Starter L",
+          "Unlimited users and unlimited messages",
+          "White-label included — app, emails and PDFs"
+        ],
+        "cta": "Start the 30-day trial"
       }
     }
   },
@@ -256,39 +305,48 @@
     "items": [
       {
         "q": "Do I need to be a DMARC expert?",
-        "a": "No. Sentinely translates raw reports into plain-language verdicts and tells you exactly which record to publish. If you can edit a DNS entry, you're set."
+        "a": "No. Sentinely translates raw aggregate reports into plain-language verdicts and tells you exactly which record to publish. If you can edit a DNS entry, you're set."
       },
       {
-        "q": "Will it change my email or DNS?",
-        "a": "No. Sentinely is read-only: we only receive the DMARC reports you route to us. We recommend the records to publish, but you always make the change yourself."
+        "q": "Will it change my email or my DNS?",
+        "a": "No. Sentinely only receives the DMARC reports you route to it. It never publishes or edits your DNS records: it works out the exact record you need and shows it to you — publishing stays with you."
+      },
+      {
+        "q": "What's the difference between Free and the trial?",
+        "a": "Free is a real, perpetual plan: one domain, one user, 1,000 messages a month, 30 days of history, no card, no end date. The 30-day trial is the front door to the paid plans — three domains, 10,000 messages a month, and every feature and add-on switched on. When the trial ends you move to Free automatically; nothing is locked and your data stays readable."
       },
       {
         "q": "How quickly will I see results?",
-        "a": "As soon as your RUA points to us, reports start flowing. Most domains get their first full digest within 24 hours."
+        "a": "As soon as your RUA points at us, reports start flowing. Mailbox providers send aggregate reports roughly once a day, so most domains get their first full verdict and digest within 24 hours."
       },
       {
-        "q": "Can I manage multiple domains or clients?",
-        "a": "Yes. Sentinely is multi-tenant by design — ideal for IT and security teams and for agencies or MSPs running email for many domains."
+        "q": "Do you ingest forensic (RUF) reports?",
+        "a": "No — aggregate reports only. That means Sentinely never holds copies of individual messages: it works from the counts, sources and authentication results that providers report in aggregate."
       },
       {
-        "q": "Where is my data stored, and for how long?",
-        "a": "DMARC report data is processed and stored in the EU and retained on a rolling window. See our GDPR/DPA page for the specifics."
+        "q": "Can I manage multiple domains and clients?",
+        "a": "Yes. Sentinely has been multi-tenant since day one: separate spaces per client, per-domain access assignable to individual users, white-label branding across the app, emails and PDFs, and a read-only REST API with a per-tenant key."
       },
       {
-        "q": "Which languages are supported?",
-        "a": "The interface, alerts, daily digest and AI Insights are all available in both English and Italian."
+        "q": "What doesn't Sentinely do?",
+        "a": "It isn't a mail gateway — it doesn't route, filter or block mail, and it doesn't replace your SEG or anti-spam. It doesn't do inbox-placement testing, seed lists or spam-trap monitoring, and it doesn't validate BIMI VMC certificates. There's no SSO/SAML, and white-label doesn't put the application on your own domain. The score reads the DMARC data you receive — it isn't a guarantee of inbox delivery."
+      },
+      {
+        "q": "Where is my data stored, and in which languages do you work?",
+        "a": "DMARC report data is processed and stored in the EU and retained on a rolling window — see our GDPR/DPA page for the specifics. The interface, alerts, daily digest and AI Insights are all available in both English and Italian."
       }
     ]
   },
   "finalCta": {
-    "heading": "See who's sending as your domain.",
-    "sub": "Start free — publish one DNS record and you'll have your first verdict within a day.",
-    "primary": "Start free trial",
+    "heading": "Find out what's really being sent as you.",
+    "sub": "Publish one DNS record and your first verdict arrives within a day. The 30-day trial has everything switched on — no card.",
+    "primary": "Start the 30-day trial",
     "secondary": "Contact us"
   },
   "footer": {
     "tagline": "Email authentication, made legible. A product of Purple IT s.r.l.",
     "colProduct": "Product",
+    "colSolutions": "Solutions",
     "colCompany": "Company",
     "colLegal": "Legal",
     "product": {
@@ -324,7 +382,7 @@
   "contact": {
     "eyebrow": "Contact",
     "heading": "Talk to us.",
-    "sub": "Questions about coverage, pricing or a rollout across many domains? Send a note and we'll get back to you — in English or Italian.",
+    "sub": "Questions about coverage, pricing, a rollout across many domains, or volumes past the Business plan? Send a note and we'll get back to you — in English or Italian.",
     "formHeading": "Send a message",
     "fields": {
       "name": "Name",
@@ -340,6 +398,220 @@
     },
     "consent": "By sending this message you agree to be contacted about your request.",
     "submit": "Send message"
+  },
+  "solutions": {
+    "menuLabel": "Solutions",
+    "menuHint": "One product. Three ways to read the same evidence.",
+    "marketing": {
+      "nav": "Email marketing & DEM",
+      "navHint": "Reach the inbox. See every ESP sending as you.",
+      "short": "Email marketing",
+      "meta": {
+        "title": "DMARC for email marketing & DEM — Sentinely",
+        "description": "See which ESPs send as your domain, whether your campaigns authenticate, and what broke after a platform change. Google and Yahoo require DMARC above 5,000 messages a day — Sentinely shows you where you stand."
+      },
+      "eyebrow": "For email marketing & DEM",
+      "title": "Reach the inbox. And know who else is sending as you.",
+      "sub": "Gmail, Outlook, Yahoo and the rest already report on every message sent in your name. Sentinely reads those reports, so you can see which platforms send as you, which of them authenticate, and what changed after a migration.",
+      "problem": {
+        "eyebrow": "The problem",
+        "heading": "Sending volume isn't the hard part. Not knowing is.",
+        "sub": "Campaign tooling tells you what you sent. It doesn't tell you what mailbox providers made of it, or who else is sending under your name.",
+        "cards": [
+          {
+            "title": "Google and Yahoo already require it",
+            "body": "Since 2024, anyone sending more than 5,000 messages a day to Gmail or Yahoo users has to publish DMARC and keep authentication passing. Sentinely shows you whether you actually do."
+          },
+          {
+            "title": "Senders you never approved",
+            "body": "A form tool here, a CRM there, an agency that kept sending after the contract ended. Each one appears in your aggregate reports with its IP, its host and its volume."
+          },
+          {
+            "title": "You changed platform and something broke",
+            "body": "A migration that missed a DKIM selector or an SPF include fails quietly. Engagement tells you weeks later; the aggregate reports tell you the next morning."
+          }
+        ]
+      },
+      "value": {
+        "eyebrow": "What you get",
+        "heading": "The same evidence, read in campaign terms.",
+        "sub": "Everything below comes out of the DMARC aggregate reports your domain already receives.",
+        "cards": [
+          {
+            "title": "Every platform, named",
+            "body": "IP, hostname, geolocation and organisation for each sending source — and a clear mark on the ones that have never sent for you before."
+          },
+          {
+            "title": "Authentication rate per source",
+            "body": "SPF and DKIM alignment, compliance and failure rates, computed on what providers actually did with the message rather than on what your records claim."
+          },
+          {
+            "title": "A deliverability score to track",
+            "body": "0–100 with an A–F grade, built from authentication, policy, hygiene and blocklist status, with a confidence indicator while the data is still thin."
+          },
+          {
+            "title": "History across a platform change",
+            "body": "Up to 180 days of it. Compare the weeks either side of a migration and see exactly which source stopped authenticating, and when."
+          },
+          {
+            "title": "Blocklist watch on your senders",
+            "body": "Continuous DNSBL/RBL checks on the IPs sending for your domain, with a three-state result so 'not checkable' never gets read as 'clean'."
+          },
+          {
+            "title": "The record to publish, written out",
+            "body": "An SPF record past the 10-lookup limit, a DMARC tag fused to the next by a missing semicolon, a revoked DKIM key. Sentinely finds it and hands you the exact record."
+          }
+        ]
+      },
+      "note": {
+        "heading": "What this is not",
+        "body": "Sentinely does not do inbox-placement testing, seed lists or spam-trap monitoring, and it can't tell you which folder a given message landed in. It reads the aggregate reports providers send about your domain — which is where sender identity, authentication and policy live. Placement testing is a different instrument; this one tells you whether your mail is authenticated and who is sending it."
+      },
+      "cta": {
+        "heading": "See which platforms send as your domain.",
+        "sub": "Publish one DNS record. The first reports usually land within a day — and the 30-day trial has everything switched on."
+      }
+    },
+    "security": {
+      "nav": "IT & Sec Ops",
+      "navHint": "Stop impersonation. Get to p=reject with data.",
+      "short": "IT & security",
+      "meta": {
+        "title": "DMARC monitoring for IT & Sec Ops — Sentinely",
+        "description": "Name every source sending as your domain, read your SPF, DKIM, DMARC, BIMI, MTA-STS and TLS-RPT records for real syntax errors, and move from p=none to p=reject without blocking legitimate mail."
+      },
+      "eyebrow": "For IT & Sec Ops",
+      "title": "Stop impersonation. Reach p=reject with the data to prove it's safe.",
+      "sub": "The evidence you need to enforce DMARC already arrives every day, as XML nobody reads. Sentinely reads it, names every sender, and shows you what would break before you change the policy.",
+      "problem": {
+        "eyebrow": "The problem",
+        "heading": "Staying at p=none is a decision too.",
+        "sub": "It's the decision to leave your domain usable by anyone, and to find out about it from whoever got the phish.",
+        "cards": [
+          {
+            "title": "Anyone can send as you",
+            "body": "Until DMARC is enforced your domain is a free identity. Phishing sent from it arrives with your name on it, and the first you hear of it is from the person who received it."
+          },
+          {
+            "title": "Enforcement without data is a gamble",
+            "body": "Move to p=reject before you know every legitimate sender and you'll block your own invoices, tickets or payroll mail. Which is why most domains never move."
+          },
+          {
+            "title": "Broken auth hides in plain sight",
+            "body": "A revoked DKIM key, an SPF record past the 10-lookup ceiling, terms placed after \"all\" that will never be evaluated. Published, present, and silently failing."
+          }
+        ]
+      },
+      "value": {
+        "eyebrow": "What you get",
+        "heading": "Enough evidence to change the policy.",
+        "sub": "Read-only, from the aggregate reports your domain already receives. Nothing to install, nothing in the mail path.",
+        "cards": [
+          {
+            "title": "Every source resolved",
+            "body": "IP, hostname (rDNS/PTR), geolocation and organisation/ASN for each sender, plus a clear line between sources you already know and ones that have never sent for your domain."
+          },
+          {
+            "title": "Records read for syntax",
+            "body": "SPF, DKIM, DMARC, BIMI, MTA-STS and TLS-RPT checked for how they're written: fused DMARC tags, rua or ruf without mailto:, invalid sp and pct, unknown SPF mechanisms, invalid ip4/ip6, deprecated ptr, the 10-lookup limit."
+          },
+          {
+            "title": "A protection score with a grade",
+            "body": "0–100 and A–F across authentication, policy, hygiene and blocklist status, with a confidence indicator while there isn't yet enough data to be sure."
+          },
+          {
+            "title": "Alerts with a severity threshold",
+            "body": "New source never seen before, volume anomaly against the 7-day average, high failure rate, mail quarantined or rejected from a known source. Configurable per recipient and per domain."
+          },
+          {
+            "title": "Blocklist monitoring",
+            "body": "Continuous DNSBL/RBL checks on every IP sending for the domain, with a three-state result — listed, clean, or not checkable."
+          },
+          {
+            "title": "A warning when reports stop",
+            "body": "A domain that suddenly stops receiving aggregate reports usually means a broken configuration, not quiet skies. Sentinely tells you instead of letting the silence look like success."
+          }
+        ]
+      },
+      "note": {
+        "heading": "What this is not",
+        "body": "Sentinely doesn't route, filter or block mail — it isn't a gateway and it doesn't replace your SEG or anti-spam. It ingests aggregate (RUA) reports only, never forensic/RUF, so there are no copies of individual messages anywhere in it. It doesn't validate BIMI VMC certificates, and it offers no SSO/SAML. It never publishes or edits your DNS: it computes the record and shows it to you, and publishing stays with you."
+      },
+      "cta": {
+        "heading": "Find out who's sending as your domain.",
+        "sub": "One DNS record, and the first verdict lands within a day. The 30-day trial has everything switched on — no card."
+      }
+    },
+    "agencies": {
+      "nav": "Agencies & MSPs",
+      "navHint": "Many clients, your brand, one API.",
+      "short": "Agencies & MSPs",
+      "meta": {
+        "title": "DMARC for agencies, MSPs & consultants — Sentinely",
+        "description": "Multi-tenant since day one: a separate space per client, per-domain access, your name, colour, logo and footer on the app, emails and PDFs, and a read-only REST API with a per-tenant key."
+      },
+      "eyebrow": "For agencies, MSPs & consultants",
+      "title": "Many clients. Many domains. One place, with your name on it.",
+      "sub": "Sentinely has been multi-tenant since the first day: a separate space per client, per-domain access for each user, and your brand applied to the application, the emails and the PDF reports.",
+      "problem": {
+        "eyebrow": "The problem",
+        "heading": "The work scales. The reporting is what doesn't.",
+        "sub": "Running email authentication for other people is mostly an administration problem, and most tools are built for one company watching itself.",
+        "cards": [
+          {
+            "title": "Every client is a separate login",
+            "body": "Domains scattered across accounts nobody has a full view of, and a monthly report you assemble by hand from screenshots."
+          },
+          {
+            "title": "The report carries someone else's name",
+            "body": "You did the work and wrote the recommendation, and the PDF that reaches the client has another vendor's logo at the top of it."
+          },
+          {
+            "title": "Onboarding eats the margin",
+            "body": "If setting up a client takes a day of agent installs and gateway changes, the engagement is underwater before it starts."
+          }
+        ]
+      },
+      "value": {
+        "eyebrow": "What you get",
+        "heading": "Built for running this on other people's domains.",
+        "sub": "Not a single-tenant tool with a client dropdown bolted on.",
+        "cards": [
+          {
+            "title": "A separate space per client",
+            "body": "Many domains and many clients kept properly apart, with per-domain access assignable to individual users — so a client's own staff can see their domain and nothing else."
+          },
+          {
+            "title": "Your brand, end to end",
+            "body": "Name, colour, logo and footer applied to the application, the alert and digest emails, and the exported PDF reports."
+          },
+          {
+            "title": "A read-only REST API",
+            "body": "A public /api/public/v1 with a per-tenant key covering domains, alerts and reports, documented with Swagger — so the data can live in your dashboard or your client's."
+          },
+          {
+            "title": "Reports a client can read",
+            "body": "PDF export, plus a daily digest per domain delivered in each recipient's own language, English or Italian, with a severity threshold set per recipient."
+          },
+          {
+            "title": "Onboarding is one DNS record",
+            "body": "No agent, no gateway change, no mail rerouting. Hand the client the rua= record to publish — or push reports yourself over a signed HTTP webhook. The first report lands within a day."
+          },
+          {
+            "title": "External domains handled",
+            "body": "When reports cover a third-party domain, Sentinely manages the consent record the standard requires, automatically, instead of leaving you to chase it."
+          }
+        ]
+      },
+      "note": {
+        "heading": "The honest limits",
+        "body": "White-label covers your name, colour, logo and footer across the app, emails and PDFs — it does not put the application on your own domain; it stays on a Sentinely domain. There's no SSO/SAML. And Sentinely never publishes DNS on a client's behalf: it gives you the exact record, and you or the client publish it."
+      },
+      "cta": {
+        "heading": "Run every client's email authentication from one place.",
+        "sub": "Start with the 30-day trial — white-label and AI Insights are switched on while it runs — or talk to us about volume."
+      }
+    }
   },
   "affiliates": {
     "eyebrow": "Affiliate program",
@@ -418,10 +690,10 @@
       "title": "Terms of Service",
       "intro": "These Terms govern access to and use of the Sentinely website and service, provided by Purple IT s.r.l. By using Sentinely you agree to these Terms.",
       "sections": [
-        { "heading": "The service", "body": "Sentinely ingests DMARC aggregate reports and provides analysis, a protection score, alerts and a daily digest. Sentinely is a read-only analysis tool and does not send, filter or reroute your email." },
+        { "heading": "The service", "body": "Sentinely ingests DMARC aggregate reports and provides analysis, a protection score, alerts and a daily digest. Sentinely is a read-only analysis tool: it does not send, filter or reroute your email, and it does not publish or modify your DNS records." },
         { "heading": "Accounts", "body": "You are responsible for the accuracy of the information you provide and for maintaining the security of your account and credentials." },
         { "heading": "Acceptable use", "body": "You agree to use Sentinely only for domains you are authorised to manage, and not to misuse, disrupt or attempt to gain unauthorised access to the service." },
-        { "heading": "Plans & billing", "body": "Paid plans are billed as described at sign-up. Pricing shown on this site is indicative and may change before general availability." },
+        { "heading": "Plans & billing", "body": "Paid plans are billed as described at sign-up and payment is handled by Stripe. Prices shown on this site are in EUR and exclude VAT; annual billing is charged as ten monthly instalments." },
         { "heading": "Liability", "body": "The service is provided \"as is\". To the extent permitted by law, Purple IT s.r.l. limits its liability as set out in the final Terms published before go-live." }
       ]
     },
@@ -440,15 +712,19 @@
   "about": {
     "eyebrow": "About",
     "heading": "Email authentication, made legible.",
-    "sub": "Sentinely exists because the evidence to stop spoofing already arrives in your inbox every day — trapped in XML nobody reads. We turn it into something a person can act on.",
+    "sub": "Sentinely exists because the evidence already arrives every day — trapped in XML nobody reads. We turn it into something a person can act on.",
     "sections": [
       {
         "heading": "What we do",
-        "body": "We ingest DMARC aggregate reports, resolve every sending source, check authentication and reputation, and turn the result into a clear verdict, a protection score, smart alerts and a daily digest with AI Insights."
+        "body": "You publish a single DNS record. From then on, mailbox providers worldwide send us the DMARC aggregate reports for your domain. We parse them, resolve every sending source, check authentication, alignment, record syntax and blocklist status, and return a verdict: a 0–100 score with a grade, alerts, a daily digest and reports you can export."
       },
       {
         "heading": "Who it's for",
-        "body": "IT and security teams protecting their own domains, and the agencies and MSPs who protect email for many clients at once. Multi-tenant, EU-hosted, bilingual."
+        "body": "Marketing teams who need their campaigns to authenticate and to know which platforms send in their name. IT and security teams taking a domain from p=none to enforcement. And the agencies, MSPs and consultants who do both, for many clients at once — multi-tenant, white-label, with a read-only API."
+      },
+      {
+        "heading": "How we talk about it",
+        "body": "Sentinely reads aggregate reports. It is not a mail gateway, it does not test inbox placement, and it never touches your DNS. We would rather tell you what it doesn't do than have you find out later — so the limits are written down next to the features, on every page."
       }
     ]
   },

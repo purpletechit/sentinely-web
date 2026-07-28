@@ -2,16 +2,24 @@
 import { localizePath, useTranslations, type Lang } from '../i18n/utils';
 import { APP_SIGNUP_URL } from '../config';
 
+/** Segment pages pass their own headline; the home page uses the defaults. */
+interface Props {
+  heading?: string;
+  sub?: string;
+}
+
 const lang = (Astro.currentLocale ?? 'en') as Lang;
 const t = useTranslations(lang);
 const contactHref = localizePath('/contact', lang);
+
+const { heading = t('finalCta.heading'), sub = t('finalCta.sub') } = Astro.props;
 ---
 
 <section class="section final-cta">
   <div class="container">
     <div class="cta-panel reveal">
-      <h2 class="cta-title">{t('finalCta.heading')}</h2>
-      <p class="cta-sub measure">{t('finalCta.sub')}</p>
+      <h2 class="cta-title">{heading}</h2>
+      <p class="cta-sub measure">{sub}</p>
       <div class="cta-actions">
         <a href={APP_SIGNUP_URL} class="btn btn-primary">{t('finalCta.primary')}</a>
         <a href={contactHref} class="btn btn-ghost">{t('finalCta.secondary')}</a>

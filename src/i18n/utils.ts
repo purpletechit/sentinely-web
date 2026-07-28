@@ -38,6 +38,17 @@ export function useTranslations(lang: Lang) {
   };
 }
 
+/**
+ * Fill `{name}` placeholders in a translated string. Used where a sentence has
+ * to wrap a number that lives in the data (a price, a day count), so the copy
+ * stays natural in each language and the number stays in one place.
+ */
+export function interpolate(template: string, vars: Record<string, string | number>): string {
+  return template.replace(/\{(\w+)\}/g, (match, name: string) =>
+    name in vars ? String(vars[name]) : match,
+  );
+}
+
 /** Normalise a pathname: drop trailing slash (except root). */
 function normalise(pathname: string): string {
   const p = pathname.replace(/\/+$/, '');

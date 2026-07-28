@@ -1,5 +1,6 @@
 ---
 import { localizePath, useTranslations, type Lang } from '../i18n/utils';
+import { segments } from '../data/segments';
 
 const lang = (Astro.currentLocale ?? 'en') as Lang;
 const t = useTranslations(lang);
@@ -12,6 +13,11 @@ const product = [
   { href: `${homeHref}#pricing`, label: t('footer.product.pricing') },
   { href: `${homeHref}#faq`, label: t('footer.product.faq') },
 ];
+
+const solutions = segments.map((segment) => ({
+  href: p(segment.path),
+  label: t(`solutions.${segment.id}.short`) as string,
+}));
 ---
 
 <footer class="site-footer">
@@ -28,6 +34,15 @@ const product = [
       <h2 class="footer-heading">{t('footer.colProduct')}</h2>
       <ul>
         {product.map((item) => (
+          <li><a href={item.href} class="footer-link">{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <nav class="footer-col" aria-label={t('footer.colSolutions')}>
+      <h2 class="footer-heading">{t('footer.colSolutions')}</h2>
+      <ul>
+        {solutions.map((item) => (
           <li><a href={item.href} class="footer-link">{item.label}</a></li>
         ))}
       </ul>
@@ -150,8 +165,8 @@ const product = [
   }
   @media (min-width: 900px) {
     .footer-grid {
-      grid-template-columns: 2fr 1fr 1fr 1fr;
-      gap: 3rem;
+      grid-template-columns: 1.6fr repeat(4, 1fr);
+      gap: 2.25rem;
     }
     .footer-brand {
       grid-column: auto;

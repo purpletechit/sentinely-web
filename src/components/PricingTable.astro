@@ -1,20 +1,109 @@
 ---
 import Icon from './Icon.astro';
 import SectionHeading from './SectionHeading.astro';
-import { pricingTiers } from '../data/pricing';
-import { localizePath, useTranslations, type Lang } from '../i18n/utils';
+import {
+  freePlan,
+  paidPlans,
+  trial,
+  resolveAddon,
+  whiteLabelFromPrice,
+  WHITE_LABEL_ENTRY_LIVE,
+  formatPrice,
+  formatCount,
+  type Addon,
+  type Plan,
+} from '../data/pricing';
+import { interpolate, useTranslations, type Lang } from '../i18n/utils';
+import { APP_SIGNUP_URL } from '../config';
 
 const lang = (Astro.currentLocale ?? 'en') as Lang;
 const t = useTranslations(lang);
 
-type TierCopy = {
-  name: string;
-  tagline: string;
-  features: string[];
-  cta: string;
-  badge?: string;
-  priceLabel?: string;
-};
+type PlanCopy = { name: string; tagline: string; features: string[]; cta: string };
+
+const price = (value: number) => formatPrice(value, lang);
+const count = (value: number) => formatCount(value, lang);
+
+const unlimited = t('pricing.table.unlimited') as string;
+const usersOf = (plan: Plan) => (plan.users === null ? unlimited : count(plan.users));
+const messagesOf = (plan: Plan) => (plan.messages === null ? unlimited : count(plan.messages));
+const historyOf = (days: number) => interpolate(t('pricing.table.days'), { n: count(days) });
+
+/** An add-on as a customer can actually buy it today — see resolveAddon(). */
+function addonLabel(addon: Addon): string {
+  const resolved = resolveAddon(addon);
+  if (resolved.kind === 'included') return t('pricing.table.included');
+  if (resolved.kind === 'addon') {
+    return interpolate(t('pricing.table.addonPrice'), { price: price(resolved.price) });
+  }
+  return t('pricing.table.notAvailable');
+}
+
+/** Every limit a plan carries, labelled — rendered on the card and in the table. */
+const specsOf = (plan: Plan) => [
+  { label: t('pricing.table.domains'), value: count(plan.domains) },
+  { label: t('pricing.table.users'), value: usersOf(plan) },
+  { label: t('pricing.table.history'), value: historyOf(plan.historyDays) },
+  { label: t('pricing.table.messages'), value: messagesOf(plan) },
+];
+
+const cards = paidPlans.map((plan) => ({
+  plan,
+  copy: t(`pricing.plans.${plan.id}`) as PlanCopy,
+  specs: specsOf(plan),
+  /** Only Starter L sells domains past its allowance. */
+  extraDomain:
+    plan.extraDomain === null
+      ? null
+      : interpolate(t('pricing.extraDomain'), { price: price(plan.extraDomain) }),
+}));
+
+// Comparison rows: Free, the trial, then the paid ladder.
+const rows = [
+  {
+    name: t('pricing.table.free'),
+    monthly: price(freePlan.monthly),
+    annual: price(freePlan.annual),
+    domains: count(freePlan.domains),
+    users: usersOf(freePlan),
+    history: historyOf(freePlan.historyDays),
+    messages: messagesOf(freePlan),
+    ai: addonLabel(freePlan.aiInsights),
+    whiteLabel: addonLabel(freePlan.whiteLabel),
+    highlighted: false,
+  },
+  {
+    name: t('pricing.table.trial'),
+    monthly: price(0),
+    annual: t('pricing.table.notAvailable'),
+    domains: count(trial.domains),
+    users: count(trial.users),
+    history: historyOf(trial.historyDays),
+    messages: count(trial.messages),
+    ai: t('pricing.table.included'),
+    whiteLabel: t('pricing.table.included'),
+    highlighted: false,
+  },
+  ...paidPlans.map((plan) => ({
+    name: (t(`pricing.plans.${plan.id}`) as PlanCopy).name,
+    monthly: price(plan.monthly),
+    annual: price(plan.annual),
+    domains: count(plan.domains),
+    users: usersOf(plan),
+    history: historyOf(plan.historyDays),
+    messages: messagesOf(plan),
+    ai: addonLabel(plan.aiInsights),
+    whiteLabel: addonLabel(plan.whiteLabel),
+    highlighted: plan.highlighted,
+  })),
+];
+
+// Until the entry plans are configured in console, the honest claim is the
+// Starter L price — not "from €5". See WHITE_LABEL_ENTRY_LIVE.
+const whiteLabelNote = interpolate(
+  WHITE_LABEL_ENTRY_LIVE ? t('pricing.whiteLabelFrom') : t('pricing.whiteLabelStarterL'),
+  { price: price(whiteLabelFromPrice) },
+);
 ---
 
 <section id="pricing" class="section pricing">
@@ -26,51 +115,308 @@ type TierCopy = {
       align="center"
     />
 
-    <div class="pricing-grid">
-      {pricingTiers.map((tier) => {
-        const copy = t(`pricing.tiers.${tier.id}`) as TierCopy;
-        const href = tier.ctaKind === 'contact' ? localizePath(tier.ctaHref, lang) : tier.ctaHref;
-        return (
-          <article class:list={['tier', 'reveal', { highlighted: tier.highlighted }]}>
-            {tier.highlighted && <span class="tier-flag mono">{t('pricing.mostPopular')}</span>}
-            <div class="tier-head">
-              <h3 class="tier-name">{copy.name}</h3>
-              {copy.badge && <span class="chip chip-accent tier-badge">{copy.badge}</span>}
+    <!-- Free is a real, perpetual tier — shown at the top of the list, not hidden. -->
+    <div class="free-band reveal">
+      <div class="free-headline">
+        <span class="chip chip-pass free-flag">{t('pricing.free.name')}</span>
+        <p class="free-price">
+          <span class="mono free-amount">{t('pricing.free.price')}</span>
+          <span class="free-forever">{t('pricing.free.forever')}</span>
+        </p>
+      </div>
+      <div class="free-body">
+        <p class="free-tagline">{t('pricing.free.tagline')}</p>
+        <ul class="free-specs mono">
+          {specsOf(freePlan).map((spec) => (
+            <li><span class="spec-label">{spec.label}</span> {spec.value}</li>
+          ))}
+        </ul>
+      </div>
+      <a href={APP_SIGNUP_URL} class="btn btn-ghost free-cta">
+        {t('pricing.free.cta')}
+        <Icon name="arrow-right" size={16} />
+      </a>
+    </div>
+
+    <div class="trial-note reveal">
+      <h3 class="trial-title">{t('pricing.trial.title')}</h3>
+      <p class="trial-body">{t('pricing.trial.body')}</p>
+    </div>
+
+    <!-- Radio-driven billing switch: no JS, so it works before (and without) hydration. -->
+    <div class="pricing-body">
+      <input class="billing-input" type="radio" name="billing" id="billing-monthly" checked />
+      <input class="billing-input" type="radio" name="billing" id="billing-annual" />
+
+      <div class="billing-switch" role="group" aria-label={t('pricing.billing.label')}>
+        <label class="billing-option" for="billing-monthly">{t('pricing.billing.monthly')}</label>
+        <label class="billing-option" for="billing-annual">
+          {t('pricing.billing.annual')}
+          <span class="billing-save mono">{t('pricing.billing.save')}</span>
+        </label>
+      </div>
+
+      <div class="pricing-grid">
+        {cards.map(({ plan, copy, specs, extraDomain }) => (
+          <article class:list={['tier', 'reveal', { highlighted: plan.highlighted }]}>
+            {plan.highlighted && <span class="tier-flag mono">{t('pricing.mostPopular')}</span>}
+            <h3 class="tier-name">{copy.name}</h3>
+
+            <div class="tier-price" data-period="monthly">
+              <p class="price-line">
+                <span class="mono price-amount">{price(plan.monthly)}</span>
+                <span class="price-period">{t('pricing.perMonth')}</span>
+              </p>
+              <p class="price-note">
+                {interpolate(t('pricing.monthlyNote'), { price: price(plan.monthly * 12) })}
+              </p>
             </div>
-            <p class="tier-price">
-              {tier.price !== null ? (
-                <>
-                  <span class="mono price-amount">{tier.currencySymbol}{tier.price}</span>
-                  <span class="price-period">{t('pricing.perMonth')}</span>
-                </>
-              ) : (
-                <span class="mono price-amount">{copy.priceLabel}</span>
-              )}
-            </p>
+
+            <div class="tier-price" data-period="annual">
+              <p class="price-line">
+                <span class="mono price-amount">{price(plan.annual)}</span>
+                <span class="price-period">{t('pricing.perYear')}</span>
+              </p>
+              <p class="price-note">
+                {interpolate(t('pricing.annualNote'), { price: price(plan.monthly) })}
+              </p>
+            </div>
+
             <p class="tier-tagline">{copy.tagline}</p>
-            <a href={href} class:list={['btn', 'btn-block', tier.highlighted ? 'btn-primary' : 'btn-ghost']}>
+
+            <a
+              href={plan.ctaHref}
+              class:list={['btn', 'btn-block', plan.highlighted ? 'btn-primary' : 'btn-ghost']}
+            >
               {copy.cta}
             </a>
-            <ul class="tier-features">
-              {copy.features.map((feat) => (
+
+            <ul class="tier-specs">
+              {specs.map((spec) => (
                 <li>
-                  <span class="feat-check" aria-hidden="true"><Icon name="check" size={15} /></span>
-                  <span>{feat}</span>
+                  <span class="spec-label">{spec.label}</span>
+                  <span class="mono spec-value">{spec.value}</span>
                 </li>
               ))}
             </ul>
+
+            <ul class="tier-features">
+              {copy.features.map((feature) => (
+                <li>
+                  <span class="feat-check" aria-hidden="true"><Icon name="check" size={15} /></span>
+                  <span>{feature}</span>
+                </li>
+              ))}
+              {extraDomain && (
+                <li>
+                  <span class="feat-check" aria-hidden="true"><Icon name="check" size={15} /></span>
+                  <span>{extraDomain}</span>
+                </li>
+              )}
+            </ul>
           </article>
-        );
-      })}
+        ))}
+      </div>
     </div>
 
     <p class="pricing-footnote mono">{t('pricing.footnote')}</p>
+
+    <div class="compare">
+      <SectionHeading title={t('pricing.table.heading')} sub={t('pricing.table.sub')} align="center" />
+      <div class="scroll-x compare-scroll reveal">
+        <table class="compare-table">
+          <caption class="sr-only">{t('pricing.table.caption')}</caption>
+          <thead>
+            <tr>
+              <th scope="col">{t('pricing.table.plan')}</th>
+              <th scope="col">{t('pricing.table.monthly')}</th>
+              <th scope="col">{t('pricing.table.annual')}</th>
+              <th scope="col">{t('pricing.table.domains')}</th>
+              <th scope="col">{t('pricing.table.users')}</th>
+              <th scope="col">{t('pricing.table.history')}</th>
+              <th scope="col">{t('pricing.table.messages')}</th>
+              <th scope="col">{t('pricing.table.aiInsights')}</th>
+              <th scope="col">{t('pricing.table.whiteLabel')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row) => (
+              <tr class:list={{ highlighted: row.highlighted }}>
+                <th scope="row">{row.name}</th>
+                <td class="mono">{row.monthly}</td>
+                <td class="mono">{row.annual}</td>
+                <td class="mono">{row.domains}</td>
+                <td class="mono">{row.users}</td>
+                <td class="mono">{row.history}</td>
+                <td class="mono">{row.messages}</td>
+                <td class="mono">{row.ai}</td>
+                <td class="mono">{row.whiteLabel}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="compare-note">{whiteLabelNote}</p>
+    </div>
   </div>
 </section>
 
 <style>
-  .pricing-grid {
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* ---- Free band ---- */
+  .free-band {
     margin-top: 2.75rem;
+    display: grid;
+    gap: 1.1rem;
+    align-items: center;
+    padding: 1.4rem 1.5rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background-color: var(--surface);
+  }
+  .free-headline {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    flex-wrap: wrap;
+  }
+  .free-flag {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+  }
+  .free-price {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+  }
+  .free-amount {
+    font-size: 1.9rem;
+    font-weight: 780;
+    color: var(--strong);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .free-forever {
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+  .free-tagline {
+    color: var(--ink);
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+  .free-specs {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1.1rem;
+    margin-top: 0.6rem;
+    font-size: 0.76rem;
+    color: var(--muted);
+  }
+  .free-specs .spec-label {
+    color: var(--faint);
+  }
+  .free-cta {
+    justify-self: start;
+  }
+
+  /* ---- Trial note ---- */
+  .trial-note {
+    margin-top: 1.25rem;
+    padding: 1.4rem 1.5rem;
+    border: 1px solid var(--accent-line);
+    border-radius: var(--radius-lg);
+    background:
+      radial-gradient(90% 140% at 0% 0%, var(--accent-soft), transparent 60%),
+      var(--surface);
+  }
+  .trial-title {
+    font-size: 1.1rem;
+    font-weight: 750;
+    color: var(--strong);
+    margin-bottom: 0.5rem;
+  }
+  .trial-body {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    max-width: 68ch;
+  }
+
+  /* ---- Billing switch ---- */
+  .billing-input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+  }
+  .billing-switch {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 0.3rem;
+    padding: 0.3rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background-color: var(--surface-2);
+    width: fit-content;
+    margin-inline: auto;
+  }
+  .billing-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    transition: background-color 0.14s ease, color 0.14s ease;
+  }
+  .billing-option:hover {
+    color: var(--strong);
+  }
+  .billing-save {
+    font-size: 0.66rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+  }
+  #billing-monthly:checked ~ .billing-switch .billing-option[for="billing-monthly"],
+  #billing-annual:checked ~ .billing-switch .billing-option[for="billing-annual"] {
+    background-color: var(--surface);
+    color: var(--strong);
+    box-shadow: var(--shadow);
+  }
+  #billing-monthly:focus-visible ~ .billing-switch .billing-option[for="billing-monthly"],
+  #billing-annual:focus-visible ~ .billing-switch .billing-option[for="billing-annual"] {
+    outline: 2px solid var(--accent-solid);
+    outline-offset: 2px;
+  }
+  /* The switch drives which price block each card shows. */
+  #billing-monthly:checked ~ .pricing-grid .tier-price[data-period="annual"],
+  #billing-annual:checked ~ .pricing-grid .tier-price[data-period="monthly"] {
+    display: none;
+  }
+
+  /* ---- Plan cards ---- */
+  .pricing-grid {
+    margin-top: 2rem;
     display: grid;
     gap: 1.25rem;
     grid-template-columns: 1fr;
@@ -103,27 +449,18 @@ type TierCopy = {
     padding: 0.28rem 0.6rem;
     border-radius: 999px;
   }
-  .tier-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-  }
   .tier-name {
     font-size: 1.25rem;
     font-weight: 750;
     color: var(--strong);
   }
-  .tier-badge {
-    font-size: 0.66rem;
-  }
-  .tier-price {
+  .price-line {
     display: flex;
     align-items: baseline;
     gap: 0.35rem;
   }
   .price-amount {
-    font-size: 2.2rem;
+    font-size: 2.1rem;
     font-weight: 780;
     color: var(--strong);
     letter-spacing: -0.02em;
@@ -131,26 +468,54 @@ type TierCopy = {
   }
   .price-period {
     color: var(--muted);
-    font-size: 0.95rem;
+    font-size: 0.92rem;
+  }
+  .price-note {
+    margin-top: 0.35rem;
+    font-size: 0.76rem;
+    color: var(--faint);
   }
   .tier-tagline {
     color: var(--muted);
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     line-height: 1.5;
-    min-height: 2.8em;
+    min-height: 3em;
+  }
+  .tier-specs {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--line);
+  }
+  .tier-specs li {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    font-size: 0.84rem;
+  }
+  .spec-label {
+    color: var(--muted);
+  }
+  .spec-value {
+    color: var(--strong);
+    font-weight: 600;
   }
   .tier-features {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 0.7rem;
-    margin-top: 0.35rem;
+    gap: 0.6rem;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--line);
   }
   .tier-features li {
     display: flex;
     align-items: flex-start;
     gap: 0.6rem;
-    font-size: 0.92rem;
+    font-size: 0.88rem;
     color: var(--ink);
   }
   .feat-check {
@@ -169,10 +534,87 @@ type TierCopy = {
     text-align: center;
     color: var(--faint);
     font-size: 0.75rem;
+    max-width: 70ch;
+    margin-inline: auto;
+    line-height: 1.6;
   }
-  @media (min-width: 860px) {
+
+  /* ---- Comparison table ---- */
+  .compare {
+    margin-top: 4.5rem;
+  }
+  .compare-scroll {
+    margin-top: 2rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+  }
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    white-space: nowrap;
+  }
+  .compare-table th,
+  .compare-table td {
+    padding: 0.7rem 0.85rem;
+    text-align: left;
+    border-bottom: 1px solid var(--line);
+  }
+  .compare-table thead th {
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    text-transform: uppercase;
+    letter-spacing: 0.11em;
+    font-weight: 600;
+    color: var(--faint);
+    background-color: var(--surface-2);
+    white-space: normal;
+  }
+  .compare-table tbody th {
+    font-weight: 700;
+    color: var(--strong);
+  }
+  .compare-table tbody td {
+    color: var(--muted);
+  }
+  .compare-table tbody tr:last-child th,
+  .compare-table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+  .compare-table tbody tr.highlighted {
+    background-color: var(--accent-soft);
+  }
+  .compare-note {
+    margin-top: 1.1rem;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.86rem;
+    max-width: 62ch;
+    margin-inline: auto;
+  }
+
+  @media (min-width: 720px) {
+    .free-band {
+      grid-template-columns: auto 1fr auto;
+      gap: 1.75rem;
+      padding: 1.5rem 1.75rem;
+    }
+    .free-headline {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.55rem;
+    }
     .pricing-grid {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1040px) {
+    .pricing-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .tier {
+      padding: 1.75rem 1.35rem;
     }
     .tier.highlighted {
       transform: translateY(-0.5rem);
