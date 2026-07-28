@@ -9,6 +9,30 @@ deployed to **Cloudflare Pages** (static build + Pages Functions for the forms).
 
 ---
 
+## Current status
+
+**Live** at `https://sentinely-web.pages.dev` (GitHub `purpletechit/sentinely-web`,
+branch `main`, connected to Cloudflare Pages → auto-deploys on every push). Contact and
+affiliate forms work end-to-end (email delivered to `info@sentinely.eu`).
+
+Actual config decisions (in place — don't "revert" these):
+
+- **Turnstile site key** (public) is committed in `src/config.ts`; the **secret** is a
+  Pages dashboard secret. Widget hostnames: `sentinely.eu` + `sentinely-web.pages.dev`.
+- **SES region** is `us-east-1`, set in `wrangler.toml` `[vars]` (code default is
+  `eu-west-1`). AWS keys are dashboard secrets.
+- Convention: **plaintext vars → `wrangler.toml [vars]`; secrets → Pages dashboard**
+  (Pages disables plaintext dashboard vars when a wrangler config is present).
+- `trailingSlash: 'always'`, Node pinned to 22 (`.node-version`).
+
+**Open follow-up:** an iPad-Safari "scroll past the footer" issue — fix applied (moved
+`overflow-x: clip` from `body` to `html`), pending confirmation on a real iPad. The phone
+horizontal cut-off of the hero verdict panel is fixed and verified.
+
+See "What's still outstanding" near the end for the pre-go-live checklist.
+
+---
+
 ## Stack
 
 | Concern        | Choice                                                       |
@@ -193,8 +217,11 @@ the app, DNS, or the apex.
 - **Blog** — collection is provisioned with one `draft: true` placeholder; no posts are
   published yet. The footer "Blog" link is marked *soon*. Add Markdown files under
   `src/content/blog/` with `draft: false` to publish.
-- **Turnstile keys** — create a Turnstile widget for `sentinely.eu` and set the real
-  site/secret keys.
+- **Verify iPad layout** — confirm on a real iPad that the "scroll past the footer"
+  issue is gone after moving `overflow-x: clip` from `body` to `html`.
+- **Lighthouse** — run on the live site (target ≥95 across the four categories).
+
+_Done: Turnstile widget + keys configured; SES (us-east-1) sending live; site deployed._
 
 ---
 
