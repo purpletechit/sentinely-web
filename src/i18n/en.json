@@ -215,7 +215,7 @@
       "save": "2 months free"
     },
     "annualNote": "Ten instalments of {price} — two months free.",
-    "monthlyNote": "{price} a year at this rate.",
+    "monthlyNote": "Paying monthly: {yearly} a year — annual: {annual}.",
     "entryLabel": "Two ways to start. Both cost nothing, neither asks for a card.",
     "free": {
       "name": "Free",

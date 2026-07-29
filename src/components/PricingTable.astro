@@ -208,8 +208,14 @@ const whiteLabelNote = interpolate(
                 <span class="mono price-amount">{price(plan.monthly)}</span>
                 <span class="price-period">{t('pricing.perMonth')}</span>
               </p>
+              <!-- Both numbers, side by side: twelve monthly payments vs. the
+                   annual price the comparison table quotes. Naming only the
+                   first read as "€60 a year" three rows above a €50 cell. -->
               <p class="price-note">
-                {interpolate(t('pricing.monthlyNote'), { price: price(plan.monthly * 12) })}
+                {interpolate(t('pricing.monthlyNote'), {
+                  yearly: price(plan.monthly * 12),
+                  annual: price(plan.annual),
+                })}
               </p>
             </div>
 

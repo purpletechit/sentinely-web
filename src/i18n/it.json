@@ -215,7 +215,7 @@
       "save": "2 mesi gratis"
     },
     "annualNote": "Dieci mensilità da {price} — due mesi gratis.",
-    "monthlyNote": "{price} all'anno a questo ritmo.",
+    "monthlyNote": "Pagando mensilmente: {yearly} all'anno — annuale: {annual}.",
     "entryLabel": "Due modi per iniziare. Non costano nulla e nessuno dei due chiede la carta.",
     "free": {
       "name": "Free",
