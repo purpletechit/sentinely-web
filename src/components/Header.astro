@@ -1,6 +1,7 @@
 ---
 import ThemeToggle from './ThemeToggle.astro';
 import LangSwitch from './LangSwitch.astro';
+import Brandmark from './Brandmark.astro';
 import { localizePath, useTranslations, type Lang } from '../i18n/utils';
 import { segments } from '../data/segments';
 import { APP_LOGIN_URL, APP_SIGNUP_URL } from '../config';
@@ -27,7 +28,7 @@ const solutions = segments.map((segment) => ({
 <header class="site-header" data-site-header>
   <div class="container header-inner">
     <a href={homeHref} class="brand" aria-label={t('site.name')}>
-      <span class="beacon" aria-hidden="true"></span>
+      <Brandmark />
       <span class="brand-name">{t('site.name')}</span>
     </a>
 
@@ -125,10 +126,11 @@ const solutions = segments.map((segment) => ({
     height: 4rem;
   }
 
+  /* Baseline, not centre: the mark stands on the same line as the S. */
   .brand {
     display: inline-flex;
-    align-items: center;
-    gap: 0.55rem;
+    align-items: baseline;
+    gap: 0.42rem;
     font-weight: 750;
     font-size: 1.12rem;
     letter-spacing: -0.02em;

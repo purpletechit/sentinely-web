@@ -3,28 +3,33 @@
 // Outputs into ./public. Re-run whenever the brand mark changes.
 
 import sharp from 'sharp';
+import { writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { badgeSvg, markFull, markSimple, BRAND_ORANGE } from '../src/data/brandmark.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const publicDir = join(__dirname, '..', 'public');
 
 const ACCENT = '#E67423';
-const BTN_FG = '#241206';
-const TILE_BG = '#17120B';
 
-// Shield-check mark in a 32-unit box (matches public/favicon.svg).
-const shield = (fill, stroke) => `
-  <path d="M16 2.5 5.5 6.6v7.9C5.5 21.6 10 26.8 16 29.5c6-2.7 10.5-7.9 10.5-15V6.6L16 2.5Z" fill="${fill}"/>
-  <path d="m10.8 15.6 3.5 3.5L21.2 12" fill="none" stroke="${stroke}" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"/>`;
+// The badge lockup, from docs/brand/sentinely-icon.svg. Small sizes get the
+// simple variant: inside the badge the mark is ~73% of the tile, so a 32px
+// favicon draws it at ~23px and a 16px tab icon at ~12px, well under the
+// threshold where the eyes and the pulse line silt up.
+const appIconSvg = badgeSvg({ variant: markFull });
+const smallIconSvg = badgeSvg({ variant: markSimple });
 
-const faviconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">${shield(ACCENT, BTN_FG)}</svg>`;
-
-// App tile: rounded dark background + centered orange shield.
-const appIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="112" fill="${TILE_BG}"/>
-  <g transform="translate(96,96) scale(10)">${shield(ACCENT, TILE_BG)}</g>
-</svg>`;
+// The mark on transparent, for the OG lockup: hard orange (no theme to inherit
+// out there) and standing on the wordmark's baseline, same as in the header.
+function ogMark({ height, x, baseline, variant = markFull }) {
+  const [vx, vy, , vh] = variant.viewBox.split(' ').map(Number);
+  const scale = height / vh;
+  return (
+    `<g transform="translate(${(x - vx * scale).toFixed(3)} ${(baseline - height - vy * scale).toFixed(3)}) scale(${scale.toFixed(6)})">` +
+    `<path fill="${BRAND_ORANGE}" fill-rule="evenodd" clip-rule="evenodd" d="${variant.d}"/></g>`
+  );
+}
 
 // Open Graph 1200x630.
 const ogSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
@@ -37,7 +42,7 @@ const ogSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
   <rect width="1200" height="630" fill="#131009"/>
   <rect width="1200" height="630" fill="url(#glow)"/>
   <rect x="0" y="0" width="1200" height="6" fill="${ACCENT}"/>
-  <g transform="translate(96,120) scale(2.6)">${shield(ACCENT, BTN_FG)}</g>
+  ${ogMark({ height: 84, x: 98, baseline: 188 })}
   <text x="188" y="188" font-family="Arial, Helvetica, sans-serif" font-size="76" font-weight="bold" fill="#FBF6EE" letter-spacing="-1.5">Sentinely</text>
   <text x="98" y="300" font-family="Arial, Helvetica, sans-serif" font-size="46" font-weight="bold" fill="#ECE5DA">See every source sending as your domain.</text>
   <text x="98" y="372" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#A79B8B">DMARC reports, turned into a clear verdict — plus the controls to act.</text>
@@ -52,14 +57,20 @@ const ogSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
   <text x="98" y="566" font-family="Arial, Helvetica, sans-serif" font-size="22" fill="#6F6557">A product of Purple IT s.r.l.  ·  sentinely.eu</text>
 </svg>`;
 
-async function png(svg, size, out, resize = true) {
-  let img = sharp(Buffer.from(svg));
-  if (resize) img = img.resize(size, size);
-  await img.png().toFile(join(publicDir, out));
+async function png(svg, size, out) {
+  // density: rasterise the 512-unit artwork well above the target, then scale
+  // down — otherwise the thin strokes alias badly at icon sizes.
+  await sharp(Buffer.from(svg), { density: 900 })
+    .resize(size, size)
+    .png()
+    .toFile(join(publicDir, out));
   console.log('✓', out);
 }
 
-await png(faviconSvg, 32, 'favicon-32.png');
+await writeFile(join(publicDir, 'favicon.svg'), `${smallIconSvg}\n`);
+console.log('✓ favicon.svg');
+
+await png(smallIconSvg, 32, 'favicon-32.png');
 await png(appIconSvg, 180, 'apple-touch-icon.png');
 await png(appIconSvg, 192, 'icon-192.png');
 await png(appIconSvg, 512, 'icon-512.png');

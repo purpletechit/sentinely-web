@@ -101,9 +101,22 @@ and dark and switched via `prefers-color-scheme` plus a `:root[data-theme="…"]
 override printed by the header theme toggle. Tailwind utilities map to the same
 variables via `@theme inline`, so `bg-surface`, `text-ink`, etc. follow the theme.
 
-- **Accent** = warm orange `#E67423` (CTAs, beacon, eyebrows, focus).
+- **Accent** = warm orange `#E67423` (CTAs, brand mark, eyebrows, focus).
 - **Green / red** are **semantic only** (DMARC pass/fail), never used as accent.
 - **Monospace** is a voice: eyebrows, labels, IPs, KPIs, prices.
+
+### Brand mark
+
+The shield beside the wordmark is `src/components/Brandmark.astro`: an inline SVG
+painted with `currentColor`, sized in `em` at the cap height of the wordmark
+(`0.725em`) and aligned on the baseline, so it stands exactly as tall as the S.
+Behind it a radial halo pulses on the same 2.6s / `cubic-bezier(.16,1,.3,1)` as
+the older `.beacon` dot, and stops under `prefers-reduced-motion`.
+
+Geometry lives in `src/data/brandmark.js`, lifted from `docs/brand/*.svg`, in two
+variants: `full` as drawn, and `simple` — eye counters dropped, strokes fattened —
+which is what anything under ~20px tall must use, including the header and the
+32px favicon. `npm run og` regenerates every raster asset from the same source.
 
 ---
 

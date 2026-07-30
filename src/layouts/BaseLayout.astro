@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import BrandmarkSprite from '../components/BrandmarkSprite.astro';
 import { localizePath, stripLocale, useTranslations, type Lang } from '../i18n/utils';
 import { SITE_ORIGIN, OG_IMAGE } from '../config';
 
@@ -90,6 +91,7 @@ const ogLocaleAlt = lang === 'it' ? 'en_US' : 'it_IT';
     </script>
   </head>
   <body>
+    <BrandmarkSprite />
     <a href="#main" class="skip-link">{t('common.skipToContent')}</a>
     <Header />
     <main id="main">

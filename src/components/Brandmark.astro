@@ -1,0 +1,104 @@
+---
+// The Sentinely shield, inline so it inherits colour from the text beside it.
+//
+// Sized in `em` off the wordmark and aligned on the baseline, so it stands
+// exactly as tall as the S of "Sentinely" (see .brand in Header/Footer, which
+// sets align-items: baseline). Behind it sits the radial halo that replaced the
+// old CSS beacon — same 2.6s / same easing, so the pulse still reads as the
+// same signal.
+//
+// aria-hidden: the accessible name lives on the .brand link, and the word
+// "Sentinely" is written right next to it. Announcing the mark too would say
+// the name twice.
+//
+// The geometry itself comes from the <symbol> that <BrandmarkSprite /> puts on
+// the page — see BaseLayout.
+import { markFull, markSimple } from '../data/brandmark.js';
+
+interface Props {
+  /**
+   * `simple` drops the eye counters and fattens the strokes — required below
+   * ~20px tall, which is where every in-page use sits today.
+   */
+  variant?: 'simple' | 'full';
+  /**
+   * Height of the mark. Keep it in `em` so it tracks the wordmark — the
+   * default is the measured cap height of this font stack (S = 0.725em, not
+   * the 1em of the font size).
+   */
+  size?: string;
+  class?: string;
+}
+
+const { variant = 'simple', size = '0.725em', class: className } = Astro.props;
+const mark = variant === 'simple' ? markSimple : markFull;
+---
+
+<span
+  class:list={['brandmark', className]}
+  style={`--brandmark-size:${size};--brandmark-ratio:${mark.ratio.toFixed(5)}`}
+  aria-hidden="true"
+>
+  <svg class="brandmark-art" focusable="false">
+    <use href={`#${mark.id}`} />
+  </svg>
+</span>
+
+<style>
+  /* currentColor, so a caller can recolour it by setting `color` — but the
+     accent is the default, carrying over the beacon this mark replaces. */
+  .brandmark {
+    position: relative;
+    display: inline-flex;
+    flex: none;
+    color: var(--accent-solid);
+  }
+
+  /* Positioned (not z-indexed) so it paints above the halo purely by document
+     order — a negative z-index would slip behind the footer's background. */
+  .brandmark-art {
+    position: relative;
+    display: block;
+    height: var(--brandmark-size);
+    width: calc(var(--brandmark-size) * var(--brandmark-ratio));
+  }
+
+  /* The old beacon's ping, minus the ring: a soft radial breath behind a solid
+     shape. Same duration and easing as .beacon so both belong to one family. */
+  .brandmark::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: calc(var(--brandmark-size) * 1.75);
+    height: calc(var(--brandmark-size) * 1.75);
+    margin-left: calc(var(--brandmark-size) * -0.875);
+    margin-top: calc(var(--brandmark-size) * -0.875);
+    border-radius: 999px;
+    background: radial-gradient(
+      circle closest-side,
+      color-mix(in srgb, var(--accent-solid) 55%, transparent),
+      transparent
+    );
+    animation: brandmark-halo 2.6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  }
+
+  @keyframes brandmark-halo {
+    0% {
+      transform: scale(0.5);
+      opacity: 0.45;
+    }
+    70%,
+    100% {
+      transform: scale(1.6);
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .brandmark::before {
+      animation: none;
+      opacity: 0;
+    }
+  }
+</style>

@@ -1,0 +1,39 @@
+---
+// The shield's geometry, defined once per page.
+//
+// The path is ~8.5KB; the header and the footer both draw it, and inlining it
+// twice roughly doubled the gzipped weight of every page. So it lives here as a
+// <symbol> and <Brandmark /> references it with <use>, which still counts as
+// inline SVG — the mark is in the document and inherits currentColor, no extra
+// request, nothing to load before it paints.
+//
+// BaseLayout renders this once, at the top of <body>. Anything using
+// <Brandmark /> needs it on the page.
+import { markFull, markSimple } from '../data/brandmark.js';
+
+interface Props {
+  /** Which variants the page actually draws. Emitting both doubles the cost. */
+  variants?: Array<'simple' | 'full'>;
+}
+
+const { variants = ['simple'] } = Astro.props;
+const marks = variants.map((name) => (name === 'simple' ? markSimple : markFull));
+---
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  {
+    marks.map((mark) => (
+      <symbol id={mark.id} viewBox={mark.viewBox} fill="none">
+        <path
+          d={mark.d}
+          fill="currentColor"
+          fill-rule="evenodd"
+          clip-rule="evenodd"
+          stroke={mark.strokeWidth ? 'currentColor' : undefined}
+          stroke-width={mark.strokeWidth || undefined}
+          stroke-linejoin={mark.strokeWidth ? 'round' : undefined}
+        />
+      </symbol>
+    ))
+  }
+</svg>
