@@ -94,14 +94,20 @@ const solutions = segments.map((segment) => ({
     grid-template-columns: 1fr;
     padding-bottom: 2.5rem;
   }
+  /* Same lockup as the header — centred on the wordmark, same gap. The
+     line-height matters here: centring is measured against the line box, so
+     the footer has to set the header's 1 rather than inherit the body's. */
   .footer-brand .brand {
     display: inline-flex;
-    align-items: baseline;
-    gap: 0.42rem;
+    align-items: center;
+    gap: 0.55rem;
     font-weight: 750;
     font-size: 1.12rem;
     letter-spacing: -0.02em;
     color: var(--strong);
+  }
+  .footer-brand .brand-name {
+    line-height: 1;
   }
   .footer-tagline {
     margin-top: 0.9rem;

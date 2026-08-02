@@ -108,8 +108,9 @@ variables via `@theme inline`, so `bg-surface`, `text-ink`, etc. follow the them
 ### Brand mark
 
 The shield beside the wordmark is `src/components/Brandmark.astro`: an inline SVG
-painted with `currentColor`, sized in `em` at the cap height of the wordmark
-(`0.725em`) and aligned on the baseline, so it stands exactly as tall as the S.
+painted with `currentColor`, sized in `em` at twice the cap height of the wordmark
+(`1.45em`, cap height being `0.725em` for this stack) and centred on it — taller
+than the line of text, so baseline alignment would leave it hanging above the word.
 Behind it a radial halo pulses on the same 2.6s / `cubic-bezier(.16,1,.3,1)` as
 the older `.beacon` dot, and stops under `prefers-reduced-motion`.
 

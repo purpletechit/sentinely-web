@@ -126,11 +126,21 @@ const solutions = segments.map((segment) => ({
     height: 4rem;
   }
 
-  /* Baseline, not centre: the mark stands on the same line as the S. */
+  /* Centre, not baseline: the mark is taller than the line of text, so it is
+     hung on the middle of the wordmark (Brandmark adds the optical nudge).
+     The bar keeps its 4rem — a 26px mark clears it, so nothing in the nav
+     moves.
+
+     flex: none because the lockup is not negotiable. Around 1100px the Italian
+     nav is wider than the row, and a shrinkable .brand gave up its own width
+     first: the box narrowed, "Sentinely" (one unbreakable word) spilled out of
+     it and ran under the first nav link. The nav is the part that already
+     absorbs a tight row by wrapping; let it. */
   .brand {
     display: inline-flex;
-    align-items: baseline;
-    gap: 0.42rem;
+    align-items: center;
+    flex: none;
+    gap: 0.55rem;
     font-weight: 750;
     font-size: 1.12rem;
     letter-spacing: -0.02em;
@@ -139,6 +149,16 @@ const solutions = segments.map((segment) => ({
   }
   .brand-name {
     line-height: 1;
+  }
+
+  /* From the desktop breakpoint to ~1200px the Italian nav leaves the row with
+     nothing to spare, and the wider mark is what tipped it over. The lockup
+     hands the width back by setting a step smaller — the mark is sized in `em`,
+     so it stays exactly twice the cap height while the type shrinks. */
+  @media (min-width: 1024px) and (max-width: 1199.98px) {
+    .brand {
+      font-size: 1rem;
+    }
   }
 
   .nav-desktop {

@@ -1,11 +1,13 @@
 ---
 // The Sentinely shield, inline so it inherits colour from the text beside it.
 //
-// Sized in `em` off the wordmark and aligned on the baseline, so it stands
-// exactly as tall as the S of "Sentinely" (see .brand in Header/Footer, which
-// sets align-items: baseline). Behind it sits the radial halo that replaced the
-// old CSS beacon — same 2.6s / same easing, so the pulse still reads as the
-// same signal.
+// Sized in `em` off the wordmark at twice its cap height, so it stands exactly
+// as tall as two stacked S's. Being taller than the line of text, it is centred
+// on the wordmark rather than set on the baseline (see .brand in Header/Footer,
+// which sets align-items: center) — a mark this size left on the baseline would
+// hang entirely above the word. Behind it sits the radial halo that replaced
+// the old CSS beacon — same 2.6s / same easing, so the pulse still reads as the
+// same signal, and sized off --brandmark-size so it grows with the mark.
 //
 // aria-hidden: the accessible name lives on the .brand link, and the word
 // "Sentinely" is written right next to it. Announcing the mark too would say
@@ -18,19 +20,22 @@ import { markFull, markSimple } from '../data/brandmark.js';
 interface Props {
   /**
    * `simple` drops the eye counters and fattens the strokes — required below
-   * ~20px tall, which is where every in-page use sits today.
+   * ~20px tall. At the doubled size the header and footer now draw it at ~26px,
+   * which is above the threshold where `full` holds together: worth a look if
+   * the fattened strokes start reading as heavy.
    */
   variant?: 'simple' | 'full';
   /**
    * Height of the mark. Keep it in `em` so it tracks the wordmark — the
-   * default is the measured cap height of this font stack (S = 0.725em, not
-   * the 1em of the font size).
+   * default is twice the measured cap height of this font stack (S = 0.725em,
+   * not the 1em of the font size). Width follows from the variant's ratio, so
+   * overriding this never distorts the drawing.
    */
   size?: string;
   class?: string;
 }
 
-const { variant = 'simple', size = '0.725em', class: className } = Astro.props;
+const { variant = 'simple', size = '1.45em', class: className } = Astro.props;
 const mark = variant === 'simple' ? markSimple : markFull;
 ---
 
@@ -52,6 +57,14 @@ const mark = variant === 'simple' ? markSimple : markFull;
     display: inline-flex;
     flex: none;
     color: var(--accent-solid);
+    /* Optical correction on top of the flex centring. Centring lines the mark
+       up with the middle of the wordmark's *line box*, which for this stack
+       sits 0.393em above the baseline; the middle of the cap band — baseline
+       to 0.725em, the mass the eye actually reads — sits at 0.363em. The nudge
+       closes those 0.03em. In `em` off the wordmark, not off --brandmark-size,
+       because it answers to the type, not to how big the mark is. A transform
+       so it stays out of layout: nothing in the header shifts. */
+    transform: translateY(0.03em);
   }
 
   /* Positioned (not z-indexed) so it paints above the halo purely by document
