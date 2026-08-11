@@ -13,6 +13,8 @@ const product = [
   { href: `${homeHref}#how`, label: t('footer.product.how') },
   { href: `${homeHref}#pricing`, label: t('footer.product.pricing') },
   { href: `${homeHref}#faq`, label: t('footer.product.faq') },
+  // Slug stays English in both locales, like the segment pages.
+  { href: p('/tools/email-header-analyzer'), label: t('footer.product.tools') },
 ];
 
 const solutions = segments.map((segment) => ({

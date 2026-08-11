@@ -1,0 +1,1460 @@
+---
+/**
+ * The email-header analyser: a textarea, a button, and the reading of what came
+ * back from `POST /api/v1/tools/header-analysis`.
+ *
+ * Three rules shape everything below, and none of them is cosmetic.
+ *
+ * 1. ⚠️ **The call goes straight to the API from the browser.** Never through a
+ *    Pages Function: the product rate-limits this route per IP, and a proxy
+ *    would hand it Cloudflare's IP on every request, so one abuser would spend
+ *    the whole allowance for every visitor. CORS is configured product-side for
+ *    this route and for `sentinely.eu` / `www.sentinely.eu` only — which is why
+ *    the call cannot succeed from localhost or from the pages.dev preview.
+ *
+ * 2. ⚠️ **Nothing is kept.** Pasted headers are third parties' personal data —
+ *    senders, recipients, IPs, subjects — belonging to people who never agreed
+ *    to anything. So: no `localStorage`/`sessionStorage`, no query-string
+ *    prefill (a URL would land in history, in CDN logs and in the referer), no
+ *    analytics touching the content, and the textarea carries no `name` so that
+ *    not even a stray native submit could serialise it into a URL. The body of
+ *    the message is dropped in the browser before the request leaves.
+ *
+ * 3. ⚠️ **The words stay honest.** Authentication results are claims made by
+ *    the server that received the message, so every label this file writes says
+ *    "reported", never "SPF is valid". And absence is not failure: a method with
+ *    no result gets a neutral chip and never a red one — the API agrees (it
+ *    files `NO_AUTH_RESULTS` as `info`), and the page must not contradict it.
+ *
+ * The strings all come from the dictionaries so EN and IT stay at parity; the
+ * ones the script needs are handed over as a JSON island. Everything the API
+ * returns is written with `textContent` only: header values are arbitrary text
+ * from a stranger's mailbox and must never be parsed as HTML.
+ */
+import { useTranslations, type Lang } from '../i18n/utils';
+import { HEADER_ANALYSIS_ENDPOINT, HEADER_ANALYSIS_MAX_BYTES } from '../config';
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+
+/** Anchor of the "where to find the headers" section, linked from two places. */
+const FIND_ANCHOR = '#find-headers';
+
+/**
+ * Strings the client script picks (a result value, a severity, an error) rather
+ * than ones Astro can render at build time. Handed over as JSON rather than a
+ * pile of `data-` attributes because there are dozens; `<` is escaped so no
+ * string can close the script element early.
+ */
+const strings = {
+  submit: t('headerAnalyzer.form.submit'),
+  submitBusy: t('headerAnalyzer.form.submitBusy'),
+  size: t('headerAnalyzer.form.size'),
+  statusBusy: t('headerAnalyzer.form.statusBusy'),
+  statusDone: t('headerAnalyzer.form.statusDone'),
+  errors: t('headerAnalyzer.errors'),
+  result: t('headerAnalyzer.result'),
+};
+const stringsJson = JSON.stringify(strings).replace(/</g, '\\u003c');
+---
+
+<div
+  class="analyzer"
+  data-analyzer
+  data-lang={lang}
+  data-endpoint={HEADER_ANALYSIS_ENDPOINT}
+  data-max-bytes={HEADER_ANALYSIS_MAX_BYTES}
+>
+  <form class="ha-form panel" data-ha-form novalidate>
+    <label class="field-label ha-label" for="ha-input">{t('headerAnalyzer.form.label')}</label>
+    <p class="ha-hint" id="ha-hint">{t('headerAnalyzer.form.hint')}</p>
+
+    {/* No `name`: nothing here may ever be serialised into a URL. */}
+    <textarea
+      class="field ha-input mono"
+      id="ha-input"
+      rows="14"
+      spellcheck="false"
+      autocomplete="off"
+      autocapitalize="off"
+      autocorrect="off"
+      aria-describedby="ha-hint"
+      placeholder={t('headerAnalyzer.form.placeholder')}></textarea>
+
+    <div class="ha-actions">
+      <button type="submit" class="btn btn-primary" data-ha-submit>
+        <span data-ha-submit-label>{t('headerAnalyzer.form.submit')}</span>
+      </button>
+      <button type="button" class="btn btn-ghost" data-ha-clear>{t('headerAnalyzer.form.clear')}</button>
+      <a class="ha-help-link" href={FIND_ANCHOR}>{t('headerAnalyzer.form.helpLink')}</a>
+      <p class="ha-size mono" data-ha-size hidden></p>
+    </div>
+
+    <p class="ha-error" role="alert" data-ha-error hidden></p>
+
+    <noscript>
+      <p class="ha-error">{t('headerAnalyzer.errors.network')}</p>
+    </noscript>
+  </form>
+
+  <p class="ha-sr" role="status" aria-live="polite" data-ha-status></p>
+
+  <aside class="ha-privacy">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
+      <path d="M12 3 5 6v5c0 4.4 3 8 7 9 4-1 7-4.6 7-9V6l-7-3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path>
+      <path d="M9.2 12.2 11 14l3.8-3.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg>
+    <div>
+      <p class="ha-privacy-title">{t('headerAnalyzer.privacy.title')}</p>
+      <p class="ha-privacy-body">{t('headerAnalyzer.privacy.body')}</p>
+    </div>
+  </aside>
+
+  {/* `recognized: false` is a valid answer, not an error — so it gets an
+      explanation and a route forward, never the red error line. */}
+  <section class="ha-unrecognized panel" data-ha-unrecognized hidden tabindex="-1">
+    <h2 class="ha-unrecognized-title">{t('headerAnalyzer.unrecognized.title')}</h2>
+    <p class="ha-unrecognized-body">{t('headerAnalyzer.unrecognized.body')}</p>
+    <a class="btn btn-ghost" href={FIND_ANCHOR}>{t('headerAnalyzer.unrecognized.cta')}</a>
+  </section>
+
+  <div class="ha-result" data-ha-result hidden tabindex="-1">
+    <section class="ha-verdict panel">
+      <p class="eyebrow">{t('headerAnalyzer.result.eyebrow')}</p>
+      <p class="ha-summary" data-ha-summary></p>
+      <p class="ha-reported mono" data-ha-reported></p>
+      <dl class="ha-identity">
+        <div class="ha-id-row">
+          <dt class="label">{t('headerAnalyzer.result.identity.from')}</dt>
+          <dd class="mono" data-ha-id-from></dd>
+        </div>
+        <div class="ha-id-row">
+          <dt class="label">{t('headerAnalyzer.result.identity.subject')}</dt>
+          <dd data-ha-id-subject></dd>
+        </div>
+        <div class="ha-id-row">
+          <dt class="label">{t('headerAnalyzer.result.identity.date')}</dt>
+          <dd data-ha-id-date></dd>
+        </div>
+      </dl>
+    </section>
+
+    <aside class="ha-limits" data-ha-limits hidden>
+      <p class="ha-limits-heading">{t('headerAnalyzer.result.limits.heading')}</p>
+      <ul data-ha-limits-list></ul>
+    </aside>
+
+    <section class="ha-section">
+      <h2 class="ha-h">{t('headerAnalyzer.result.auth.heading')}</h2>
+      <p class="ha-sub">{t('headerAnalyzer.result.auth.sub')}</p>
+      <div class="ha-absent" data-ha-auth-absent hidden>
+        <p class="ha-absent-title">{t('headerAnalyzer.result.auth.absentTitle')}</p>
+        <p class="ha-absent-body">{t('headerAnalyzer.result.auth.absentBody')}</p>
+      </div>
+      <div class="ha-auth-grid" data-ha-auth-grid></div>
+    </section>
+
+    <section class="ha-section">
+      <h2 class="ha-h">{t('headerAnalyzer.result.alignment.heading')}</h2>
+      <p class="ha-sub">{t('headerAnalyzer.result.alignment.sub')}</p>
+      <p class="ha-plain" data-ha-align-nofrom hidden>{t('headerAnalyzer.result.alignment.noFromDomain')}</p>
+      <div class="ha-align" data-ha-align hidden>
+        <div class="ha-align-anchor">
+          <p class="label">{t('headerAnalyzer.result.alignment.fromDomain')}</p>
+          <p class="mono ha-anchor-domain" data-ha-align-from></p>
+        </div>
+        <div class="ha-align-rows" data-ha-align-rows></div>
+      </div>
+      <p class="ha-footnote" data-ha-align-signing hidden>
+        <span class="label">{t('headerAnalyzer.result.alignment.signingDomains')}</span>
+        <span class="mono" data-ha-align-signing-list></span>
+      </p>
+      <p class="ha-footnote" data-ha-align-approx hidden>{t('headerAnalyzer.result.alignment.approximated')}</p>
+    </section>
+
+    <section class="ha-section" data-ha-notes-section hidden>
+      <h2 class="ha-h">{t('headerAnalyzer.result.notes.heading')}</h2>
+      <ul class="ha-notes" data-ha-notes></ul>
+    </section>
+
+    <section class="ha-section">
+      <h2 class="ha-h">{t('headerAnalyzer.result.path.heading')}</h2>
+      <p class="ha-sub">{t('headerAnalyzer.result.path.sub')}</p>
+      <p class="ha-plain" data-ha-path-empty hidden>{t('headerAnalyzer.result.path.empty')}</p>
+      <div data-ha-path hidden>
+        <div class="ha-kpis">
+          <div class="ha-kpi">
+            <p class="label">{t('headerAnalyzer.result.path.totalTime')}</p>
+            <p class="mono ha-kpi-value" data-ha-path-total></p>
+          </div>
+          <div class="ha-kpi">
+            <p class="label">{t('headerAnalyzer.result.path.hops')}</p>
+            <p class="mono ha-kpi-value" data-ha-path-hops></p>
+          </div>
+          <div class="ha-kpi" data-ha-path-slowest-wrap hidden>
+            <p class="label">{t('headerAnalyzer.result.path.slowest')}</p>
+            <p class="mono ha-kpi-value" data-ha-path-slowest></p>
+          </div>
+        </div>
+        <p class="ha-plain ha-plain-warn" data-ha-path-skew hidden>{t('headerAnalyzer.result.path.clockSkew')}</p>
+        <div class="scroll-x">
+          <table class="ha-table">
+            <thead>
+              <tr>
+                <th>{t('headerAnalyzer.result.path.columns.step')}</th>
+                <th>{t('headerAnalyzer.result.path.columns.from')}</th>
+                <th>{t('headerAnalyzer.result.path.columns.by')}</th>
+                <th class="ta-right">{t('headerAnalyzer.result.path.columns.delay')}</th>
+                <th>{t('headerAnalyzer.result.path.columns.transport')}</th>
+                <th>{t('headerAnalyzer.result.path.columns.time')}</th>
+              </tr>
+            </thead>
+            <tbody data-ha-hops></tbody>
+          </table>
+        </div>
+        <p class="ha-footnote">{t('headerAnalyzer.result.path.timezone')}</p>
+      </div>
+    </section>
+
+    <details class="ha-details">
+      <summary class="ha-details-summary">{t('headerAnalyzer.result.details.summaryLabel')}</summary>
+      <div class="ha-details-body">
+        <dl class="ha-kv">
+          <div class="ha-id-row">
+            <dt class="label">{t('headerAnalyzer.result.details.to')}</dt>
+            <dd class="mono" data-ha-d-to></dd>
+          </div>
+          <div class="ha-id-row">
+            <dt class="label">{t('headerAnalyzer.result.details.replyTo')}</dt>
+            <dd class="mono" data-ha-d-replyto></dd>
+          </div>
+          <div class="ha-id-row">
+            <dt class="label">{t('headerAnalyzer.result.details.returnPath')}</dt>
+            <dd class="mono" data-ha-d-returnpath></dd>
+          </div>
+          <div class="ha-id-row">
+            <dt class="label">{t('headerAnalyzer.result.details.messageId')}</dt>
+            <dd class="mono" data-ha-d-messageid></dd>
+          </div>
+        </dl>
+        <ul class="ha-notable" data-ha-notable></ul>
+        <p class="ha-footnote mono" data-ha-headercount></p>
+      </div>
+    </details>
+  </div>
+
+  {/* Rows are cloned from templates rather than built with createElement so
+      they inherit this component's scoped styles. */}
+  <template data-tpl-auth>
+    <article class="ha-auth-card">
+      <p class="ha-auth-method mono" data-method></p>
+      <span class="chip" data-chip></span>
+      <p class="ha-auth-meta mono" data-meta hidden></p>
+      <p class="ha-auth-reason" data-reason hidden></p>
+    </article>
+  </template>
+
+  <template data-tpl-align>
+    <div class="ha-align-row">
+      <p class="label" data-label></p>
+      <p class="mono ha-align-domain" data-domain></p>
+      <span class="chip" data-chip></span>
+      <p class="ha-align-meta" data-meta hidden></p>
+    </div>
+  </template>
+
+  <template data-tpl-note>
+    <li class="ha-note">
+      <span class="chip chip-xs" data-sev></span>
+      <div class="ha-note-body">
+        <p class="ha-note-title" data-title></p>
+        <p class="ha-note-detail" data-detail></p>
+      </div>
+    </li>
+  </template>
+
+  <template data-tpl-hop>
+    <tr>
+      <td class="mono ha-hop-idx" data-idx></td>
+      <td>
+        <span class="mono ha-hop-host" data-from></span>
+        <span class="mono ha-hop-ip" data-fromip hidden></span>
+      </td>
+      <td class="mono ha-hop-host" data-by></td>
+      <td class="mono ta-right ha-hop-delay" data-delay></td>
+      <td class="ha-hop-transport">
+        <span class="chip chip-xs" data-tls hidden></span>
+        <span class="mono ha-hop-proto" data-proto hidden></span>
+      </td>
+      <td class="mono ha-hop-time" data-time></td>
+    </tr>
+  </template>
+
+  <template data-tpl-notable>
+    <li class="ha-notable-item">
+      <span class="mono ha-notable-key" data-key></span>
+      <span class="chip chip-xs" data-state></span>
+      <span class="mono ha-notable-value" data-value hidden></span>
+    </li>
+  </template>
+
+  <script type="application/json" data-ha-strings is:inline set:html={stringsJson}></script>
+</div>
+
+<style>
+  /* Elements are shown and hidden with the `hidden` attribute; our own
+     display rules would otherwise win over the UA default. */
+  [hidden] {
+    display: none !important;
+  }
+
+  .analyzer {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  /* ---- Form ---- */
+  .ha-form {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+  }
+  .ha-label {
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+  }
+  .ha-hint {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.9rem;
+    max-width: 70ch;
+  }
+  .ha-input {
+    min-height: 16rem;
+    font-size: 0.84rem;
+    line-height: 1.55;
+    resize: vertical;
+    background-color: var(--surface-2);
+  }
+  .ha-input::placeholder {
+    color: var(--faint);
+  }
+  .ha-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+    margin-top: 1rem;
+  }
+  .ha-help-link {
+    font-size: 0.88rem;
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .ha-size {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-left: auto;
+  }
+  .ha-size[data-over] {
+    color: var(--fail);
+    font-weight: 650;
+  }
+  .ha-error {
+    margin-top: 0.9rem;
+    color: var(--fail);
+    font-size: 0.9rem;
+    font-weight: 550;
+    line-height: 1.55;
+    max-width: 70ch;
+  }
+  .btn[data-loading] {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
+  /* Visually hidden live region — the result is announced without being seen. */
+  .ha-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* ---- Privacy note ---- */
+  .ha-privacy {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1.1rem 1.25rem;
+    border: 1px solid var(--accent-line);
+    border-radius: var(--radius);
+    background-color: var(--accent-soft);
+  }
+  .ha-privacy svg {
+    flex: none;
+    color: var(--accent);
+    margin-top: 0.15rem;
+  }
+  .ha-privacy-title {
+    font-weight: 680;
+    color: var(--strong);
+    font-size: 0.95rem;
+  }
+  .ha-privacy-body {
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-top: 0.3rem;
+    max-width: 78ch;
+  }
+
+  /* ---- "Nothing recognised" ---- */
+  .ha-unrecognized {
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.85rem;
+  }
+  .ha-unrecognized-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+  .ha-unrecognized-body {
+    color: var(--muted);
+    font-size: 0.97rem;
+    line-height: 1.65;
+    max-width: 72ch;
+  }
+
+  /* ---- Result ---- */
+  .ha-result {
+    display: flex;
+    flex-direction: column;
+    gap: 2.25rem;
+  }
+  .ha-result:focus {
+    outline: none;
+  }
+
+  .ha-verdict {
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+  }
+  .ha-summary {
+    margin-top: 0.7rem;
+    font-size: 1.15rem;
+    line-height: 1.5;
+    color: var(--strong);
+    font-weight: 620;
+    max-width: 62ch;
+  }
+  .ha-reported {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--faint);
+  }
+  .ha-identity {
+    margin-top: 1.25rem;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--line);
+    display: grid;
+    gap: 0.7rem;
+  }
+  .ha-id-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
+  }
+  .ha-id-row dd {
+    font-size: 0.92rem;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+  }
+
+  .ha-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    min-width: 0;
+  }
+  .ha-h {
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+  .ha-sub {
+    color: var(--muted);
+    font-size: 0.94rem;
+    line-height: 1.6;
+    max-width: 72ch;
+  }
+  .ha-plain {
+    color: var(--muted);
+    font-size: 0.94rem;
+    line-height: 1.6;
+    max-width: 72ch;
+    margin-top: 0.4rem;
+  }
+  .ha-plain-warn {
+    color: var(--warn);
+  }
+  .ha-footnote {
+    color: var(--faint);
+    font-size: 0.82rem;
+    line-height: 1.6;
+    max-width: 74ch;
+    margin-top: 0.5rem;
+  }
+  .ha-footnote .label {
+    margin-right: 0.4rem;
+  }
+
+  /* Absence of results — stated plainly, never coloured as a failure. */
+  .ha-absent {
+    margin-top: 0.6rem;
+    padding: 1rem 1.15rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-2);
+  }
+  .ha-absent-title {
+    font-weight: 650;
+    color: var(--strong);
+    font-size: 0.95rem;
+  }
+  .ha-absent-body {
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-top: 0.35rem;
+    max-width: 74ch;
+  }
+
+  .ha-auth-grid {
+    margin-top: 0.75rem;
+    display: grid;
+    gap: 0.85rem;
+    grid-template-columns: 1fr;
+  }
+  .ha-auth-card {
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+  .ha-auth-method {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .ha-auth-meta {
+    font-size: 0.76rem;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+    line-height: 1.5;
+  }
+  .ha-auth-reason {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+
+  .ha-align {
+    margin-top: 0.75rem;
+    display: grid;
+    gap: 0.85rem;
+    grid-template-columns: 1fr;
+  }
+  .ha-align-anchor,
+  .ha-align-row {
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+    min-width: 0;
+  }
+  .ha-align-anchor {
+    background-color: var(--surface-2);
+  }
+  .ha-anchor-domain,
+  .ha-align-domain {
+    font-size: 0.95rem;
+    font-weight: 650;
+    color: var(--strong);
+    overflow-wrap: anywhere;
+  }
+  .ha-align-rows {
+    display: grid;
+    gap: 0.85rem;
+    grid-template-columns: 1fr;
+    min-width: 0;
+  }
+  .ha-align-meta {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .ha-notes {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    list-style: none;
+  }
+  .ha-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.95rem 1.1rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+  }
+  .ha-note-body {
+    min-width: 0;
+  }
+  .ha-note-title {
+    font-weight: 650;
+    color: var(--strong);
+    font-size: 0.95rem;
+  }
+  .ha-note-detail {
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-top: 0.25rem;
+    max-width: 74ch;
+  }
+
+  .ha-kpis {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.75rem;
+  }
+  .ha-kpi-value {
+    font-size: 1.05rem;
+    font-weight: 650;
+    color: var(--strong);
+    margin-top: 0.15rem;
+  }
+
+  .ha-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    min-width: 44rem;
+    margin-top: 1rem;
+  }
+  .ha-table th {
+    text-align: left;
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.62rem;
+    font-weight: 600;
+    color: var(--faint);
+    padding: 0 0.6rem 0.55rem;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+  .ha-table td {
+    padding: 0.65rem 0.6rem;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  .ha-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  .ha-table tr[data-slowest] {
+    background-color: var(--warn-soft);
+  }
+  .ta-right {
+    text-align: right;
+  }
+  .ha-hop-idx {
+    color: var(--faint);
+  }
+  .ha-hop-host {
+    display: block;
+    color: var(--ink);
+    font-size: 0.8rem;
+    overflow-wrap: anywhere;
+  }
+  .ha-hop-ip {
+    display: block;
+    color: var(--faint);
+    font-size: 0.74rem;
+    margin-top: 0.15rem;
+  }
+  .ha-hop-delay {
+    color: var(--strong);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .ha-hop-transport {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+  }
+  .ha-hop-proto {
+    font-size: 0.72rem;
+    color: var(--faint);
+  }
+  .ha-hop-time {
+    color: var(--muted);
+    font-size: 0.76rem;
+    white-space: nowrap;
+  }
+
+  .ha-limits {
+    padding: 0.95rem 1.15rem;
+    border: 1px solid color-mix(in srgb, var(--warn) 35%, var(--line));
+    border-radius: var(--radius-sm);
+    background-color: var(--warn-soft);
+  }
+  .ha-limits-heading {
+    font-weight: 650;
+    color: var(--strong);
+    font-size: 0.92rem;
+  }
+  .ha-limits ul {
+    margin-top: 0.4rem;
+    padding-left: 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .ha-limits li {
+    list-style: disc;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.55;
+  }
+
+  .ha-details {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    overflow: hidden;
+  }
+  .ha-details-summary {
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    font-weight: 650;
+    color: var(--strong);
+    font-size: 0.95rem;
+  }
+  .ha-details-summary:hover {
+    color: var(--accent);
+  }
+  .ha-details-body {
+    padding: 0 1.25rem 1.35rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    min-width: 0;
+  }
+  .ha-kv {
+    display: grid;
+    gap: 0.7rem;
+  }
+  .ha-kv dd {
+    font-size: 0.88rem;
+    overflow-wrap: anywhere;
+  }
+  .ha-notable {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    list-style: none;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--line);
+  }
+  .ha-notable-item {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+  .ha-notable-key {
+    font-size: 0.8rem;
+    font-weight: 650;
+    color: var(--strong);
+  }
+  .ha-notable-value {
+    font-size: 0.74rem;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+    flex: 1 1 14rem;
+    min-width: 0;
+  }
+
+  .chip-xs {
+    padding: 0.12rem 0.45rem;
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+  }
+  /* Neutral chip: "not reported", "no chain", "absent" — never a red one. */
+  .chip-muted {
+    color: var(--muted);
+    border-style: dashed;
+  }
+
+  @media (min-width: 640px) {
+    .ha-id-row {
+      grid-template-columns: 8rem minmax(0, 1fr);
+      gap: 1rem;
+      align-items: baseline;
+    }
+  }
+  @media (min-width: 720px) {
+    .ha-auth-grid,
+    .ha-align-rows {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .ha-form {
+      padding: 1.75rem;
+    }
+  }
+  @media (min-width: 980px) {
+    .ha-auth-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .ha-align {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+      align-items: start;
+    }
+  }
+</style>
+
+<script>
+  /* ── The shape the API returns ────────────────────────────────────────────
+     Mirrors `HeaderAnalysis` in the product. Only the fields this page reads
+     are declared; `null` means "not determinable" everywhere, never "negative".
+  */
+  type AuthResult =
+    | 'pass'
+    | 'fail'
+    | 'softfail'
+    | 'neutral'
+    | 'none'
+    | 'temperror'
+    | 'permerror'
+    | 'policy'
+    | 'unknown';
+
+  interface AuthVerdict {
+    result: AuthResult;
+    rawResult: string;
+    reportedBy: string | null;
+    reason: string | null;
+    properties: Record<string, string>;
+  }
+
+  interface AlignmentResult {
+    domain: string | null;
+    source: string | null;
+    relation: 'exact' | 'subdomain' | 'none' | null;
+    strict: boolean | null;
+    relaxed: boolean | null;
+  }
+
+  interface Hop {
+    index: number;
+    from: string | null;
+    fromIp: string | null;
+    by: string | null;
+    transport: { secured: boolean | null; protocol: string | null; detail: string | null };
+    timestamp: string | null;
+    delaySeconds: number | null;
+    clockSkew: boolean;
+  }
+
+  interface Analysis {
+    locale: string;
+    recognized: boolean;
+    headerCount: number;
+    summary: string;
+    message: {
+      from: { address: string | null; name: string | null }[];
+      to: { address: string | null; name: string | null }[];
+      replyTo: { address: string | null; name: string | null }[];
+      returnPath: string | null;
+      subject: string | null;
+      date: string | null;
+      messageId: string | null;
+    };
+    authentication: {
+      present: boolean;
+      reportedBy: string | null;
+      spf: AuthVerdict | null;
+      dkim: AuthVerdict | null;
+      dmarc: AuthVerdict | null;
+      arc: {
+        present: boolean;
+        instances: number;
+        chainValidation: 'none' | 'pass' | 'fail' | null;
+        reportedResult: AuthResult | null;
+      };
+    };
+    alignment: {
+      fromDomain: string | null;
+      spf: AlignmentResult;
+      dkim: AlignmentResult;
+      dkimDomains: string[];
+      organizationalDomainApproximated: boolean;
+    };
+    path: {
+      hops: Hop[];
+      totalHops: number;
+      totalSeconds: number | null;
+      slowestHopIndex: number | null;
+      slowestHopSeconds: number | null;
+      clockSkewDetected: boolean;
+    };
+    notableHeaders: { key: string; present: boolean; value: string | null; count: number }[];
+    notes: { code: string; severity: 'info' | 'warning' | 'critical'; title: string; detail: string }[];
+    limits: { headersTruncated: boolean; hopsTruncated: boolean; valuesTruncated: boolean };
+  }
+
+  const root = document.querySelector<HTMLElement>('[data-analyzer]');
+
+  if (root) {
+    const S = JSON.parse(
+      root.querySelector<HTMLScriptElement>('[data-ha-strings]')?.textContent ?? '{}',
+    );
+    const R = S.result;
+    const lang = root.dataset.lang === 'it' ? 'it' : 'en';
+    const endpoint = root.dataset.endpoint ?? '';
+    const maxBytes = Number(root.dataset.maxBytes) || 65536;
+
+    const q = <T extends Element>(sel: string, scope: ParentNode = root) =>
+      scope.querySelector<T>(sel);
+
+    const form = q<HTMLFormElement>('[data-ha-form]')!;
+    const input = q<HTMLTextAreaElement>('#ha-input')!;
+    const submitBtn = q<HTMLButtonElement>('[data-ha-submit]')!;
+    const submitLabel = q<HTMLElement>('[data-ha-submit-label]')!;
+    const clearBtn = q<HTMLButtonElement>('[data-ha-clear]')!;
+    const sizeEl = q<HTMLElement>('[data-ha-size]')!;
+    const errorEl = q<HTMLElement>('[data-ha-error]')!;
+    const statusEl = q<HTMLElement>('[data-ha-status]')!;
+    const resultEl = q<HTMLElement>('[data-ha-result]')!;
+    const unrecognizedEl = q<HTMLElement>('[data-ha-unrecognized]')!;
+
+    const encoder = new TextEncoder();
+
+    // ── Helpers ───────────────────────────────────────────────────────────
+
+    const interpolate = (tpl: string, vars: Record<string, string | number>) =>
+      tpl.replace(/\{(\w+)\}/g, (m, k: string) => (k in vars ? String(vars[k]) : m));
+
+    /**
+     * Keeps only the header block, cutting at the first blank line — the exact
+     * rule the API applies server-side, so the reading is identical.
+     *
+     * Doing it here is deliberate: pasting Gmail's "Show original" means pasting
+     * the whole message, and the body is both irrelevant to the analysis and
+     * the most personal part of somebody else's mail. Cut here, it never leaves
+     * the browser — and a long message stops blowing the 64 KB ceiling.
+     */
+    const cutHeaderBlock = (raw: string): string => {
+      const text = raw.replace(/^\s+/, '');
+      const crlf = text.indexOf('\r\n\r\n');
+      const lf = text.indexOf('\n\n');
+      let end = -1;
+      if (crlf >= 0) end = crlf;
+      if (lf >= 0) end = end < 0 ? lf : Math.min(end, lf);
+      return end < 0 ? text : text.slice(0, end);
+    };
+
+    /** Same rendering as the API's own durations, so the two never disagree. */
+    const formatDuration = (totalSeconds: number): string => {
+      const seconds = Math.max(0, Math.round(totalSeconds));
+      if (seconds < 60) return `${seconds} s`;
+      const h = Math.floor(seconds / 3600);
+      const min = Math.floor((seconds % 3600) / 60);
+      const s = seconds % 60;
+      const parts: string[] = [];
+      if (h > 0) parts.push(`${h} h`);
+      if (min > 0) parts.push(`${min} min`);
+      if (s > 0 && h === 0) parts.push(`${s} s`);
+      return parts.join(' ');
+    };
+
+    const formatBytes = (bytes: number) =>
+      `${(bytes / 1024).toLocaleString(lang, { maximumFractionDigits: 1 })} KB`;
+
+    const formatDate = (iso: string | null): string | null => {
+      if (!iso) return null;
+      const d = new Date(iso);
+      if (Number.isNaN(d.getTime())) return null;
+      return d.toLocaleString(lang, { dateStyle: 'medium', timeStyle: 'short' });
+    };
+
+    const formatAddresses = (list: { address: string | null; name: string | null }[]): string =>
+      list
+        .map((a) => (a.name && a.address ? `${a.name} <${a.address}>` : (a.address ?? a.name ?? '')))
+        .filter(Boolean)
+        .join(', ');
+
+    /** Writes text, or the "not present" placeholder when there is none. */
+    const setText = (el: Element | null, value: string | null | undefined) => {
+      if (el) el.textContent = value && value.length > 0 ? value : R.identity.none;
+    };
+
+    const show = (el: Element | null, visible: boolean) => {
+      if (el) (el as HTMLElement).hidden = !visible;
+    };
+
+    const clone = (name: string): DocumentFragment =>
+      q<HTMLTemplateElement>(`[data-tpl-${name}]`)!.content.cloneNode(true) as DocumentFragment;
+
+    /**
+     * Chip colour for a reported result. `neutral`, `none`, `policy` and
+     * anything non-standard stay neutral on purpose: not knowing is not failing,
+     * and a red chip here would be the page telling a lie the API did not.
+     */
+    const chipClass = (result: AuthResult): string => {
+      if (result === 'pass') return 'chip chip-pass';
+      if (result === 'fail') return 'chip chip-fail';
+      if (result === 'softfail' || result === 'temperror' || result === 'permerror') {
+        return 'chip chip-warn';
+      }
+      return 'chip chip-muted';
+    };
+
+    const resultLabel = (v: AuthVerdict): string =>
+      R.auth.results[v.result] ?? v.rawResult ?? R.auth.results.unknown;
+
+    // ── Form state ────────────────────────────────────────────────────────
+
+    const setError = (message: string | null) => {
+      errorEl.textContent = message ?? '';
+      errorEl.hidden = !message;
+    };
+
+    // Deliberately leaves the live region alone on the way out: the caller
+    // announces the outcome, and clearing here would wipe it.
+    const setLoading = (loading: boolean) => {
+      submitBtn.toggleAttribute('data-loading', loading);
+      submitLabel.textContent = loading ? S.submitBusy : S.submit;
+      if (loading) statusEl.textContent = S.statusBusy;
+    };
+
+    const updateSize = () => {
+      const bytes = encoder.encode(cutHeaderBlock(input.value)).length;
+      // Only worth showing once it is close enough to matter.
+      const visible = bytes > maxBytes * 0.6;
+      sizeEl.hidden = !visible;
+      sizeEl.toggleAttribute('data-over', bytes > maxBytes);
+      if (visible) {
+        sizeEl.textContent = interpolate(S.size, {
+          size: formatBytes(bytes),
+          max: formatBytes(maxBytes),
+        });
+      }
+    };
+
+    input.addEventListener('input', updateSize);
+
+    clearBtn.addEventListener('click', () => {
+      input.value = '';
+      setError(null);
+      updateSize();
+      resultEl.hidden = true;
+      unrecognizedEl.hidden = true;
+      statusEl.textContent = '';
+      input.focus();
+    });
+
+    // ── Rendering ─────────────────────────────────────────────────────────
+
+    const renderAuth = (a: Analysis) => {
+      const grid = q<HTMLElement>('[data-ha-auth-grid]')!;
+      grid.replaceChildren();
+      show(q('[data-ha-auth-absent]'), !a.authentication.present);
+
+      const methods: [string, AuthVerdict | null][] = [
+        ['SPF', a.authentication.spf],
+        ['DKIM', a.authentication.dkim],
+        ['DMARC', a.authentication.dmarc],
+      ];
+
+      for (const [label, verdict] of methods) {
+        const node = clone('auth');
+        setText(q('[data-method]', node), label);
+        const chip = q<HTMLElement>('[data-chip]', node)!;
+        if (verdict) {
+          chip.className = chipClass(verdict.result);
+          chip.textContent = resultLabel(verdict);
+          const props = Object.entries(verdict.properties)
+            .map(([k, v]) => `${k}=${v}`)
+            .join(' · ');
+          const meta = q<HTMLElement>('[data-meta]', node)!;
+          if (props) {
+            meta.textContent = props;
+            meta.hidden = false;
+          }
+          const reason = q<HTMLElement>('[data-reason]', node)!;
+          if (verdict.reason) {
+            reason.textContent = `${R.auth.reason}: ${verdict.reason}`;
+            reason.hidden = false;
+          }
+        } else {
+          chip.className = 'chip chip-muted';
+          chip.textContent = R.auth.notReported;
+        }
+        grid.append(node);
+      }
+
+      // ARC is never pass/fail here: its presence is information, not a verdict.
+      const arc = a.authentication.arc;
+      const node = clone('auth');
+      setText(q('[data-method]', node), R.auth.arc.label);
+      const chip = q<HTMLElement>('[data-chip]', node)!;
+      chip.className = 'chip chip-muted';
+      chip.textContent = arc.present
+        ? interpolate(R.auth.arc.seals, { count: arc.instances })
+        : R.auth.arc.absent;
+      if (arc.chainValidation) {
+        const meta = q<HTMLElement>('[data-meta]', node)!;
+        meta.textContent = interpolate(R.auth.arc.chain, { value: arc.chainValidation });
+        meta.hidden = false;
+      }
+      if (arc.present) {
+        const reason = q<HTMLElement>('[data-reason]', node)!;
+        reason.textContent = R.auth.arc.hint;
+        reason.hidden = false;
+      }
+      grid.append(node);
+    };
+
+    const renderAlignment = (a: Analysis) => {
+      const al = a.alignment;
+      show(q('[data-ha-align-nofrom]'), !al.fromDomain);
+      show(q('[data-ha-align]'), Boolean(al.fromDomain));
+      show(q('[data-ha-align-approx]'), al.organizationalDomainApproximated);
+
+      const signing = q<HTMLElement>('[data-ha-align-signing]')!;
+      if (al.dkimDomains.length > 1) {
+        setText(q('[data-ha-align-signing-list]'), al.dkimDomains.join(', '));
+        signing.hidden = false;
+      } else {
+        signing.hidden = true;
+      }
+
+      if (!al.fromDomain) return;
+      setText(q('[data-ha-align-from]'), al.fromDomain);
+
+      const rows = q<HTMLElement>('[data-ha-align-rows]')!;
+      rows.replaceChildren();
+
+      for (const [label, r] of [
+        [R.alignment.spf, al.spf],
+        [R.alignment.dkim, al.dkim],
+      ] as [string, AlignmentResult][]) {
+        const node = clone('align');
+        setText(q('[data-label]', node), label);
+        setText(q('[data-domain]', node), r.domain);
+
+        const chip = q<HTMLElement>('[data-chip]', node)!;
+        if (r.relaxed === true) {
+          chip.className = 'chip chip-pass';
+          chip.textContent = R.alignment.aligned;
+        } else if (r.relaxed === false) {
+          // A warning, not a failure: it is the API's own severity for this.
+          chip.className = 'chip chip-warn';
+          chip.textContent = R.alignment.notAligned;
+        } else {
+          chip.className = 'chip chip-muted';
+          chip.textContent = R.alignment.unknown;
+        }
+
+        const bits: string[] = [];
+        if (r.relation) bits.push(R.alignment.relation[r.relation]);
+        if (r.relaxed === true) {
+          bits.push(r.strict === true ? R.alignment.modes.both : R.alignment.modes.relaxed);
+        }
+        if (r.source) bits.push(interpolate(R.alignment.source, { source: r.source }));
+        const meta = q<HTMLElement>('[data-meta]', node)!;
+        if (bits.length) {
+          meta.textContent = bits.join(' · ');
+          meta.hidden = false;
+        }
+        rows.append(node);
+      }
+    };
+
+    const renderNotes = (a: Analysis) => {
+      const list = q<HTMLElement>('[data-ha-notes]')!;
+      list.replaceChildren();
+      show(q('[data-ha-notes-section]'), a.notes.length > 0);
+
+      for (const note of a.notes) {
+        const node = clone('note');
+        const sev = q<HTMLElement>('[data-sev]', node)!;
+        sev.className =
+          note.severity === 'critical'
+            ? 'chip chip-xs chip-fail'
+            : note.severity === 'warning'
+              ? 'chip chip-xs chip-warn'
+              : 'chip chip-xs chip-muted';
+        sev.textContent = R.notes.severity[note.severity] ?? note.severity;
+        // Titles and details arrive already localised — rendered verbatim.
+        setText(q('[data-title]', node), note.title);
+        setText(q('[data-detail]', node), note.detail);
+        list.append(node);
+      }
+    };
+
+    const renderPath = (a: Analysis) => {
+      const p = a.path;
+      show(q('[data-ha-path-empty]'), p.hops.length === 0);
+      show(q('[data-ha-path]'), p.hops.length > 0);
+      if (p.hops.length === 0) return;
+
+      setText(
+        q('[data-ha-path-total]'),
+        p.totalSeconds !== null ? formatDuration(p.totalSeconds) : '—',
+      );
+      setText(q('[data-ha-path-hops]'), String(p.totalHops));
+
+      const slowestWrap = q<HTMLElement>('[data-ha-path-slowest-wrap]')!;
+      if (p.slowestHopIndex !== null && p.slowestHopSeconds !== null) {
+        setText(
+          q('[data-ha-path-slowest]'),
+          interpolate(R.path.slowestValue, {
+            index: p.slowestHopIndex,
+            duration: formatDuration(p.slowestHopSeconds),
+          }),
+        );
+        slowestWrap.hidden = false;
+      } else {
+        slowestWrap.hidden = true;
+      }
+
+      show(q('[data-ha-path-skew]'), p.clockSkewDetected);
+
+      const body = q<HTMLElement>('[data-ha-hops]')!;
+      body.replaceChildren();
+
+      for (const hop of p.hops) {
+        const node = clone('hop');
+        const row = q<HTMLElement>('tr', node)!;
+        if (hop.index === p.slowestHopIndex) row.setAttribute('data-slowest', '');
+
+        setText(q('[data-idx]', node), String(hop.index));
+        setText(q('[data-from]', node), hop.from ?? R.path.unknownHost);
+        const ip = q<HTMLElement>('[data-fromip]', node)!;
+        if (hop.fromIp) {
+          ip.textContent = hop.fromIp;
+          ip.hidden = false;
+        }
+        setText(q('[data-by]', node), hop.by ?? R.path.unknownHost);
+        setText(
+          q('[data-delay]', node),
+          hop.delaySeconds !== null ? formatDuration(hop.delaySeconds) : '—',
+        );
+
+        // TLS is claimed only on positive evidence; silence reads "not declared",
+        // never "plaintext".
+        const tls = q<HTMLElement>('[data-tls]', node)!;
+        if (hop.transport.secured === true) {
+          tls.className = 'chip chip-xs chip-pass';
+          tls.textContent = R.path.tls;
+        } else {
+          tls.className = 'chip chip-xs chip-muted';
+          tls.textContent = R.path.tlsUnknown;
+        }
+        tls.hidden = false;
+
+        const proto = q<HTMLElement>('[data-proto]', node)!;
+        if (hop.transport.protocol) {
+          proto.textContent = hop.transport.protocol;
+          proto.hidden = false;
+        }
+
+        setText(q('[data-time]', node), formatDate(hop.timestamp) ?? '—');
+        body.append(node);
+      }
+    };
+
+    /** Canonical header names — protocol tokens, the same in every language. */
+    const NOTABLE_NAMES: Record<string, string> = {
+      'message-id': 'Message-ID',
+      date: 'Date',
+      'return-path': 'Return-Path',
+      'reply-to': 'Reply-To',
+      'list-unsubscribe': 'List-Unsubscribe',
+      'list-unsubscribe-post': 'List-Unsubscribe-Post',
+      'dkim-signature': 'DKIM-Signature',
+      'authentication-results': 'Authentication-Results',
+      received: 'Received',
+      'mime-version': 'MIME-Version',
+    };
+
+    const renderDetails = (a: Analysis) => {
+      setText(q('[data-ha-d-to]'), formatAddresses(a.message.to));
+      setText(q('[data-ha-d-replyto]'), formatAddresses(a.message.replyTo));
+      setText(q('[data-ha-d-returnpath]'), a.message.returnPath);
+      setText(q('[data-ha-d-messageid]'), a.message.messageId);
+      setText(q('[data-ha-headercount]'), interpolate(R.headerCount, { count: a.headerCount }));
+
+      const list = q<HTMLElement>('[data-ha-notable]')!;
+      list.replaceChildren();
+      for (const h of a.notableHeaders) {
+        const node = clone('notable');
+        setText(q('[data-key]', node), NOTABLE_NAMES[h.key] ?? h.key);
+        const state = q<HTMLElement>('[data-state]', node)!;
+        // Presence is a fact, not a grade: both states stay neutral.
+        state.className = 'chip chip-xs chip-muted';
+        state.textContent =
+          h.present && h.count > 1
+            ? `${R.details.present} ${interpolate(R.details.count, { count: h.count })}`
+            : h.present
+              ? R.details.present
+              : R.details.absent;
+        const value = q<HTMLElement>('[data-value]', node)!;
+        if (h.value) {
+          value.textContent = h.value;
+          value.hidden = false;
+        }
+        list.append(node);
+      }
+    };
+
+    const renderLimits = (a: Analysis) => {
+      const wrap = q<HTMLElement>('[data-ha-limits]')!;
+      const list = q<HTMLElement>('[data-ha-limits-list]')!;
+      list.replaceChildren();
+      const messages: string[] = [];
+      if (a.limits.headersTruncated) messages.push(R.limits.headersTruncated);
+      if (a.limits.hopsTruncated) messages.push(R.limits.hopsTruncated);
+      if (a.limits.valuesTruncated) messages.push(R.limits.valuesTruncated);
+      for (const m of messages) {
+        const li = document.createElement('li');
+        li.textContent = m;
+        list.append(li);
+      }
+      wrap.hidden = messages.length === 0;
+    };
+
+    const render = (a: Analysis) => {
+      // Not an error: nothing in the text looked like a header. Explain, and
+      // point at the instructions instead of showing a failure.
+      if (!a.recognized) {
+        resultEl.hidden = true;
+        unrecognizedEl.hidden = false;
+        unrecognizedEl.focus();
+        return;
+      }
+      unrecognizedEl.hidden = true;
+
+      setText(q('[data-ha-summary]'), a.summary);
+      setText(
+        q('[data-ha-reported]'),
+        a.authentication.reportedBy
+          ? interpolate(R.reportedBy, { host: a.authentication.reportedBy })
+          : R.reportedByUnknown,
+      );
+      setText(q('[data-ha-id-from]'), formatAddresses(a.message.from));
+      setText(q('[data-ha-id-subject]'), a.message.subject);
+      setText(q('[data-ha-id-date]'), formatDate(a.message.date));
+
+      renderLimits(a);
+      renderAuth(a);
+      renderAlignment(a);
+      renderNotes(a);
+      renderPath(a);
+      renderDetails(a);
+
+      resultEl.hidden = false;
+      resultEl.focus();
+    };
+
+    // ── Submit ────────────────────────────────────────────────────────────
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      setError(null);
+
+      const headers = cutHeaderBlock(input.value);
+      if (headers.trim().length === 0) {
+        setError(S.errors.empty);
+        input.focus();
+        return;
+      }
+
+      // Stopped here rather than at the API: a certain 422 is worth neither the
+      // round trip nor the visitor's rate-limit allowance.
+      const bytes = encoder.encode(headers).length;
+      if (bytes > maxBytes) {
+        setError(
+          interpolate(S.errors.tooLarge, {
+            size: formatBytes(bytes),
+            max: formatBytes(maxBytes),
+          }),
+        );
+        return;
+      }
+
+      setLoading(true);
+      resultEl.hidden = true;
+      unrecognizedEl.hidden = true;
+
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ headers, locale: lang }),
+        });
+
+        if (!res.ok) {
+          if (res.status === 429) setError(S.errors.rateLimited);
+          else if (res.status === 422) setError(S.errors.unprocessable);
+          else setError(S.errors.server);
+          return;
+        }
+
+        const payload = (await res.json()) as { data?: Analysis };
+        if (!payload?.data) {
+          setError(S.errors.server);
+          return;
+        }
+        render(payload.data);
+        statusEl.textContent = S.statusDone;
+      } catch {
+        // Network, CORS or malformed JSON — the visitor can only retry, and the
+        // reason is never worth exposing.
+        setError(S.errors.network);
+      } finally {
+        setLoading(false);
+      }
+    });
+  }
+</script>

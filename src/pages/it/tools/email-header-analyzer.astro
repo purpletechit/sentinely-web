@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import HeaderAnalyzerBody from '../../../components/pages/HeaderAnalyzerBody.astro';
+import { useTranslations, type Lang } from '../../../i18n/utils';
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+---
+
+<BaseLayout
+  title={t('pages.headerAnalyzer.title')}
+  description={t('pages.headerAnalyzer.description')}
+>
+  <HeaderAnalyzerBody />
+</BaseLayout>

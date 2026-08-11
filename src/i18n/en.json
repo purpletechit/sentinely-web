@@ -63,6 +63,10 @@
     "blog": {
       "title": "Blog — Sentinely",
       "description": "Notes on DMARC, email authentication, deliverability and keeping domains safe from spoofing."
+    },
+    "headerAnalyzer": {
+      "title": "Email header analyzer — free, no sign-up — Sentinely",
+      "description": "Paste the raw headers of any email and read them in plain language: what the receiving server reported for SPF, DKIM and DMARC, whether the domains align, the route the message took and where it lost time. Free, no sign-up, and nothing you paste is stored."
     }
   },
   "hero": {
@@ -415,7 +419,8 @@
       "features": "Features",
       "how": "How it works",
       "pricing": "Pricing",
-      "faq": "FAQ"
+      "faq": "FAQ",
+      "tools": "Header analyzer"
     },
     "company": {
       "about": "About",
@@ -833,5 +838,245 @@
     "allPosts": "All posts",
     "draftBadge": "Draft",
     "readMore": "Read more"
+  },
+  "headerAnalyzer": {
+    "eyebrow": "Free tool",
+    "title": "Email header analyzer",
+    "sub": "Paste the headers of an email and read what they actually say: what the receiving server reported for SPF, DKIM and DMARC, whether the visible sender matches the domain that authenticated, the route the message took and where it lost time.",
+    "form": {
+      "label": "Paste the email headers",
+      "hint": "The whole message is fine — everything after the first blank line is the body, and your browser drops it before sending.",
+      "placeholder": "Delivered-To: you@example.com\nReceived: from mail.example.net (mail.example.net [198.51.100.24])\n        by mx.example.com with ESMTPS id 4Wq2LxJ\n        for <you@example.com>;\n        Tue, 11 Aug 2026 10:12:40 +0000 (UTC)\nAuthentication-Results: mx.example.com;\n       spf=pass smtp.mailfrom=bounce@mail.example.net;\n       dkim=pass header.i=@example.net;\n       dmarc=pass header.from=example.net\nFrom: Example <news@example.net>\nSubject: …",
+      "submit": "Analyse the headers",
+      "submitBusy": "Reading…",
+      "clear": "Clear",
+      "helpLink": "Where do I find the headers?",
+      "size": "{size} of {max}",
+      "statusBusy": "Reading the headers…",
+      "statusDone": "Analysis ready."
+    },
+    "privacy": {
+      "title": "Nothing you paste is stored",
+      "body": "Email headers are other people's personal data — senders, recipients, IP addresses, subject lines — and the people named in them never agreed to anything. So your browser sends them straight to our analysis API, which reads them and forgets them: nothing is written to a database, a file or a log. This page keeps nothing either — no history, no browser storage, and not one character of what you paste reaches any analytics tool. Close the tab and it's gone."
+    },
+    "errors": {
+      "empty": "Paste the email headers first.",
+      "tooLarge": "That's more than the analyser accepts ({size}, limit {max}). Paste only the header block — from the first line down to the first blank line.",
+      "rateLimited": "That's several analyses in a short time. Wait a minute and try again — the limit is what keeps the tool open to everyone without a sign-up.",
+      "unprocessable": "These headers couldn't be read. Check that you pasted the block whole, from the first line down to the first blank line.",
+      "network": "The analyser couldn't be reached. Check your connection and try again.",
+      "server": "The analyser didn't answer as expected. Try again in a moment."
+    },
+    "unrecognized": {
+      "title": "No headers found in that text",
+      "body": "Nothing in what you pasted looks like an email header — this is the usual first try. Headers are the technical lines above the message, each one starting with a name and a colon: Received:, From:, Authentication-Results:. Your mail client hides them by default; the steps below show how to reveal them in the one you use.",
+      "cta": "How to find the headers"
+    },
+    "result": {
+      "eyebrow": "Result",
+      "reportedBy": "Reported by {host}",
+      "reportedByUnknown": "The receiving server did not name itself",
+      "headerCount": "{count} headers read",
+      "identity": {
+        "from": "From",
+        "to": "To",
+        "subject": "Subject",
+        "date": "Sent",
+        "none": "not present"
+      },
+      "auth": {
+        "heading": "What the receiving server reported",
+        "sub": "These lines were written by the server that received the message. Sentinely reads them — it does not re-run the checks, and it could not: the headers you pasted are the only evidence here.",
+        "absentTitle": "These headers carry no authentication results",
+        "absentBody": "That is not a failure — it means nothing was reported, so nothing can be said about SPF, DKIM or DMARC. It is normal for a copy taken from the Sent folder, and for a paste that stops before the receiving server had its say.",
+        "notReported": "not reported",
+        "reason": "Reason given",
+        "arc": {
+          "label": "ARC",
+          "absent": "no chain",
+          "seals": "{count} seal(s)",
+          "chain": "chain reported as {value}",
+          "hint": "ARC carries the original results across a forwarder or a mailing list."
+        },
+        "results": {
+          "pass": "pass",
+          "fail": "fail",
+          "softfail": "softfail",
+          "neutral": "neutral",
+          "none": "none",
+          "temperror": "temporary error",
+          "permerror": "permanent error",
+          "policy": "policy",
+          "unknown": "non-standard"
+        }
+      },
+      "alignment": {
+        "heading": "Does the visible sender match?",
+        "sub": "This is what DMARC actually asks: the domain your reader sees in the From line has to match the domain that authenticated. A message can pass SPF and still fail DMARC, because it passed for somebody else’s domain.",
+        "fromDomain": "Visible From domain",
+        "spf": "SPF domain",
+        "dkim": "DKIM signing domain",
+        "aligned": "matches",
+        "notAligned": "does not match",
+        "unknown": "cannot tell",
+        "relation": {
+          "exact": "identical",
+          "subdomain": "subdomain",
+          "none": "unrelated"
+        },
+        "modes": {
+          "both": "strict and relaxed",
+          "relaxed": "relaxed only"
+        },
+        "source": "read from {source}",
+        "signingDomains": "Signing domains seen",
+        "approximated": "One domain is a subdomain of the other, which satisfies DMARC’s default (relaxed) alignment. Confirming the organisational domain exactly would need the public suffix list, which is deliberately not consulted here — nothing you paste triggers a lookup.",
+        "noFromDomain": "These headers carry no visible From address, so there is nothing to align against."
+      },
+      "notes": {
+        "heading": "What stands out",
+        "severity": {
+          "info": "note",
+          "warning": "worth a look",
+          "critical": "problem"
+        }
+      },
+      "path": {
+        "heading": "The route it took",
+        "sub": "Every server that handled the message stamped a line on the way. Read top to bottom — oldest first, with the time each step took.",
+        "totalTime": "Total time",
+        "hops": "Hops",
+        "slowest": "Slowest step",
+        "slowestValue": "step {index}, {duration}",
+        "columns": {
+          "step": "#",
+          "from": "From",
+          "by": "Received by",
+          "delay": "Delay",
+          "transport": "Transport",
+          "time": "Timestamp"
+        },
+        "tls": "TLS",
+        "tlsUnknown": "not declared",
+        "clockSkew": "At least one server’s clock disagrees with the one before it, so some steps cannot be timed. The timestamps below are read exactly as written.",
+        "timezone": "Timestamps are shown in your own time zone.",
+        "empty": "These headers carry no Received lines, so there is no route to show.",
+        "unknownHost": "not stated"
+      },
+      "details": {
+        "heading": "Header by header",
+        "summaryLabel": "Show the individual headers",
+        "present": "present",
+        "absent": "absent",
+        "count": "×{count}",
+        "identity": "Message identity",
+        "to": "To",
+        "replyTo": "Reply-To",
+        "returnPath": "Return-Path",
+        "messageId": "Message-ID"
+      },
+      "limits": {
+        "heading": "Not all of the input was analysed",
+        "headersTruncated": "The message carried more headers than the analyser reads; the extra ones were ignored.",
+        "hopsTruncated": "The message carried more Received lines than the analyser reads; the oldest were dropped.",
+        "valuesTruncated": "At least one header was too long and was cut before being read."
+      }
+    },
+    "find": {
+      "eyebrow": "Getting the headers",
+      "heading": "Where the headers hide, client by client",
+      "sub": "Every mail client keeps them one menu away from the message. Copy everything you see — the block is long, and the useful lines are usually at the top.",
+      "clients": [
+        {
+          "name": "Gmail (web)",
+          "steps": "Open the message, click the ⋮ menu at the top right of the message itself (not the one in the toolbar) and choose “Show original”. The page that opens has a “Copy to clipboard” button — it copies the whole message, which is fine."
+        },
+        {
+          "name": "Outlook (Windows, desktop)",
+          "steps": "Open the message in its own window, then File → Properties. The headers are in the “Internet headers” box at the bottom: click inside it, select all, copy."
+        },
+        {
+          "name": "Outlook on the web / Outlook.com",
+          "steps": "Open the message, click the ⋯ menu at the top right and choose “View” → “View message details”. Copy everything in the panel."
+        },
+        {
+          "name": "Apple Mail (macOS)",
+          "steps": "Select the message, then View → Message → All Headers (⇧⌘H). For the complete block use View → Message → Raw Source (⌥⌘U) and copy from the top down to the first blank line."
+        },
+        {
+          "name": "Thunderbird",
+          "steps": "Select the message and press Ctrl+U (⌘U on macOS) for the source, or View → Headers → All to see them inline."
+        },
+        {
+          "name": "Yahoo Mail",
+          "steps": "Open the message, click the ⋯ (More) menu and choose “View raw message”. Copy the whole page."
+        }
+      ],
+      "note": "Forwarding the email to yourself does not work: forwarding writes a fresh set of headers and buries the original ones in the body. Use “Show original” or “Raw source” on the message you actually received."
+    },
+    "read": {
+      "eyebrow": "Reading the result",
+      "heading": "What the answer tells you — and what it cannot",
+      "cards": [
+        {
+          "title": "The results are claims, not checks",
+          "body": "SPF, DKIM and DMARC results sit in the headers because the receiving server wrote them there when the message arrived. Reading them tells you what that server concluded at that moment. Nobody can re-run the check afterwards: the message has already been delivered, and DNS may have changed since."
+        },
+        {
+          "title": "Missing is not failing",
+          "body": "Headers with no authentication results have not failed authentication — nothing was reported. A copy from your Sent folder has none, and neither does a paste that stops too early. Read silence as “unknown”, never as “bad”."
+        },
+        {
+          "title": "Alignment is the part that bites",
+          "body": "SPF can pass for the platform that sent the message while the address your reader sees is yours. DMARC only accepts a pass whose domain matches the visible From — which is why a message can pass SPF and still be rejected."
+        },
+        {
+          "title": "The delays are real, the clocks may not be",
+          "body": "Each Received line carries the time its server stamped. Add them up and you can see where a message waited. But those clocks belong to different organisations: when one disagrees with the one before it, that step is flagged rather than guessed."
+        },
+        {
+          "title": "One message is one message",
+          "body": "A header block describes a single delivery to a single recipient. It cannot tell you how much mail leaves your domain, who else sends as you, or whether yesterday’s campaign authenticated — that lives in the aggregate reports mailbox providers already send about your domain."
+        },
+        {
+          "title": "Nothing here is looked up",
+          "body": "The analysis reads the text you paste and nothing else: no DNS query, no connection to any server named in the headers, no signature verification. That is what keeps it fast and private, and it is also the limit — a domain written in a header is a claim like everything else."
+        }
+      ]
+    },
+    "faq": {
+      "eyebrow": "Questions",
+      "heading": "About this tool",
+      "items": [
+        {
+          "q": "Do you store the headers I paste?",
+          "a": "No. They go from your browser to the analysis API, which reads them and returns the result without writing them to a database, a file or a log. The page keeps nothing either: no history, no browser storage, nothing sent to analytics. Reload and it is gone."
+        },
+        {
+          "q": "Do I need an account?",
+          "a": "No. No sign-up, no email address to leave, no limit per person — just a cap of a few analyses per minute, so the tool stays open to everyone."
+        },
+        {
+          "q": "Can I paste the whole email, body and all?",
+          "a": "Yes. Everything after the first blank line is the body: your browser drops it before sending, so only the header block ever leaves your machine. If the block itself is enormous, the tool says so before sending anything."
+        },
+        {
+          "q": "It says “no headers found” — what did I do wrong?",
+          "a": "Almost always the message was forwarded instead of exported. Forwarding writes fresh headers and buries the originals in the body. Go back to the message you received and use “Show original” (Gmail), “Properties” (Outlook) or “Raw source” (Apple Mail)."
+        },
+        {
+          "q": "SPF says pass but DMARC says fail. How?",
+          "a": "Because they look at different domains. SPF checks the envelope sender, which usually belongs to the platform that sent the message. DMARC only counts a pass whose domain matches the From address your reader sees. When the two differ and DKIM does not cover it either, DMARC fails."
+        },
+        {
+          "q": "Does this tell me whether my domain is protected?",
+          "a": "No — it reads one message. What leaves your domain every day, who else sends in your name and whether that mail authenticates lives in the DMARC aggregate reports mailbox providers already send about your domain. That is what Sentinely does the rest of the time."
+        }
+      ]
+    },
+    "cta": {
+      "heading": "That was one message. What about all the others?",
+      "sub": "Mailbox providers already report on every message sent in your name. Publish one DNS record and Sentinely turns those reports into the same kind of plain answer — for the whole domain, every day."
+    }
   }
 }

@@ -63,6 +63,10 @@
     "blog": {
       "title": "Blog — Sentinely",
       "description": "Approfondimenti su DMARC, autenticazione email, deliverability e protezione dei domini dallo spoofing."
+    },
+    "headerAnalyzer": {
+      "title": "Analizzatore di intestazioni email — gratis, senza registrazione — Sentinely",
+      "description": "Incolla le intestazioni grezze di un'email e leggile in linguaggio chiaro: che cosa ha riportato il server ricevente su SPF, DKIM e DMARC, se i domini sono allineati, che strada ha fatto il messaggio e dove ha perso tempo. Gratis, senza registrazione, e non conserviamo niente di ciò che incolli."
     }
   },
   "hero": {
@@ -415,7 +419,8 @@
       "features": "Funzionalità",
       "how": "Come funziona",
       "pricing": "Prezzi",
-      "faq": "FAQ"
+      "faq": "FAQ",
+      "tools": "Analizzatore intestazioni"
     },
     "company": {
       "about": "Chi siamo",
@@ -833,5 +838,245 @@
     "allPosts": "Tutti gli articoli",
     "draftBadge": "Bozza",
     "readMore": "Leggi"
+  },
+  "headerAnalyzer": {
+    "eyebrow": "Strumento gratuito",
+    "title": "Analizzatore di intestazioni email",
+    "sub": "Incolla le intestazioni di un'email e leggi che cosa dicono davvero: che cosa ha riportato il server ricevente su SPF, DKIM e DMARC, se il mittente visibile corrisponde al dominio che si è autenticato, che strada ha fatto il messaggio e dove ha perso tempo.",
+    "form": {
+      "label": "Incolla le intestazioni dell'email",
+      "hint": "Puoi incollare il messaggio intero: tutto ciò che segue la prima riga vuota è il corpo, e il tuo browser lo scarta prima di inviare.",
+      "placeholder": "Delivered-To: you@example.com\nReceived: from mail.example.net (mail.example.net [198.51.100.24])\n        by mx.example.com with ESMTPS id 4Wq2LxJ\n        for <you@example.com>;\n        Tue, 11 Aug 2026 10:12:40 +0000 (UTC)\nAuthentication-Results: mx.example.com;\n       spf=pass smtp.mailfrom=bounce@mail.example.net;\n       dkim=pass header.i=@example.net;\n       dmarc=pass header.from=example.net\nFrom: Example <news@example.net>\nSubject: …",
+      "submit": "Analizza le intestazioni",
+      "submitBusy": "Lettura…",
+      "clear": "Svuota",
+      "helpLink": "Dove trovo le intestazioni?",
+      "size": "{size} di {max}",
+      "statusBusy": "Sto leggendo le intestazioni…",
+      "statusDone": "Analisi pronta."
+    },
+    "privacy": {
+      "title": "Non conserviamo niente di ciò che incolli",
+      "body": "Le intestazioni di un'email sono dati personali di altre persone — mittenti, destinatari, indirizzi IP, oggetti — e chi compare là dentro non ha acconsentito a nulla. Per questo il tuo browser le manda direttamente alla nostra API di analisi, che le legge e le dimentica: niente database, niente file, niente log. Nemmeno questa pagina conserva qualcosa — nessuna cronologia, nessun salvataggio nel browser, e non un carattere di ciò che incolli finisce in uno strumento di statistica. Chiudi la scheda e non c'è più."
+    },
+    "errors": {
+      "empty": "Prima incolla le intestazioni dell'email.",
+      "tooLarge": "È più di quanto l'analizzatore accetti ({size}, limite {max}). Incolla solo il blocco delle intestazioni: dalla prima riga fino alla prima riga vuota.",
+      "rateLimited": "Sono diverse analisi in poco tempo. Aspetta un minuto e riprova — il limite è ciò che tiene lo strumento aperto a tutti senza registrazione.",
+      "unprocessable": "Non è stato possibile leggere queste intestazioni. Controlla di aver incollato il blocco per intero, dalla prima riga fino alla prima riga vuota.",
+      "network": "Non è stato possibile raggiungere l'analizzatore. Controlla la connessione e riprova.",
+      "server": "L'analizzatore non ha risposto come previsto. Riprova fra poco."
+    },
+    "unrecognized": {
+      "title": "In quel testo non ci sono intestazioni",
+      "body": "Niente di ciò che hai incollato somiglia a un'intestazione email — al primo tentativo capita quasi sempre. Le intestazioni sono le righe tecniche sopra il messaggio, ognuna comincia con un nome e i due punti: Received:, From:, Authentication-Results:. Il tuo programma di posta le tiene nascoste: qui sotto trovi come farle comparire in quello che usi.",
+      "cta": "Come trovare le intestazioni"
+    },
+    "result": {
+      "eyebrow": "Esito",
+      "reportedBy": "Riportato da {host}",
+      "reportedByUnknown": "Il server ricevente non si è identificato",
+      "headerCount": "{count} intestazioni lette",
+      "identity": {
+        "from": "Da",
+        "to": "A",
+        "subject": "Oggetto",
+        "date": "Inviata",
+        "none": "non presente"
+      },
+      "auth": {
+        "heading": "Che cosa ha riportato il server ricevente",
+        "sub": "Queste righe le ha scritte il server che ha ricevuto il messaggio. Sentinely le legge — non rifà i controlli, e non potrebbe: le intestazioni che hai incollato sono l'unica prova disponibile qui.",
+        "absentTitle": "Queste intestazioni non contengono risultati di autenticazione",
+        "absentBody": "Non è un fallimento: vuol dire che non è stato riportato niente, quindi su SPF, DKIM e DMARC non si può dire nulla. È normale per una copia presa dalla cartella Inviata e per un blocco che si ferma prima che il server ricevente abbia detto la sua.",
+        "notReported": "non riportato",
+        "reason": "Motivazione riportata",
+        "arc": {
+          "label": "ARC",
+          "absent": "nessuna catena",
+          "seals": "{count} sigillo/i",
+          "chain": "catena riportata come {value}",
+          "hint": "ARC conserva gli esiti originali attraverso un inoltro o una mailing list."
+        },
+        "results": {
+          "pass": "pass",
+          "fail": "fail",
+          "softfail": "softfail",
+          "neutral": "neutral",
+          "none": "none",
+          "temperror": "errore temporaneo",
+          "permerror": "errore permanente",
+          "policy": "policy",
+          "unknown": "fuori standard"
+        }
+      },
+      "alignment": {
+        "heading": "Il mittente visibile corrisponde?",
+        "sub": "È la domanda che pone davvero DMARC: il dominio che il lettore vede nella riga Da deve corrispondere al dominio che si è autenticato. Un messaggio può superare SPF e fallire comunque DMARC, perché lo ha superato per il dominio di qualcun altro.",
+        "fromDomain": "Dominio Da visibile",
+        "spf": "Dominio SPF",
+        "dkim": "Dominio che firma DKIM",
+        "aligned": "corrisponde",
+        "notAligned": "non corrisponde",
+        "unknown": "non determinabile",
+        "relation": {
+          "exact": "identico",
+          "subdomain": "sottodominio",
+          "none": "senza relazione"
+        },
+        "modes": {
+          "both": "strict e relaxed",
+          "relaxed": "solo relaxed"
+        },
+        "source": "letto da {source}",
+        "signingDomains": "Domini firmatari osservati",
+        "approximated": "Un dominio è sottodominio dell'altro: soddisfa l'allineamento predefinito di DMARC (relaxed). Confermare con esattezza il dominio organizzativo richiederebbe la public suffix list, che qui non viene consultata di proposito — da ciò che incolli non parte nessuna interrogazione.",
+        "noFromDomain": "Queste intestazioni non hanno un indirizzo Da visibile, quindi non c’è niente con cui confrontare."
+      },
+      "notes": {
+        "heading": "Che cosa salta all'occhio",
+        "severity": {
+          "info": "nota",
+          "warning": "da guardare",
+          "critical": "problema"
+        }
+      },
+      "path": {
+        "heading": "La strada che ha fatto",
+        "sub": "Ogni server che ha gestito il messaggio ha lasciato una riga. Si legge dall’alto in basso — prima il più vecchio, con il tempo impiegato da ciascun passaggio.",
+        "totalTime": "Tempo totale",
+        "hops": "Passaggi",
+        "slowest": "Passaggio più lento",
+        "slowestValue": "passaggio {index}, {duration}",
+        "columns": {
+          "step": "#",
+          "from": "Da",
+          "by": "Ricevuto da",
+          "delay": "Ritardo",
+          "transport": "Trasporto",
+          "time": "Orario"
+        },
+        "tls": "TLS",
+        "tlsUnknown": "non dichiarato",
+        "clockSkew": "L’orologio di almeno un server non concorda con quello del passaggio precedente, quindi alcuni tempi non sono calcolabili. Gli orari qui sotto sono letti esattamente come sono scritti.",
+        "timezone": "Gli orari sono mostrati nel tuo fuso orario.",
+        "empty": "Queste intestazioni non contengono righe Received, quindi non c’è un percorso da mostrare.",
+        "unknownHost": "non indicato"
+      },
+      "details": {
+        "heading": "Intestazione per intestazione",
+        "summaryLabel": "Mostra le singole intestazioni",
+        "present": "presente",
+        "absent": "assente",
+        "count": "×{count}",
+        "identity": "Identità del messaggio",
+        "to": "A",
+        "replyTo": "Reply-To",
+        "returnPath": "Return-Path",
+        "messageId": "Message-ID"
+      },
+      "limits": {
+        "heading": "Non tutto l'input è stato analizzato",
+        "headersTruncated": "Il messaggio conteneva più intestazioni di quante l'analizzatore ne legga: quelle in eccesso sono state ignorate.",
+        "hopsTruncated": "Il messaggio conteneva più righe Received di quante l'analizzatore ne legga: le più vecchie sono state scartate.",
+        "valuesTruncated": "Almeno un'intestazione era troppo lunga ed è stata tagliata prima della lettura."
+      }
+    },
+    "find": {
+      "eyebrow": "Ottenere le intestazioni",
+      "heading": "Dove si nascondono, client per client",
+      "sub": "Ogni programma di posta le tiene a un menu di distanza dal messaggio. Copia tutto quello che vedi: il blocco è lungo e le righe utili stanno di solito in cima.",
+      "clients": [
+        {
+          "name": "Gmail (web)",
+          "steps": "Apri il messaggio, clicca il menu ⋮ in alto a destra del messaggio (non quello della barra degli strumenti) e scegli «Mostra originale». Nella pagina che si apre c’è un pulsante «Copia negli appunti»: copia il messaggio intero, e va benissimo."
+        },
+        {
+          "name": "Outlook (Windows, desktop)",
+          "steps": "Apri il messaggio in una finestra a sé, poi File → Proprietà. Le intestazioni sono nel riquadro «Intestazioni Internet» in fondo: clicca dentro, seleziona tutto, copia."
+        },
+        {
+          "name": "Outlook sul web / Outlook.com",
+          "steps": "Apri il messaggio, clicca il menu ⋯ in alto a destra e scegli «Visualizza» → «Visualizza dettagli messaggio». Copia tutto il contenuto del pannello."
+        },
+        {
+          "name": "Apple Mail (macOS)",
+          "steps": "Seleziona il messaggio, poi Vista → Email → Tutte le intestazioni (⇧⌘H). Per il blocco completo: Vista → Email → Sorgente non elaborato (⌥⌘U), e copia dall’inizio fino alla prima riga vuota."
+        },
+        {
+          "name": "Thunderbird",
+          "steps": "Seleziona il messaggio e premi Ctrl+U (⌘U su macOS) per il sorgente, oppure Visualizza → Intestazioni → Complete per vederle nel messaggio."
+        },
+        {
+          "name": "Yahoo Mail",
+          "steps": "Apri il messaggio, clicca il menu ⋯ (Altro) e scegli «Visualizza messaggio non elaborato». Copia tutta la pagina."
+        }
+      ],
+      "note": "Inoltrarsi l’email da soli non funziona: l’inoltro scrive intestazioni nuove e sotterra le originali nel corpo del messaggio. Usa «Mostra originale» o «Sorgente non elaborato» sul messaggio che hai davvero ricevuto."
+    },
+    "read": {
+      "eyebrow": "Leggere l'esito",
+      "heading": "Che cosa dice la risposta — e che cosa non può dire",
+      "cards": [
+        {
+          "title": "Sono dichiarazioni, non controlli",
+          "body": "SPF, DKIM e DMARC compaiono nelle intestazioni perché il server ricevente ce li ha scritti quando il messaggio è arrivato. Leggerli dice a quale conclusione era arrivato quel server in quel momento. Rifare il controllo dopo non è possibile: il messaggio è già stato consegnato, e nel frattempo il DNS può essere cambiato."
+        },
+        {
+          "title": "Assente non vuol dire fallito",
+          "body": "Intestazioni senza risultati di autenticazione non hanno fallito l’autenticazione: non è stato riportato niente. Una copia dalla cartella Inviata non ne ha, e nemmeno un blocco che si ferma troppo presto. Il silenzio va letto come «non sappiamo», mai come «va male»."
+        },
+        {
+          "title": "L’allineamento è il punto che morde",
+          "body": "SPF può risultare pass per la piattaforma che ha spedito, mentre l’indirizzo che il lettore vede è il tuo. DMARC accetta un pass solo se il dominio corrisponde al Da visibile — ed è il motivo per cui un messaggio può superare SPF e finire comunque rifiutato."
+        },
+        {
+          "title": "I ritardi sono veri, gli orologi forse no",
+          "body": "Ogni riga Received porta l’ora che il suo server ha timbrato. Sommandole si vede dove il messaggio ha aspettato. Ma quegli orologi appartengono a organizzazioni diverse: quando uno non concorda con quello precedente, il passaggio viene segnalato invece che indovinato."
+        },
+        {
+          "title": "Un messaggio è un messaggio",
+          "body": "Un blocco di intestazioni descrive una sola consegna a un solo destinatario. Non può dire quanta posta esce dal tuo dominio, chi altro spedisce a tuo nome o se la campagna di ieri si è autenticata: quello sta nei report aggregati che i provider di posta già inviano sul tuo dominio."
+        },
+        {
+          "title": "Qui non si interroga niente",
+          "body": "L’analisi legge il testo che incolli e nient’altro: nessuna query DNS, nessun contatto con i server nominati nelle intestazioni, nessuna verifica delle firme. È ciò che la rende veloce e riservata, ed è anche il suo limite — un dominio scritto in un’intestazione è una dichiarazione come tutto il resto."
+        }
+      ]
+    },
+    "faq": {
+      "eyebrow": "Domande",
+      "heading": "Su questo strumento",
+      "items": [
+        {
+          "q": "Conservate le intestazioni che incollo?",
+          "a": "No. Vanno dal tuo browser all’API di analisi, che le legge e restituisce l’esito senza scriverle su database, file o log. Nemmeno la pagina conserva qualcosa: nessuna cronologia, nessun salvataggio nel browser, niente statistiche. Ricarichi e non c’è più."
+        },
+        {
+          "q": "Serve un account?",
+          "a": "No. Nessuna registrazione, nessun indirizzo email da lasciare, nessun limite a persona — solo un tetto di poche analisi al minuto, perché lo strumento resti aperto a tutti."
+        },
+        {
+          "q": "Posso incollare l’email intera, corpo compreso?",
+          "a": "Sì. Tutto ciò che segue la prima riga vuota è il corpo: il tuo browser lo scarta prima di inviare, quindi dalla tua macchina esce solo il blocco delle intestazioni. Se è il blocco stesso a essere enorme, lo strumento te lo dice prima di mandare qualsiasi cosa."
+        },
+        {
+          "q": "Dice «nessuna intestazione trovata»: che cosa ho sbagliato?",
+          "a": "Quasi sempre il messaggio è stato inoltrato invece che esportato. L’inoltro scrive intestazioni nuove e sotterra le originali nel corpo. Torna al messaggio che hai ricevuto e usa «Mostra originale» (Gmail), «Proprietà» (Outlook) o «Sorgente non elaborato» (Apple Mail)."
+        },
+        {
+          "q": "SPF dice pass ma DMARC dice fail. Com’è possibile?",
+          "a": "Perché guardano domini diversi. SPF controlla il mittente di busta, che di solito appartiene alla piattaforma che ha spedito. DMARC conta un pass solo se il dominio corrisponde all’indirizzo Da che il lettore vede. Quando i due non coincidono e nemmeno DKIM li copre, DMARC fallisce."
+        },
+        {
+          "q": "Mi dice se il mio dominio è protetto?",
+          "a": "No: legge un messaggio solo. Quanta posta esce ogni giorno dal tuo dominio, chi altro spedisce a tuo nome e se quella posta si autentica sta nei report aggregati DMARC che i provider già inviano sul tuo dominio. È quello che Sentinely fa il resto del tempo."
+        }
+      ]
+    },
+    "cta": {
+      "heading": "Questo era un messaggio. E tutti gli altri?",
+      "sub": "I provider di posta riportano già ogni messaggio spedito a tuo nome. Pubblica un record DNS e Sentinely trasforma quei report nello stesso tipo di risposta chiara — per tutto il dominio, ogni giorno."
+    }
   }
 }

@@ -23,6 +23,25 @@ export const APP_LOGIN_URL = APP_URL;
 export const TURNSTILE_SITE_KEY = '0x4AAAAAADzLiVWZJ-TCyVmg';
 export const TURNSTILE_TEST_SITE_KEY = '1x00000000000000000000AA';
 
+/**
+ * Public header-analysis endpoint, on the product API.
+ *
+ * ⚠️ The page calls this DIRECTLY from the browser — never through a Pages
+ * Function. The product rate-limits this route per IP; a proxy would put
+ * Cloudflare's IP on every request, so one abuser would burn the whole
+ * allowance for everyone. CORS is configured product-side for this one route
+ * and only for `https://sentinely.eu` / `https://www.sentinely.eu`, which is
+ * why the call fails on localhost and on the pages.dev preview.
+ */
+export const HEADER_ANALYSIS_ENDPOINT = `${APP_URL}/api/v1/tools/header-analysis`;
+
+/**
+ * Input ceiling of that endpoint, in UTF-8 BYTES (not characters — a subject in
+ * Cyrillic or CJK weighs up to 3× its `.length`). Mirrored here so the page can
+ * refuse an oversized paste before spending a request on a certain 422.
+ */
+export const HEADER_ANALYSIS_MAX_BYTES = 64 * 1024;
+
 /** Company / contact details (Purple IT s.r.l.). */
 export const CONTACT_EMAIL = 'info@sentinely.eu';
 

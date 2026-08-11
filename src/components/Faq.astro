@@ -2,19 +2,33 @@
 import SectionHeading from './SectionHeading.astro';
 import { useTranslations, type Lang } from '../i18n/utils';
 
+/**
+ * The home page's FAQ, and any other page's. `keyPrefix` points at the block in
+ * the dictionaries; `id` and `group` are separated so a second FAQ on the site
+ * keeps its own anchor and its own accordion (`name` makes `<details>` mutually
+ * exclusive — sharing it across two lists would let one close the other).
+ */
+interface Props {
+  keyPrefix?: string;
+  id?: string;
+  group?: string;
+}
+
+const { keyPrefix = 'faq', id = 'faq', group = id } = Astro.props;
+
 const lang = (Astro.currentLocale ?? 'en') as Lang;
 const t = useTranslations(lang);
 
 type Item = { q: string; a: string };
-const items = t('faq.items') as Item[];
+const items = t(`${keyPrefix}.items`) as Item[];
 ---
 
-<section id="faq" class="section faq">
+<section id={id} class="section faq">
   <div class="container faq-inner">
-    <SectionHeading eyebrow={t('faq.eyebrow')} title={t('faq.heading')} />
+    <SectionHeading eyebrow={t(`${keyPrefix}.eyebrow`)} title={t(`${keyPrefix}.heading`)} />
     <div class="faq-list reveal">
       {items.map((item, i) => (
-        <details class="faq-item" name="faq" open={i === 0}>
+        <details class="faq-item" name={group} open={i === 0}>
           <summary class="faq-q">
             <span>{item.q}</span>
             <svg class="faq-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">

@@ -1,0 +1,155 @@
+---
+/**
+ * The public "analyse your email headers" page.
+ *
+ * It is an acquisition tool as much as a utility: somebody with a mail problem
+ * searches for exactly this, so the two content sections under the tool ("where
+ * the headers hide" and "what the answer can and cannot tell you") are written
+ * to be worth reading on their own — for the visitor who will never become a
+ * customer as much as for search.
+ */
+import PageHero from '../PageHero.astro';
+import SectionHeading from '../SectionHeading.astro';
+import FeatureCard from '../FeatureCard.astro';
+import Faq from '../Faq.astro';
+import FinalCta from '../FinalCta.astro';
+import HeaderAnalyzer from '../HeaderAnalyzer.astro';
+import { useTranslations, type Lang } from '../../i18n/utils';
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+
+type Client = { name: string; steps: string };
+type Card = { title: string; body: string };
+
+const clients = t('headerAnalyzer.find.clients') as Client[];
+const readCards = t('headerAnalyzer.read.cards') as Card[];
+
+/** Icons follow the order of the cards in the dictionaries. */
+const readIcons = ['scope', 'eye-off', 'key', 'history', 'layers', 'shield'];
+---
+
+<PageHero
+  eyebrow={t('headerAnalyzer.eyebrow')}
+  title={t('headerAnalyzer.title')}
+  sub={t('headerAnalyzer.sub')}
+/>
+
+<section class="section section-tool">
+  <div class="container">
+    <HeaderAnalyzer />
+  </div>
+</section>
+
+<section id="find-headers" class="section">
+  <div class="container">
+    <SectionHeading
+      eyebrow={t('headerAnalyzer.find.eyebrow')}
+      title={t('headerAnalyzer.find.heading')}
+      sub={t('headerAnalyzer.find.sub')}
+    />
+    <div class="client-grid">
+      {clients.map((client, i) => (
+        <article class="client-card reveal" style={`transition-delay:${(i % 3) * 70}ms`}>
+          <h3 class="client-name">{client.name}</h3>
+          <p class="client-steps">{client.steps}</p>
+        </article>
+      ))}
+    </div>
+    <!-- The single most common reason the tool finds nothing, so it is said
+         here rather than left to the FAQ. -->
+    <aside class="find-note panel reveal">
+      <p>{t('headerAnalyzer.find.note')}</p>
+    </aside>
+  </div>
+</section>
+
+<section class="section section-tight">
+  <div class="container">
+    <SectionHeading
+      eyebrow={t('headerAnalyzer.read.eyebrow')}
+      title={t('headerAnalyzer.read.heading')}
+    />
+    <div class="read-grid">
+      {readCards.map((card, i) => (
+        <FeatureCard
+          icon={readIcons[i] ?? 'shield'}
+          title={card.title}
+          body={card.body}
+          delay={(i % 3) * 70}
+        />
+      ))}
+    </div>
+  </div>
+</section>
+
+<Faq keyPrefix="headerAnalyzer.faq" id="tool-faq" />
+
+<FinalCta heading={t('headerAnalyzer.cta.heading')} sub={t('headerAnalyzer.cta.sub')} />
+
+<style>
+  .section-tool {
+    padding-top: 1rem;
+  }
+  .section-tight {
+    padding-top: 0;
+  }
+
+  .client-grid {
+    margin-top: 2.75rem;
+    display: grid;
+    gap: 1.1rem;
+    grid-template-columns: 1fr;
+  }
+  .client-card {
+    padding: 1.4rem 1.5rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    min-width: 0;
+  }
+  .client-name {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    font-weight: 650;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+  }
+  .client-steps {
+    color: var(--muted);
+    font-size: 0.94rem;
+    line-height: 1.65;
+  }
+
+  .find-note {
+    margin-top: 1.5rem;
+    padding: 1.35rem 1.5rem;
+  }
+  .find-note p {
+    color: var(--muted);
+    font-size: 0.97rem;
+    line-height: 1.7;
+    max-width: 76ch;
+  }
+
+  .read-grid {
+    margin-top: 2.75rem;
+    display: grid;
+    gap: 1.1rem;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 620px) {
+    .client-grid,
+    .read-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 980px) {
+    .client-grid,
+    .read-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>
