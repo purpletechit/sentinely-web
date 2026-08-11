@@ -19,7 +19,8 @@
     "how": "Come funziona",
     "pricing": "Prezzi",
     "faq": "FAQ",
-    "contact": "Contatti"
+    "contact": "Contatti",
+    "tools": "Strumenti"
   },
   "cta": {
     "login": "Accedi",
@@ -1077,6 +1078,8 @@
     "cta": {
       "heading": "Questo era un messaggio. E tutti gli altri?",
       "sub": "I provider di posta riportano già ogni messaggio spedito a tuo nome. Pubblica un record DNS e Sentinely trasforma quei report nello stesso tipo di risposta chiara — per tutto il dominio, ogni giorno."
-    }
+    },
+    "nav": "Analizzatore intestazioni",
+    "navHint": "Gratis. Leggi le intestazioni di un’email in chiaro."
   }
 }

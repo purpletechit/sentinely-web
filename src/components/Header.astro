@@ -23,6 +23,20 @@ const solutions = segments.map((segment) => ({
   label: t(`solutions.${segment.id}.nav`) as string,
   hint: t(`solutions.${segment.id}.navHint`) as string,
 }));
+
+/**
+ * Free tools, in their own group under the segments. They ride in the Solutions
+ * panel rather than as a seventh top-level link because the nav row has no width
+ * to spare: in Italian it already runs tight between 1024 and 1200px, and the
+ * panel costs the row nothing.
+ */
+const tools = [
+  {
+    href: localizePath('/tools/email-header-analyzer', lang),
+    label: t('headerAnalyzer.nav') as string,
+    hint: t('headerAnalyzer.navHint') as string,
+  },
+];
 ---
 
 <header class="site-header" data-site-header>
@@ -50,6 +64,13 @@ const solutions = segments.map((segment) => ({
         <div class="nav-panel" id="solutions-menu" aria-labelledby="solutions-trigger" data-nav-panel>
           <p class="nav-panel-hint">{t('solutions.menuHint')}</p>
           {solutions.map((item) => (
+            <a href={item.href} class="nav-panel-item">
+              <span class="npi-label">{item.label}</span>
+              <span class="npi-hint">{item.hint}</span>
+            </a>
+          ))}
+          <p class="nav-panel-hint nav-panel-group">{t('nav.tools')}</p>
+          {tools.map((item) => (
             <a href={item.href} class="nav-panel-item">
               <span class="npi-label">{item.label}</span>
               <span class="npi-hint">{item.hint}</span>
@@ -90,6 +111,10 @@ const solutions = segments.map((segment) => ({
     <nav class="mobile-nav" aria-label="Mobile">
       <p class="mobile-group-label label">{t('nav.solutions')}</p>
       {solutions.map((item) => (
+        <a href={item.href} class="mobile-link is-nested">{item.label}</a>
+      ))}
+      <p class="mobile-group-label label">{t('nav.tools')}</p>
+      {tools.map((item) => (
         <a href={item.href} class="mobile-link is-nested">{item.label}</a>
       ))}
       {nav.map((item) => <a href={item.href} class="mobile-link">{item.label}</a>)}
@@ -236,6 +261,12 @@ const solutions = segments.map((segment) => ({
     font-weight: 600;
     color: var(--faint);
     padding: 0.3rem 0.6rem 0.55rem;
+  }
+  /* A second group inside the panel: hairline, then the same mono mini-title. */
+  .nav-panel-group {
+    margin-top: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--line);
   }
   .nav-panel-item {
     display: flex;

@@ -19,7 +19,8 @@
     "how": "How it works",
     "pricing": "Pricing",
     "faq": "FAQ",
-    "contact": "Contact"
+    "contact": "Contact",
+    "tools": "Tools"
   },
   "cta": {
     "login": "Log in",
@@ -1077,6 +1078,8 @@
     "cta": {
       "heading": "That was one message. What about all the others?",
       "sub": "Mailbox providers already report on every message sent in your name. Publish one DNS record and Sentinely turns those reports into the same kind of plain answer — for the whole domain, every day."
-    }
+    },
+    "nav": "Email header analyzer",
+    "navHint": "Free. Read any email’s headers in plain language."
   }
 }
