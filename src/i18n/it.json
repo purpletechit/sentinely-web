@@ -2,7 +2,7 @@
   "site": {
     "name": "Sentinely",
     "tagline": "Sai chi spedisce a nome tuo, e se la tua posta arriva.",
-    "defaultDescription": "Sentinely legge i report DMARC che i provider di posta inviano già sul tuo dominio e li trasforma in un verdetto: ogni sorgente di invio riconosciuta, un punteggio di recapito, l'analisi dei record, il controllo delle blocklist, gli avvisi e il digest quotidiano."
+    "defaultDescription": "Sentinely legge i report DMARC che i provider di posta inviano già sul tuo dominio e li trasforma in un verdetto: ogni sorgente di invio riconosciuta, un punteggio di recapito, l'analisi dei record, un avviso quando il DNS cambia, il controllo delle blocklist e il digest."
   },
   "common": {
     "skipToContent": "Vai al contenuto",
@@ -34,7 +34,7 @@
   "pages": {
     "home": {
       "title": "Sentinely — sai chi spedisce a nome tuo, e se la tua posta arriva",
-      "description": "Pubblichi un solo record DNS. Sentinely legge i tuoi report aggregati DMARC e restituisce un verdetto: ogni sorgente di invio riconosciuta, un punteggio di recapito 0–100, l'analisi di SPF/DKIM/DMARC/BIMI/MTA-STS, il monitoraggio delle blocklist, gli avvisi e il digest quotidiano. Con un piano gratuito."
+      "description": "Pubblichi un solo record DNS. Sentinely legge i tuoi report aggregati DMARC e restituisce un verdetto: ogni sorgente di invio riconosciuta, un punteggio di recapito 0–100, l'analisi di SPF/DKIM/DMARC/BIMI/MTA-STS, un avviso quando un record cambia, il monitoraggio delle blocklist e il digest. Con un piano gratuito."
     },
     "contact": {
       "title": "Contatti — Sentinely",
@@ -110,7 +110,7 @@
   },
   "signals": {
     "heading": "Tutto ciò che decide se il tuo dominio è affidabile",
-    "sub": "Sentinely tiene d'occhio l'intero insieme di segnali che i provider di posta usano per fidarsi — o rifiutare — la tua email."
+    "sub": "Sentinely tiene d'occhio l'intero insieme di segnali che i provider di posta usano per fidarsi — o rifiutare — la tua email. Anche MX e NS sono sorvegliati: non per il punteggio, ma per sapere il giorno in cui cambiano."
   },
   "problem": {
     "eyebrow": "Il problema",
@@ -134,7 +134,7 @@
   "features": {
     "eyebrow": "Cosa ottieni",
     "heading": "Un verdetto, non un mucchio di dati.",
-    "sub": "Sentinely trasforma i report aggregati grezzi in decisioni: un punteggio da seguire, sorgenti che puoi riconoscere, record che puoi correggere e avvisi che ti raggiungono prima che se ne accorga chiunque altro.",
+    "sub": "Sentinely trasforma i report aggregati grezzi in decisioni: un punteggio da seguire, sorgenti che puoi riconoscere, record che puoi correggere, cambiamenti che altrimenti ti sfuggirebbero e avvisi che ti raggiungono prima che se ne accorga chiunque altro.",
     "cards": [
       {
         "title": "Punteggio di recapito e protezione",
@@ -149,12 +149,24 @@
         "body": "SPF, DKIM, DMARC, BIMI, MTA-STS e TLS-RPT verificati per come sono scritti: tag DMARC fusi, rua senza mailto:, meccanismi SPF sconosciuti, il limite delle 10 ricerche. Con il record esatto da pubblicare."
       },
       {
+        "title": "I cambiamenti, non solo lo stato attuale",
+        "body": "Ogni giro di analisi confronta il tuo DNS con l'osservazione precedente e registra cosa si è mosso — il valore prima, il valore dopo e quando. Una policy DMARC riportata a p=none, un include SPF sparito, un MX che punta altrove: ognuno genera un avviso."
+      },
+      {
+        "title": "Selettori DKIM, trovati nei tuoi report",
+        "body": "Il DNS non permette di elencare i selettori DKIM di un dominio, così quasi tutti gli strumenti te li fanno digitare a memoria. Sentinely raccoglie quelli che compaiono nei tuoi report DMARC e te li propone; confermi i tuoi con un clic. Parziale per costruzione — molti sistemi omettono il selettore — e molto meglio di un campo vuoto."
+      },
+      {
+        "title": "Quanto autorizza davvero il tuo SPF",
+        "body": "Il numero di indirizzi IPv4 che il tuo record autorizza a spedire a nome tuo, accanto a quanti di essi lo hanno fatto negli ultimi 90 giorni. Il modo più rapido per vedere la superficie che lascia aperta un include dimenticato — ed è un minimo, non un totale, perché conta gli indirizzi scritti letteralmente nel record."
+      },
+      {
         "title": "Reputazione e blocklist",
         "body": "Controllo continuo su DNSBL/RBL degli IP che spediscono per il tuo dominio, con esito a tre stati — elencato, pulito o non verificabile — così l'incertezza non viene mai letta come sicurezza."
       },
       {
-        "title": "Avvisi e digest quotidiano",
-        "body": "Una nuova sorgente, un'anomalia di volume rispetto alla media dei 7 giorni, un tasso di fallimento alto, posta messa in quarantena o rifiutata. Più un digest per dominio ogni mattina, nella lingua di chi lo riceve."
+        "title": "Avvisi, e un digest per tutto",
+        "body": "Una nuova sorgente, un'anomalia di volume rispetto alla media dei 7 giorni, un tasso di fallimento alto, posta messa in quarantena o rifiutata, un record cambiato. Più un digest per persona — tutti i domini che segui in un'unica email, prima quelli messi peggio — giornaliero, settimanale o entrambi, nella lingua di chi lo riceve."
       },
       {
         "title": "Multi-tenant, white-label, API",
@@ -173,7 +185,7 @@
       },
       {
         "title": "Ingeriamo e riconosciamo",
-        "body": "XML, GZIP e ZIP analizzati e deduplicati. Ogni sorgente risolta in IP, host, posizione e organizzazione, poi verificata su autenticazione, allineamento e blocklist."
+        "body": "XML, GZIP e ZIP analizzati e deduplicati. Ogni sorgente risolta in IP, host, posizione e organizzazione, poi verificata su autenticazione, allineamento e blocklist. Ogni giro confronta anche il tuo DNS con l'osservazione precedente, così un record modificato non passa inosservato."
       },
       {
         "title": "Leggi il verdetto e agisci",
@@ -181,16 +193,58 @@
       }
     ]
   },
+  "changes": {
+    "eyebrow": "Monitoraggio della configurazione",
+    "heading": "Un record è giusto finché qualcuno non lo modifica.",
+    "sub": "La configurazione che hai impostato quasi mai resta come l'hai lasciata: un cliente, un tecnico o il registrar cambia qualcosa e nessuno se ne accorge. Ogni giro di analisi confronta il tuo DNS con l'osservazione precedente e registra la differenza — il valore prima, il valore dopo, il giorno in cui si è mosso.",
+    "points": [
+      {
+        "title": "MX e NS, non solo i record di autenticazione",
+        "body": "Dove viene consegnata la tua posta, e chi governa la tua zona. Un MX che passa da Microsoft 365 a un server sconosciuto o interrompe la posta in arrivo o significa che qualcuno è arrivato al tuo DNS — perciò entrambi i record sono seguiti e finiscono nella stessa cronologia. Nessuno dei due tocca il punteggio: è monitoraggio, non un voto."
+      },
+      {
+        "title": "Selettori DKIM che non hai dovuto digitare",
+        "body": "Il DNS non permette di elencare i selettori pubblicati per un dominio, così chi non li conosce già sta facendo un'analisi cieca. Sentinely raccoglie i selettori che compaiono nei tuoi report DMARC e te li propone; confermi i tuoi con un clic. L'inventario è parziale — molti sistemi che inviano i report omettono il selettore — e preferiamo dirlo piuttosto che spacciarlo per completo."
+      },
+      {
+        "title": "Quanto è aperto il tuo SPF",
+        "body": "Una riga ti dice quanti indirizzi il tuo record autorizza a spedire a nome tuo, e quanti di essi lo hanno fatto davvero. La differenza è la superficie che lascia dietro di sé un include dimenticato — e per leggerla non serve sapere cos'è l'SPF."
+      },
+      {
+        "title": "Lo storico parte da quando parti tu",
+        "body": "Nessuna interrogazione DNS può recuperare cosa diceva un record il mese scorso, e non fingiamo il contrario. La cronologia comincia quando aggiungi il dominio; da lì in poi non cambia nulla senza che venga annotato."
+      }
+    ],
+    "panel": {
+      "title": "Configurazione",
+      "domain": "acme.com",
+      "count": "3 modifiche",
+      "rows": [
+        { "when": "12 lug", "record": "DMARC", "from": "p=reject", "to": "p=none", "tone": "fail" },
+        { "when": "09 lug", "record": "MX", "from": "…protection.outlook.com", "to": "mx.unknown-host.net", "tone": "fail" },
+        { "when": "02 lug", "record": "SPF", "from": "include:_spf.vendor.com", "to": "rimosso", "tone": "warn" }
+      ],
+      "spfLabel": "Superficie SPF",
+      "spfAuthorised": "428.216",
+      "spfAuthorisedLabel": "indirizzi IPv4 autorizzati a spedire come acme.com",
+      "spfSeen": "14",
+      "spfSeenLabel": "di questi hanno spedito negli ultimi 90 giorni",
+      "caption": "Esempio di modifiche per un dominio monitorato. Il conteggio SPF copre gli indirizzi scritti letteralmente nel record — i meccanismi che si risolvono al momento della valutazione sono contati a parte — quindi va letto come un minimo, non come un totale."
+    }
+  },
   "digest": {
-    "eyebrow": "Il digest quotidiano",
+    "eyebrow": "Il digest",
     "heading": "L'unica email che legge i report al posto tuo.",
-    "sub": "Ogni mattina, un digest per dominio che riassume cosa è successo e cosa conta davvero — nella lingua di chi lo riceve.",
+    "sub": "Un'email per persona, non una per dominio: tutto quello che segui in un solo messaggio, prima ciò che è messo peggio. Cosa è cambiato nella configurazione, il voto, le sorgenti finite in blacklist e un avviso se i report hanno smesso di arrivare. Giornaliero, settimanale o entrambi — sceglie chi lo riceve, nella propria lingua.",
     "cardTitle": "Digest quotidiano",
-    "domain": "acme.com",
+    "scope": "3 domini",
     "date": "Lun, 6 lug 2026",
-    "scoreLabel": "Punteggio di protezione",
-    "scoreValue": "A · 96",
-    "scoreDelta": "+2",
+    "domainsLabel": "Domini, prima i peggiori",
+    "domains": [
+      { "name": "shop.acme.com", "grade": "F", "tone": "fail", "note": "Policy DMARC cambiata — p=reject → p=none" },
+      { "name": "mail.acme.com", "grade": "—", "tone": "warn", "note": "Nessun report aggregato da 6 giorni" },
+      { "name": "acme.com", "grade": "A", "tone": "pass", "note": "Nuova sorgente, presente in 1 blocklist" }
+    ],
     "kpis": [
       { "label": "Autenticate", "value": "98,7%" },
       { "label": "Volume", "value": "11.854" },
@@ -198,7 +252,7 @@
     ],
     "insightLabel": "AI Insight",
     "insightBody": "Una nuova sorgente, 193.42.33.8, ha inviato 604 messaggi a nome di acme.com fallendo sia SPF sia DKIM. È presente in una blocklist e non corrisponde a nessuno dei tuoi mittenti noti: sembra spoofing, non posta legittima persa. Nessuna azione richiesta da parte tua; mantenere il DMARC su p=reject garantisce che questi messaggi vengano rifiutati.",
-    "footer": "Sentinely · Digest quotidiano · EN/IT",
+    "footer": "Sentinely · Giornaliero o settimanale · EN/IT",
     "addonNote": "Gli AI Insights — Claude che spiega perché è successo qualcosa, non solo i numeri — sono un add-on opzionale su tutti i piani a pagamento, e sono attivi per tutta la prova di 30 giorni."
   },
   "pricing": {
@@ -318,6 +372,14 @@
       {
         "q": "Quanto in fretta vedrò i risultati?",
         "a": "Non appena il tuo RUA punta a noi, i report iniziano ad arrivare. I provider di posta inviano i report aggregati all'incirca una volta al giorno, quindi la maggior parte dei domini ottiene il primo verdetto completo e il primo digest entro 24 ore."
+      },
+      {
+        "q": "Mi dite quando cambia il mio DNS?",
+        "a": "Sì — dal giorno in cui aggiungi il dominio. Ogni giro di analisi confronta il tuo DNS con l'osservazione precedente e registra la differenza: il valore prima, il valore dopo, quando si è mosso, con un avviso. Vale per SPF, DKIM, DMARC, BIMI, MTA-STS e TLS-RPT, e anche per MX e NS — dove viene consegnata la posta e chi governa la zona — anche se questi due sono solo monitoraggio e non incidono sul punteggio. Quello che non possiamo fare è ricostruire il passato: nessuna interrogazione DNS può dirti cosa diceva un record il mese scorso, quindi la cronologia parte da quando parte il monitoraggio."
+      },
+      {
+        "q": "Devo conoscere i miei selettori DKIM?",
+        "a": "Aiuta, ma non è necessario. Il DNS non permette di elencare i selettori pubblicati per un dominio, quindi se non li conosci non c'è modo di cercarli. Sentinely raccoglie i selettori che compaiono nei tuoi report DMARC e te li propone; confermi con un clic quelli che sono tuoi. L'inventario è parziale per costruzione — molti sistemi che inviano i report omettono il selettore — quindi puoi sempre aggiungere a mano quelli che conosci."
       },
       {
         "q": "Ingerite anche i report forensic (RUF)?",
@@ -454,6 +516,18 @@
             "body": "Fino a 180 giorni. Confronta le settimane prima e dopo una migrazione e vedi esattamente quale sorgente ha smesso di autenticarsi, e quando."
           },
           {
+            "title": "Una modifica che non hai fatto tu",
+            "body": "Una migrazione che perde un include SPF, una policy che qualcuno riporta indietro, un MX ripuntato dal registrar. Ogni giro di analisi confronta il tuo DNS con l'osservazione precedente e ti dice cosa si è mosso, con il valore prima e il valore dopo."
+          },
+          {
+            "title": "Selettori DKIM, senza chiederli all'ESP",
+            "body": "Il DNS non elenca i selettori pubblicati per un dominio, così quasi tutti gli strumenti te li fanno digitare. Sentinely raccoglie quelli che compaiono nei tuoi report DMARC e te li propone da confermare — parziale, perché molti sistemi omettono il selettore, ma di solito basta a smettere di tirare a indovinare."
+          },
+          {
+            "title": "Quanti mittenti autorizza il tuo SPF",
+            "body": "Ogni piattaforma che hai aggiunto lascia dietro di sé un include. Sentinely conta gli indirizzi IPv4 che il tuo record autorizza e quanti di essi hanno spedito negli ultimi 90 giorni — la differenza è ciò che puoi ripulire senza rischi. Leggi il conteggio come un minimo: copre gli indirizzi scritti letteralmente nel record."
+          },
+          {
             "title": "Blocklist sotto controllo",
             "body": "Verifica continua su DNSBL/RBL degli IP che spediscono per il tuo dominio, con esito a tre stati, così \"non verificabile\" non viene mai letto come \"pulito\"."
           },
@@ -478,7 +552,7 @@
       "short": "IT e security",
       "meta": {
         "title": "Monitoraggio DMARC per IT e Sec Ops — Sentinely",
-        "description": "Riconosci ogni sorgente che spedisce a nome del tuo dominio, leggi i record SPF, DKIM, DMARC, BIMI, MTA-STS e TLS-RPT cercando errori di sintassi reali, e passa da p=none a p=reject senza bloccare la posta legittima."
+        "description": "Riconosci ogni sorgente che spedisce a nome del tuo dominio, leggi i record SPF, DKIM, DMARC, BIMI, MTA-STS e TLS-RPT cercando errori di sintassi reali, ricevi un avviso quando uno di essi cambia, e passa da p=none a p=reject senza bloccare la posta legittima."
       },
       "eyebrow": "Per IT e Sec Ops",
       "title": "Ferma l'impersonificazione. Arriva a p=reject con i dati per dimostrare che è sicuro.",
@@ -514,6 +588,18 @@
           {
             "title": "Record letti nella sintassi",
             "body": "SPF, DKIM, DMARC, BIMI, MTA-STS e TLS-RPT verificati per come sono scritti: tag DMARC fusi, rua o ruf senza mailto:, sp e pct non validi, meccanismi SPF sconosciuti, ip4/ip6 non validi, ptr deprecato, il limite delle 10 ricerche."
+          },
+          {
+            "title": "Modifiche registrate, con prima e dopo",
+            "body": "Ogni giro confronta il tuo DNS con l'osservazione precedente e registra la differenza — valore prima, valore dopo, quando. Una policy riportata a p=none, un include SPF sparito, un record BIMI rimosso. MX e NS sono sorvegliati allo stesso modo, pur non toccando il punteggio."
+          },
+          {
+            "title": "Selettori DKIM, scoperti",
+            "body": "Al DNS non si può chiedere l'elenco dei selettori pubblicati per un dominio, così quasi tutti gli strumenti ti lasciano un campo vuoto. Sentinely raccoglie i selettori che compaiono nei report aggregati e te li propone da confermare. Parziale per natura — molti sistemi omettono il selettore — ma trasforma un'analisi cieca in una che funziona."
+          },
+          {
+            "title": "Le dimensioni di ciò che il tuo SPF autorizza",
+            "body": "Il numero di indirizzi IPv4 che il tuo record permette, accanto a quanti di essi hanno spedito negli ultimi 90 giorni. Un include dimenticato può autorizzare centinaia di migliaia di host mentre a spedire sono una manciata. Il conteggio copre gli indirizzi scritti letteralmente nel record, quindi va trattato come un minimo."
           },
           {
             "title": "Un punteggio di protezione con un voto",
@@ -590,8 +676,20 @@
             "body": "Una /api/public/v1 pubblica con chiave per tenant su domini, avvisi e report, documentata via Swagger — così i dati possono vivere nella tua dashboard o in quella del cliente."
           },
           {
-            "title": "Report che un cliente può leggere",
-            "body": "Export PDF, più un digest quotidiano per dominio consegnato nella lingua di ciascun destinatario, italiano o inglese, con soglia di severità impostata per destinatario."
+            "title": "Un'email per persona, non una per dominio",
+            "body": "Chi segue venti domini riceve un solo messaggio che li copre tutti, prima quelli messi peggio: cosa è cambiato, il voto, le sorgenti finite in blacklist, i domini che hanno smesso di mandare report. Giornaliero, settimanale o entrambi — ciascun destinatario sceglie la cadenza, la lingua e la soglia di severità. Più l'export PDF per il report che resta al cliente."
+          },
+          {
+            "title": "La modifica che il cliente ha fatto senza dirtelo",
+            "body": "Il problema quasi mai è la configurazione iniziale: è la modifica fatta tre mesi dopo. Ogni giro confronta il DNS di ciascun cliente con l'osservazione precedente e genera un avviso sulla differenza — MX e NS compresi, sorvegliati ma mai valutati a punteggio."
+          },
+          {
+            "title": "I selettori dei domini che hai ereditato",
+            "body": "Prendi in carico un dominio e nessuno ricorda quali selettori DKIM siano in uso. Sentinely propone quelli che compaiono nei report aggregati e tu li confermi — un elenco parziale, perché molti sistemi omettono il selettore, ma meglio che interrogare il fornitore precedente."
+          },
+          {
+            "title": "Un numero da mettere nell'audit",
+            "body": "Quanti indirizzi IPv4 autorizza l'SPF di un cliente e quanti hanno spedito davvero negli ultimi 90 giorni. È la riga che rende facile giustificare una ripulitura — ed è un minimo, perché conta gli indirizzi scritti letteralmente nel record."
           },
           {
             "title": "L'onboarding è un record DNS",
@@ -716,7 +814,7 @@
     "sections": [
       {
         "heading": "Cosa facciamo",
-        "body": "Pubblichi un solo record DNS. Da lì in poi i provider di posta di tutto il mondo ci inviano i report aggregati DMARC del tuo dominio. Noi li analizziamo, risolviamo ogni sorgente di invio, verifichiamo autenticazione, allineamento, sintassi dei record e blocklist, e restituiamo un verdetto: un punteggio 0–100 con un voto, avvisi, un digest quotidiano e report che puoi esportare."
+        "body": "Pubblichi un solo record DNS. Da lì in poi i provider di posta di tutto il mondo ci inviano i report aggregati DMARC del tuo dominio. Noi li analizziamo, risolviamo ogni sorgente di invio, verifichiamo autenticazione, allineamento, sintassi dei record e blocklist, confrontiamo il tuo DNS con l'osservazione precedente per cogliere cosa è cambiato, e restituiamo un verdetto: un punteggio 0–100 con un voto, avvisi, un digest e report che puoi esportare."
       },
       {
         "heading": "Per chi è",

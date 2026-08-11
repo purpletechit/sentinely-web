@@ -1,0 +1,265 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import { useTranslations, type Lang } from '../i18n/utils';
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+
+type Point = { title: string; body: string };
+type Row = { when: string; record: string; from: string; to: string; tone: 'fail' | 'warn' };
+type Panel = {
+  title: string;
+  domain: string;
+  count: string;
+  rows: Row[];
+  spfLabel: string;
+  spfAuthorised: string;
+  spfAuthorisedLabel: string;
+  spfSeen: string;
+  spfSeenLabel: string;
+  caption: string;
+};
+
+const points = t('changes.points') as Point[];
+const panel = t('changes.panel') as Panel;
+---
+
+<section class="section changes">
+  <div class="container cw-grid">
+    <div class="cw-copy">
+      <SectionHeading eyebrow={t('changes.eyebrow')} title={t('changes.heading')} sub={t('changes.sub')} />
+      <ul class="cw-points">
+        {points.map((point, i) => (
+          <li class="cw-point reveal" style={`transition-delay:${i * 60}ms`}>
+            <h3 class="cw-point-title">{point.title}</h3>
+            <p class="cw-point-body">{point.body}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <!-- The panel is decorative evidence: the caption names it as an example and
+         carries the caveat on the SPF count, so it doubles as the accessible label. -->
+    <figure class="cw-visual reveal">
+      <div class="panel cw-panel" role="img" aria-labelledby="cw-caption">
+        <div class="cw-head">
+          <span class="cw-dot" aria-hidden="true"></span>
+          <span class="mono cw-title">{panel.title} · {panel.domain}</span>
+          <span class="chip mono cw-count">{panel.count}</span>
+        </div>
+
+        <ul class="cw-list">
+          {panel.rows.map((row) => (
+            <li class="cw-row">
+              <span class="mono cw-when">{row.when}</span>
+              <span class="chip mono cw-record">{row.record}</span>
+              <span class="cw-change mono">
+                <span class="cw-from">{row.from}</span>
+                <span class="cw-arrow" aria-hidden="true">→</span>
+                <span class:list={['cw-to', `cw-to-${row.tone}`]}>{row.to}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+
+        <div class="cw-spf">
+          <p class="label cw-spf-label">{panel.spfLabel}</p>
+          <p class="cw-spf-line">
+            <span class="mono cw-num">{panel.spfAuthorised}</span>
+            <span>{panel.spfAuthorisedLabel}</span>
+          </p>
+          <p class="cw-spf-line">
+            <span class="mono cw-num">{panel.spfSeen}</span>
+            <span>{panel.spfSeenLabel}</span>
+          </p>
+        </div>
+      </div>
+      <figcaption id="cw-caption" class="cw-caption">{panel.caption}</figcaption>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .cw-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  .cw-points {
+    list-style: none;
+    margin-top: 2.25rem;
+    display: grid;
+    gap: 1.4rem;
+  }
+  .cw-point {
+    padding-left: 1rem;
+    border-left: 2px solid var(--accent-line);
+  }
+  .cw-point-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--strong);
+    margin-bottom: 0.35rem;
+  }
+  .cw-point-body {
+    color: var(--muted);
+    font-size: 0.94rem;
+    line-height: 1.6;
+    max-width: 58ch;
+  }
+
+  .cw-panel {
+    padding: 1.15rem;
+    box-shadow: var(--shadow-lg);
+  }
+  .cw-head {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .cw-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background-color: var(--warn);
+    box-shadow: 0 0 0 3px var(--warn-soft);
+    flex: none;
+  }
+  .cw-title {
+    font-weight: 650;
+    color: var(--strong);
+    font-size: 0.92rem;
+  }
+  /* `.chip-xs` is scoped to VerdictPanel, so the compact sizing is repeated here. */
+  .cw-count,
+  .cw-record {
+    padding: 0.12rem 0.45rem;
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+  }
+  .cw-count {
+    margin-left: auto;
+    color: var(--muted);
+  }
+
+  .cw-list {
+    list-style: none;
+  }
+  .cw-row {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    flex-wrap: wrap;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .cw-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  .cw-when {
+    font-size: 0.72rem;
+    color: var(--faint);
+    flex: none;
+    min-width: 3.4rem;
+  }
+  .cw-record {
+    color: var(--ink);
+    flex: none;
+  }
+  .cw-change {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+    font-size: 0.78rem;
+    min-width: 0;
+  }
+  .cw-from {
+    color: var(--muted);
+    text-decoration: line-through;
+    text-decoration-color: var(--faint);
+    overflow-wrap: anywhere;
+  }
+  .cw-arrow {
+    color: var(--faint);
+    flex: none;
+  }
+  .cw-to {
+    font-weight: 650;
+    overflow-wrap: anywhere;
+  }
+  .cw-to-fail {
+    color: var(--fail);
+  }
+  .cw-to-warn {
+    color: var(--warn);
+  }
+
+  .cw-spf {
+    margin-top: 1.15rem;
+    padding: 0.95rem 1rem;
+    border-radius: var(--radius);
+    background-color: var(--accent-soft);
+    border: 1px solid var(--accent-line);
+  }
+  .cw-spf-label {
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+  }
+  .cw-spf-line {
+    display: flex;
+    align-items: baseline;
+    gap: 0.55rem;
+    font-size: 0.85rem;
+    color: var(--ink);
+    line-height: 1.45;
+  }
+  .cw-spf-line + .cw-spf-line {
+    margin-top: 0.5rem;
+  }
+  .cw-num {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--strong);
+    line-height: 1.1;
+    flex: none;
+  }
+
+  /* Narrow panels: the before → after pair drops to its own line rather than
+     wrapping around the date and the record chip. */
+  @media (max-width: 460px) {
+    .cw-change {
+      flex-basis: 100%;
+    }
+  }
+
+  /* --muted, not --faint: this caption carries the caveat on the SPF figure,
+     so it has to be as readable as body copy (--faint is ~3:1 on light). */
+  .cw-caption {
+    margin-top: 0.85rem;
+    color: var(--muted);
+    font-size: 0.78rem;
+    line-height: 1.55;
+    max-width: 56ch;
+  }
+
+  /* Desktop: the evidence leads on the left, so the page alternates instead of
+     stacking three copy-left / panel-right sections in a row. */
+  @media (min-width: 940px) {
+    .cw-grid {
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+      gap: 3.5rem;
+    }
+    .cw-visual {
+      order: 1;
+    }
+    .cw-copy {
+      order: 2;
+    }
+  }
+</style>

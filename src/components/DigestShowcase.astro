@@ -6,7 +6,9 @@ const lang = (Astro.currentLocale ?? 'en') as Lang;
 const t = useTranslations(lang);
 
 type Kpi = { label: string; value: string };
+type DigestDomain = { name: string; grade: string; tone: 'pass' | 'warn' | 'fail'; note: string };
 const kpis = t('digest.kpis') as Kpi[];
+const domains = t('digest.domains') as DigestDomain[];
 ---
 
 <section class="section digest">
@@ -26,17 +28,24 @@ const kpis = t('digest.kpis') as Kpi[];
         <div class="mock-head">
           <div class="mock-from">
             <span class="beacon" aria-hidden="true"></span>
-            <span class="mono">{t('digest.cardTitle')} · {t('digest.domain')}</span>
+            <span class="mono">{t('digest.cardTitle')} · {t('digest.scope')}</span>
           </div>
           <span class="mono mock-date">{t('digest.date')}</span>
         </div>
 
-        <div class="mock-score">
-          <div>
-            <p class="label">{t('digest.scoreLabel')}</p>
-            <p class="mock-score-value mono">{t('digest.scoreValue')}</p>
-          </div>
-          <span class="chip chip-pass chip-delta mono">▲ {t('digest.scoreDelta')}</span>
+        <div class="mock-domains">
+          <p class="label">{t('digest.domainsLabel')}</p>
+          <ul class="mock-domain-list">
+            {domains.map((domain) => (
+              <li class="mock-domain">
+                <span class:list={['chip', 'mono', 'mock-grade', `chip-${domain.tone}`]}>{domain.grade}</span>
+                <span class="mock-domain-meta">
+                  <span class="mono mock-domain-name">{domain.name}</span>
+                  <span class="mock-domain-note">{domain.note}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
         </div>
 
         <div class="mock-kpis">
@@ -132,23 +141,51 @@ const kpis = t('digest.kpis') as Kpi[];
     font-size: 0.78rem;
   }
 
-  .mock-score {
+  /* One email, every domain the recipient watches — worst first. */
+  .mock-domains {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .mock-domain-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .mock-domain {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.1rem;
+    gap: 0.7rem;
+    padding: 0.6rem 0.75rem;
     border: 1px solid var(--line);
-    border-radius: var(--radius);
+    border-radius: var(--radius-sm);
     background-color: var(--surface-2);
   }
-  .mock-score-value {
-    font-size: 1.5rem;
+  .mock-grade {
+    flex: none;
+    justify-content: center;
+    min-width: 2rem;
+    padding: 0.14rem 0.4rem;
+    font-size: 0.75rem;
     font-weight: 700;
-    color: var(--strong);
-    margin-top: 0.15rem;
   }
-  .chip-delta {
-    align-self: flex-start;
+  .mock-domain-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    min-width: 0;
+  }
+  .mock-domain-name {
+    font-size: 0.82rem;
+    font-weight: 650;
+    color: var(--strong);
+    overflow-wrap: anywhere;
+  }
+  .mock-domain-note {
+    font-size: 0.72rem;
+    color: var(--muted);
+    line-height: 1.4;
   }
 
   .mock-kpis {
