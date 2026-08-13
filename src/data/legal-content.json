@@ -399,7 +399,7 @@
     },
     "cookies": {
       "title": "Cookie Policy",
-      "updated": "12 August 2026 · Version: 2026-08-12",
+      "updated": "13 August 2026 · Version: 2026-08-12",
       "intro": [
         {
           "type": "p",
@@ -421,15 +421,89 @@
           ]
         },
         {
-          "heading": "This website sets no cookies",
+          "heading": "Your choice comes first",
           "blocks": [
             {
               "type": "p",
-              "html": "<strong><code>sentinely.eu</code> sets no cookies at all</strong> — none for statistics, none for advertising, and none of its own for technical purposes. That is also why you have not been shown a consent banner: there is nothing here to consent to, and asking permission for nothing would be an obstacle without a purpose."
+              "html": "<strong>No statistics cookie is placed before you agree.</strong> On your first visit a banner asks you what you want. Until you answer, this site stores nothing at all: the statistics script is not loaded, not even in the background, and no request leaves your browser towards it."
             },
             {
               "type": "p",
-              "html": "Nor does the site load anything from third parties. Scripts, fonts, styles and images all come from our own domains, with the single exception described below — no external provider learns the address of your browser merely because you are reading this page."
+              "html": "Refusing is exactly as easy as accepting — one button, side by side, same size. If you refuse, nothing is loaded and nothing more is asked of you. You can change your mind at any time through <strong>Cookie preferences</strong> at the bottom of any page."
+            }
+          ]
+        },
+        {
+          "heading": "What is stored, and when",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "<strong>Once you have made a choice</strong>, one cookie of ours records it, so we do not ask again:"
+            },
+            {
+              "type": "table",
+              "columns": [
+                "Cookie",
+                "Purpose",
+                "Duration",
+                "Set by"
+              ],
+              "rows": [
+                [
+                  "<code>sntly_consent</code>",
+                  "Remembers your cookie choice",
+                  "12 months",
+                  "Sentinely (first party)"
+                ]
+              ]
+            },
+            {
+              "type": "p",
+              "html": "<strong>Only if you accept statistics</strong>, our Matomo instance sets these:"
+            },
+            {
+              "type": "table",
+              "columns": [
+                "Cookie",
+                "Purpose",
+                "Duration",
+                "Set by"
+              ],
+              "rows": [
+                [
+                  "<code>_pk_id.*</code>",
+                  "Tells one visitor from another",
+                  "13 months",
+                  "Purple IT (self-hosted)"
+                ],
+                [
+                  "<code>_pk_ses.*</code>",
+                  "Groups the requests of one visit together",
+                  "30 minutes",
+                  "Purple IT (self-hosted)"
+                ]
+              ]
+            },
+            {
+              "type": "p",
+              "html": "If you refuse, none of the Matomo cookies is ever written."
+            },
+            {
+              "type": "p",
+              "html": "Separately from cookies, your <strong>light or dark theme</strong> choice is kept in your browser's local storage under <code>theme</code>. It never leaves your device and is not sent with any request. Clearing your browsing data removes it."
+            }
+          ]
+        },
+        {
+          "heading": "Statistics: Matomo, and we host it ourselves",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "We use <strong>Matomo</strong> to understand which pages are read and how people arrive at them. It runs on our own infrastructure at <code>analytics.purpletech.it</code>: the statistics it collects reach <strong>no third party</strong>, because Matomo is software we operate, not a service we send your data to. Nothing about your visit is sold, shared or used to build an advertising profile."
+            },
+            {
+              "type": "p",
+              "html": "We ask for your consent all the same. These are statistics cookies, not technical ones, and we would rather ask than assume."
             }
           ]
         },
@@ -438,7 +512,7 @@
           "blocks": [
             {
               "type": "p",
-              "html": "The contact form and the affiliate form load <strong>Cloudflare Turnstile</strong>, the check that tells a person apart from an automated script. It runs on those two pages only, for the sole purpose of letting the form be submitted. It is not a statistics or advertising tool: it measures nothing about you and builds no profile. Without it the forms would be filled by bots within days, so it is a security measure needed to deliver a service you asked for — which is why it does not require consent."
+              "html": "The contact form and the affiliate form load <strong>Cloudflare Turnstile</strong>, the check that tells a person apart from an automated script. It runs on those two pages only, for the sole purpose of letting the form be submitted, and it is not a statistics or advertising tool: it measures nothing about you and builds no profile. Without it the forms would be filled by bots within days, so it is a security measure needed to deliver a service you asked for — which is why it does not require consent."
             },
             {
               "type": "p",
@@ -447,11 +521,11 @@
           ]
         },
         {
-          "heading": "What is stored in your browser",
+          "heading": "The record of your choice",
           "blocks": [
             {
               "type": "p",
-              "html": "One thing, and it is not a cookie. If you switch between the light and the dark theme, your choice is saved in your browser's <strong>local storage</strong> under <code>theme</code>. It stays on your device, is never sent with any request, and exists so that the site does not show you the wrong colours on your next visit. Clearing your browsing data removes it."
+              "html": "When you choose, we keep a record of it: a random identifier (the same one held in the <code>sntly_consent</code> cookie), the choice itself, the version of this policy, the moment, your browser identification, and a <strong>keyed hash of your IP address</strong> — never the address itself. We keep it for 24 months, because art. 7(1) GDPR requires the controller to be able to demonstrate that consent was given. This record is never used to profile you and is never linked to advertising."
             }
           ]
         },
@@ -460,16 +534,7 @@
           "blocks": [
             {
               "type": "p",
-              "html": "<code>app.sentinely.eu</code> — the product you sign in to — uses <strong>only technical cookies</strong>: the ones that keep you signed in and remember your preferences. It carries no statistics or advertising cookie, and loads no third-party tracking script. Technical cookies require no consent (art. 122 of the Italian Privacy Code, and its European equivalent, exempt them), but they do require that we tell you they exist — which is what this section does."
-            }
-          ]
-        },
-        {
-          "heading": "If this ever changes",
-          "blocks": [
-            {
-              "type": "p",
-              "html": "We may one day add website statistics or advertising measurement. If we do, this page will be updated <strong>before</strong> anything is loaded, and a banner will ask you first: refusing will be exactly as easy as accepting, and no third-party script will run — not even in the background — until you have chosen. Until you see that banner, what you have just read is the whole picture."
+              "html": "<code>app.sentinely.eu</code> — the product you sign in to — uses <strong>only technical cookies</strong>: the ones that keep you signed in and remember your preferences. It carries no statistics or advertising cookie and loads no third-party tracking script, which is why it shows no banner: there is nothing there to consent to. Technical cookies require no consent (art. 122 of the Italian Privacy Code, and its European equivalent, exempt them), but they do require that we tell you they exist — which is what this section does."
             }
           ]
         },
@@ -478,7 +543,11 @@
           "blocks": [
             {
               "type": "p",
-              "html": "Every browser lets you inspect, delete and block cookies and local storage. Since this site sets no cookies, blocking them changes nothing here: the only effect is that we can no longer remember your theme."
+              "html": "Use <strong>Cookie preferences</strong> at the bottom of any page to change or withdraw your choice. Withdrawing deletes the statistics cookies we know of and reloads the page, so that a script already running is actually stopped — a withdrawal that leaves it running would not be one."
+            },
+            {
+              "type": "p",
+              "html": "Every browser also lets you inspect, delete and block cookies and local storage on your own."
             },
             {
               "type": "p",
@@ -889,7 +958,7 @@
     },
     "cookies": {
       "title": "Informativa sui cookie",
-      "updated": "12 agosto 2026 · Versione: 2026-08-12",
+      "updated": "13 agosto 2026 · Versione: 2026-08-12",
       "intro": [
         {
           "type": "p",
@@ -911,15 +980,89 @@
           ]
         },
         {
-          "heading": "Questo sito non installa cookie",
+          "heading": "La tua scelta viene prima",
           "blocks": [
             {
               "type": "p",
-              "html": "<strong><code>sentinely.eu</code> non installa alcun cookie</strong> — né statistici, né di marketing, né tecnici propri. È anche il motivo per cui non ti è comparso alcun banner: non c'è nulla a cui prestare consenso, e chiedere il permesso per niente sarebbe un ostacolo senza scopo."
+              "html": "<strong>Nessun cookie di statistica viene installato prima del tuo consenso.</strong> Alla prima visita un banner ti chiede come vuoi procedere. Finché non rispondi questo sito non salva assolutamente nulla: lo script delle statistiche non viene caricato, nemmeno in secondo piano, e nessuna richiesta parte dal tuo browser verso di esso."
             },
             {
               "type": "p",
-              "html": "Il sito non carica nemmeno nulla da terze parti. Script, caratteri, fogli di stile e immagini arrivano tutti dai nostri domini, con la sola eccezione descritta qui sotto: nessun fornitore esterno viene a conoscenza dell'indirizzo del tuo browser per il solo fatto che stai leggendo questa pagina."
+              "html": "Rifiutare è esattamente facile quanto accettare: un pulsante, accanto all'altro, della stessa dimensione. Se rifiuti non viene caricato nulla e non ti viene chiesto altro. Puoi cambiare idea quando vuoi da <strong>Preferenze cookie</strong>, in fondo a ogni pagina."
+            }
+          ]
+        },
+        {
+          "heading": "Cosa viene salvato, e quando",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "<strong>Una volta che hai scelto</strong>, un nostro cookie registra la scelta, così non te la richiediamo:"
+            },
+            {
+              "type": "table",
+              "columns": [
+                "Cookie",
+                "Finalità",
+                "Durata",
+                "Impostato da"
+              ],
+              "rows": [
+                [
+                  "<code>sntly_consent</code>",
+                  "Ricorda la tua scelta sui cookie",
+                  "12 mesi",
+                  "Sentinely (prima parte)"
+                ]
+              ]
+            },
+            {
+              "type": "p",
+              "html": "<strong>Soltanto se accetti le statistiche</strong>, la nostra istanza Matomo installa questi:"
+            },
+            {
+              "type": "table",
+              "columns": [
+                "Cookie",
+                "Finalità",
+                "Durata",
+                "Impostato da"
+              ],
+              "rows": [
+                [
+                  "<code>_pk_id.*</code>",
+                  "Distingue un visitatore dall'altro",
+                  "13 mesi",
+                  "Purple IT (istanza propria)"
+                ],
+                [
+                  "<code>_pk_ses.*</code>",
+                  "Raggruppa le richieste di una stessa visita",
+                  "30 minuti",
+                  "Purple IT (istanza propria)"
+                ]
+              ]
+            },
+            {
+              "type": "p",
+              "html": "Se rifiuti, nessun cookie di Matomo viene mai scritto."
+            },
+            {
+              "type": "p",
+              "html": "A parte i cookie, la tua scelta fra <strong>tema chiaro e scuro</strong> viene conservata nella memoria locale del browser sotto la voce <code>theme</code>. Non lascia mai il tuo dispositivo e non viene inviata con alcuna richiesta. Cancellando i dati di navigazione sparisce."
+            }
+          ]
+        },
+        {
+          "heading": "Le statistiche: Matomo, e lo ospitiamo noi",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "Usiamo <strong>Matomo</strong> per capire quali pagine vengono lette e come ci si arriva. Gira su infrastruttura nostra, all'indirizzo <code>analytics.purpletech.it</code>: le statistiche che raccoglie non raggiungono <strong>nessuna terza parte</strong>, perché Matomo è un software che gestiamo, non un servizio a cui inviamo i tuoi dati. Nulla della tua visita viene venduto, condiviso o usato per costruire un profilo pubblicitario."
+            },
+            {
+              "type": "p",
+              "html": "Ti chiediamo comunque il consenso: sono cookie statistici, non tecnici, e preferiamo chiedere piuttosto che dare per scontato."
             }
           ]
         },
@@ -928,7 +1071,7 @@
           "blocks": [
             {
               "type": "p",
-              "html": "Il modulo di contatto e quello per gli affiliati caricano <strong>Cloudflare Turnstile</strong>, il controllo che distingue una persona da uno script automatico. Funziona soltanto su quelle due pagine e al solo scopo di permettere l'invio del modulo. Non è uno strumento di statistica né di pubblicità: non misura nulla di te e non costruisce alcun profilo. Senza, i moduli sarebbero riempiti dai bot nel giro di pochi giorni: è quindi una misura di sicurezza necessaria a fornire un servizio che hai richiesto, e per questo non richiede consenso."
+              "html": "Il modulo di contatto e quello per gli affiliati caricano <strong>Cloudflare Turnstile</strong>, il controllo che distingue una persona da uno script automatico. Funziona soltanto su quelle due pagine e al solo scopo di permettere l'invio del modulo, e non è uno strumento di statistica né di pubblicità: non misura nulla di te e non costruisce alcun profilo. Senza, i moduli sarebbero riempiti dai bot nel giro di pochi giorni: è quindi una misura di sicurezza necessaria a fornire un servizio che hai richiesto, e per questo non richiede consenso."
             },
             {
               "type": "p",
@@ -937,11 +1080,11 @@
           ]
         },
         {
-          "heading": "Cosa viene salvato nel tuo browser",
+          "heading": "Il registro della tua scelta",
           "blocks": [
             {
               "type": "p",
-              "html": "Una cosa sola, e non è un cookie. Se passi dal tema chiaro a quello scuro, la tua scelta viene salvata nella <strong>memoria locale</strong> del browser sotto la voce <code>theme</code>. Resta sul tuo dispositivo, non viene inviata con alcuna richiesta ed esiste perché alla visita successiva il sito non ti mostri i colori sbagliati. Cancellando i dati di navigazione sparisce."
+              "html": "Quando scegli, conserviamo la prova della scelta: un identificativo casuale (lo stesso del cookie <code>sntly_consent</code>), la scelta stessa, la versione di questa informativa, il momento, il tuo browser e un <strong>hash con chiave del tuo indirizzo IP</strong> — mai l'indirizzo in chiaro. Lo conserviamo per 24 mesi, perché l'art. 7(1) GDPR impone al titolare di poter dimostrare che il consenso è stato prestato. Questo registro non serve mai a profilarti e non viene mai collegato a finalità pubblicitarie."
             }
           ]
         },
@@ -950,16 +1093,7 @@
           "blocks": [
             {
               "type": "p",
-              "html": "<code>app.sentinely.eu</code> — il prodotto in cui accedi — utilizza <strong>soltanto cookie tecnici</strong>: quelli che ti tengono autenticato e ricordano le tue preferenze. Non contiene alcun cookie statistico o di marketing e non carica alcuno script di tracciamento di terze parti. I cookie tecnici non richiedono consenso (l'art. 122 del Codice privacy, e il suo equivalente europeo, li esentano), ma richiedono che ti sia detto che esistono: è ciò che fa questa sezione."
-            }
-          ]
-        },
-        {
-          "heading": "Se un domani cambierà",
-          "blocks": [
-            {
-              "type": "p",
-              "html": "Potremmo un giorno introdurre statistiche di sito o misurazione pubblicitaria. Se accadrà, questa pagina sarà aggiornata <strong>prima</strong> che venga caricato alcunché, e un banner te lo chiederà per primo: rifiutare sarà esattamente facile quanto accettare, e nessuno script di terze parti verrà eseguito — nemmeno in secondo piano — finché non avrai scelto. Finché non vedi quel banner, quello che hai appena letto è tutto."
+              "html": "<code>app.sentinely.eu</code> — il prodotto in cui accedi — utilizza <strong>soltanto cookie tecnici</strong>: quelli che ti tengono autenticato e ricordano le tue preferenze. Non contiene alcun cookie statistico o di marketing e non carica alcuno script di tracciamento di terze parti: per questo non mostra alcun banner, non ci sarebbe nulla a cui prestare consenso. I cookie tecnici non richiedono consenso (l'art. 122 del Codice privacy, e il suo equivalente europeo, li esentano), ma richiedono che ti sia detto che esistono: è ciò che fa questa sezione."
             }
           ]
         },
@@ -968,7 +1102,11 @@
           "blocks": [
             {
               "type": "p",
-              "html": "Ogni browser permette di consultare, cancellare e bloccare cookie e memoria locale. Dato che questo sito non installa cookie, bloccarli qui non cambia nulla: l'unico effetto è che non potremo più ricordare il tuo tema."
+              "html": "Usa <strong>Preferenze cookie</strong>, in fondo a ogni pagina, per cambiare o revocare la tua scelta. La revoca cancella i cookie di statistica che conosciamo e ricarica la pagina, così uno script già avviato viene davvero fermato: una revoca che lo lasciasse girare non sarebbe tale."
+            },
+            {
+              "type": "p",
+              "html": "Ogni browser permette inoltre di consultare, cancellare e bloccare cookie e memoria locale per conto proprio."
             },
             {
               "type": "p",
