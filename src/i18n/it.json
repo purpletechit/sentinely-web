@@ -437,7 +437,8 @@
       "privacy": "Privacy",
       "terms": "Termini",
       "gdpr": "GDPR/DPA",
-      "cookies": "Cookie"
+      "cookies": "Cookie",
+      "preferences": "Preferenze cookie"
     },
     "legalBar": "© 2026 Purple IT s.r.l. — Sentinely · P.IVA IT01881930661 · Perugia (PG), Italia."
   },
@@ -778,6 +779,27 @@
     "error": "Qualcosa è andato storto nell'invio. Riprova, oppure scrivi a info@sentinely.eu.",
     "turnstileError": "Verifica anti-bot non superata. Ricarica la pagina e riprova.",
     "botField": "Lascia vuoto questo campo"
+  },
+  "consent": {
+    "title": "I cookie di questo sito",
+    "body": "Vorremmo misurare come viene usato il sito. Nulla viene caricato prima della tua scelta, e rifiutare non ti costa nulla: il sito funziona esattamente uguale.",
+    "readMore": "Leggi l’informativa sui cookie",
+    "acceptAll": "Accetta tutto",
+    "rejectAll": "Rifiuta tutto",
+    "customise": "Scegli",
+    "prefsTitle": "Preferenze cookie",
+    "prefsBody": "I necessari sono sempre attivi. Tutto il resto resta spento finché non lo accendi, e puoi tornare qui a cambiare idea quando vuoi.",
+    "alwaysOn": "Sempre attivi",
+    "save": "Salva le scelte",
+    "close": "Chiudi",
+    "categories": {
+      "necessaryName": "Tecnici e necessari",
+      "necessaryDesc": "Ciò che serve al funzionamento del sito, compreso il controllo che tiene i moduli liberi dai bot. Non richiedono consenso.",
+      "analyticsName": "Statistiche",
+      "analyticsDesc": "Quali pagine vengono lette e come ci si arriva, per poterle migliorare.",
+      "marketingName": "Marketing",
+      "marketingDesc": "Misura se la nostra pubblicità raggiunge qualcuno, e da quale annuncio sei arrivato."
+    }
   },
   "legal": {
     "lastUpdated": "Ultimo aggiornamento",

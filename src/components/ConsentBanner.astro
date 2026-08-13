@@ -1,0 +1,570 @@
+---
+import { APP_URL } from '../config';
+import { localizePath, useTranslations, type Lang } from '../i18n/utils';
+
+/**
+ * Cookie consent banner — the site half of GDPR-CONSENT-01.
+ *
+ * The contract it implements is written up in the product repo,
+ * `docs/CONSENT-CONTRACT.md`. Three rules from it decide everything here, and
+ * each one is the kind that breaks quietly if it is dropped:
+ *
+ *  1. **The client decides, the backend documents (fail-open).** The choice is
+ *     applied and the cookie written whatever `POST /consent` does. A backend
+ *     that is down must never stop anyone from refusing cookies — you lose the
+ *     proof, not the choice. So the POST is fired and forgotten: never awaited,
+ *     never retried, never surfaced as an error.
+ *
+ *  2. **No configured services, no banner (fail-closed).** An empty `services`
+ *     array — or a config call that fails — means zero services, therefore no
+ *     scripts and no banner. Never "we don't know, let's load it anyway".
+ *
+ *  3. **No request to a third party before consent.** No static `<script>`, no
+ *     `preconnect`, no `dns-prefetch`. A preconnect is already a request
+ *     carrying the visitor's IP, and asking afterwards does not undo it. Every
+ *     provider is injected dynamically, one at a time, only after a valid
+ *     consent has been read.
+ *
+ * ⚠️ **"Reject all" has the same weight as "Accept all"** — same level, same
+ * size, same first screen. It is the point European authorities have fined over
+ * more than any other: consent obtained by making refusal harder is not freely
+ * given, so it is not consent, and the row in the database proves nothing.
+ *
+ * The markup below ships on every page but starts `hidden`. Without JavaScript
+ * nothing is injected either, so a silent banner is the correct outcome.
+ */
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+const policyHref = localizePath('/cookies', lang);
+---
+
+<div
+  class="consent"
+  data-consent-root
+  data-app-url={APP_URL}
+  data-locale={lang}
+  hidden
+>
+  <section class="consent-banner" data-consent-banner role="region" aria-label={t('consent.title')} hidden>
+    <div class="consent-inner">
+      <div class="consent-text">
+        <h2 class="consent-title">{t('consent.title')}</h2>
+        <p class="consent-body">
+          {t('consent.body')}{' '}
+          <a href={policyHref}>{t('consent.readMore')}</a>
+        </p>
+      </div>
+      <div class="consent-actions">
+        <button type="button" class="consent-btn consent-btn-primary" data-consent-accept>
+          {t('consent.acceptAll')}
+        </button>
+        <button type="button" class="consent-btn consent-btn-primary" data-consent-reject>
+          {t('consent.rejectAll')}
+        </button>
+        <button type="button" class="consent-btn consent-btn-quiet" data-consent-customise>
+          {t('consent.customise')}
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <dialog class="consent-dialog" data-consent-dialog aria-labelledby="consent-prefs-title">
+    <form method="dialog" class="consent-dialog-form">
+      <h2 class="consent-dialog-title" id="consent-prefs-title">{t('consent.prefsTitle')}</h2>
+      <p class="consent-dialog-body">{t('consent.prefsBody')}</p>
+
+      <ul class="consent-cats">
+        <li class="consent-cat">
+          <div class="consent-cat-head">
+            <span class="consent-cat-name">{t('consent.categories.necessaryName')}</span>
+            <span class="consent-cat-always mono">{t('consent.alwaysOn')}</span>
+          </div>
+          <p class="consent-cat-desc">{t('consent.categories.necessaryDesc')}</p>
+        </li>
+
+        <li class="consent-cat" data-consent-cat="analytics" hidden>
+          <div class="consent-cat-head">
+            <label class="consent-cat-name" for="consent-analytics">
+              {t('consent.categories.analyticsName')}
+            </label>
+            <input type="checkbox" id="consent-analytics" data-consent-toggle="analytics" />
+          </div>
+          <p class="consent-cat-desc">{t('consent.categories.analyticsDesc')}</p>
+        </li>
+
+        <li class="consent-cat" data-consent-cat="marketing" hidden>
+          <div class="consent-cat-head">
+            <label class="consent-cat-name" for="consent-marketing">
+              {t('consent.categories.marketingName')}
+            </label>
+            <input type="checkbox" id="consent-marketing" data-consent-toggle="marketing" />
+          </div>
+          <p class="consent-cat-desc">{t('consent.categories.marketingDesc')}</p>
+        </li>
+      </ul>
+
+      <div class="consent-dialog-actions">
+        <button type="button" class="consent-btn consent-btn-primary" data-consent-save>
+          {t('consent.save')}
+        </button>
+        <button type="button" class="consent-btn consent-btn-quiet" data-consent-close>
+          {t('consent.close')}
+        </button>
+      </div>
+    </form>
+  </dialog>
+</div>
+
+<script>
+  type Category = 'necessary' | 'analytics' | 'marketing';
+  type Service = {
+    id: 'ga' | 'matomo' | 'meta';
+    category: Category;
+    measurementId?: string;
+    url?: string;
+    siteId?: string;
+    pixelId?: string;
+  };
+  type Config = { policyVersion: string; cookieDomain: string | null; services: Service[] };
+  type Stored = { v: string; id: string; a: boolean; m: boolean; ts: number };
+  type Action = 'ACCEPT_ALL' | 'REJECT_ALL' | 'CUSTOM' | 'WITHDRAW';
+
+  const COOKIE = 'sntly_consent';
+  const MAX_AGE = 31536000; // 365 days, matching the re-ask window
+  const REASK_AFTER_MS = 365 * 24 * 60 * 60 * 1000;
+  /** Cookies a withdrawal must remove. Third parties keep writing them until then. */
+  const THIRD_PARTY_PREFIXES = ['_ga', '_gid', '_gat', '_fbp', '_fbc', '_pk_'];
+
+  const root = document.querySelector<HTMLElement>('[data-consent-root]');
+  if (root) {
+    const appUrl = root.dataset.appUrl ?? '';
+    const locale = root.dataset.locale ?? 'en';
+    const banner = root.querySelector<HTMLElement>('[data-consent-banner]')!;
+    const dialog = root.querySelector<HTMLDialogElement>('[data-consent-dialog]')!;
+
+    /** An unreadable cookie counts as absent: assuming consent we cannot read would load scripts without permission. */
+    function readStored(): Stored | null {
+      const raw = document.cookie
+        .split('; ')
+        .find((entry) => entry.startsWith(`${COOKIE}=`));
+      if (!raw) return null;
+      try {
+        const parsed = JSON.parse(decodeURIComponent(raw.slice(COOKIE.length + 1)));
+        if (
+          typeof parsed?.v !== 'string' ||
+          typeof parsed?.id !== 'string' ||
+          typeof parsed?.a !== 'boolean' ||
+          typeof parsed?.m !== 'boolean' ||
+          typeof parsed?.ts !== 'number'
+        ) {
+          return null;
+        }
+        return parsed as Stored;
+      } catch {
+        return null;
+      }
+    }
+
+    function writeStored(state: Stored, cookieDomain: string | null): void {
+      const parts = [
+        `${COOKIE}=${encodeURIComponent(JSON.stringify(state))}`,
+        'Path=/',
+        `Max-Age=${MAX_AGE}`,
+        'SameSite=Lax',
+      ];
+      // Without Secure on https the browser keeps it; with Secure on http it drops it.
+      if (location.protocol === 'https:') parts.push('Secure');
+      // null means host-only — emitting Domain at all would break local development.
+      if (cookieDomain) parts.push(`Domain=${cookieDomain}`);
+      document.cookie = parts.join('; ');
+    }
+
+    function newId(): string {
+      if (crypto?.randomUUID) return crypto.randomUUID();
+      // Older Safari: good enough for an opaque identifier that is never a secret.
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+        const r = (Math.random() * 16) | 0;
+        return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
+      });
+    }
+
+    /** Fire and forget: rule 1 — the choice must survive a backend that is down. */
+    function record(action: Action, state: Stored): void {
+      try {
+        void fetch(`${appUrl}/api/v1/consent`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          // The DTO is strict: an unexpected field is a 422. No Authorization
+          // header is allowed by the CORS policy, and credentials would be blocked.
+          body: JSON.stringify({
+            consentId: state.id,
+            surface: 'site',
+            policyVersion: state.v,
+            action,
+            analytics: state.a,
+            marketing: state.m,
+            locale,
+          }),
+        }).catch(() => {});
+      } catch {
+        /* never block the choice */
+      }
+    }
+
+    function injectMatomo(service: Service): void {
+      if (!service.url || !service.siteId) return;
+      const base = service.url.endsWith('/') ? service.url : `${service.url}/`;
+      const w = window as unknown as { _paq?: unknown[] };
+      w._paq = w._paq || [];
+      w._paq.push(['trackPageView'], ['enableLinkTracking'], ['setTrackerUrl', `${base}matomo.php`], ['setSiteId', service.siteId]);
+      const el = document.createElement('script');
+      el.async = true;
+      el.src = `${base}matomo.js`;
+      document.head.appendChild(el);
+    }
+
+    function injectGa(service: Service): void {
+      if (!service.measurementId) return;
+      const el = document.createElement('script');
+      el.async = true;
+      el.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(service.measurementId)}`;
+      document.head.appendChild(el);
+      const w = window as unknown as { dataLayer?: unknown[]; gtag?: (...args: unknown[]) => void };
+      w.dataLayer = w.dataLayer || [];
+      w.gtag = function gtag(...args: unknown[]) {
+        w.dataLayer!.push(args);
+      };
+      w.gtag('js', new Date());
+      w.gtag('config', service.measurementId);
+    }
+
+    function injectMeta(service: Service): void {
+      if (!service.pixelId) return;
+      const w = window as unknown as { fbq?: any; _fbq?: any };
+      if (!w.fbq) {
+        const fbq: any = function (...args: unknown[]) {
+          fbq.callMethod ? fbq.callMethod.apply(fbq, args) : fbq.queue.push(args);
+        };
+        fbq.queue = [];
+        fbq.loaded = true;
+        fbq.version = '2.0';
+        w.fbq = fbq;
+        w._fbq = fbq;
+      }
+      const el = document.createElement('script');
+      el.async = true;
+      el.src = 'https://connect.facebook.net/en_US/fbevents.js';
+      document.head.appendChild(el);
+      w.fbq('init', service.pixelId);
+      w.fbq('track', 'PageView');
+    }
+
+    /** Guards against injecting the same provider twice in one page load. */
+    const injected = new Set<string>();
+
+    function injectConsented(services: Service[], state: Stored): void {
+      for (const service of services) {
+        const allowed =
+          service.category === 'analytics' ? state.a : service.category === 'marketing' ? state.m : false;
+        if (!allowed || injected.has(service.id)) continue;
+        injected.add(service.id);
+        if (service.id === 'matomo') injectMatomo(service);
+        else if (service.id === 'ga') injectGa(service);
+        else if (service.id === 'meta') injectMeta(service);
+      }
+    }
+
+    /**
+     * Deleting the cookies is not enough on its own — an injected tracker stays
+     * alive in memory for the rest of the session, and there is no reliable way
+     * to unload it. That is why withdrawal reloads the page. A withdrawal that
+     * does not reload is a fake withdrawal.
+     */
+    function clearThirdPartyCookies(): void {
+      const names = document.cookie
+        .split('; ')
+        .map((entry) => entry.split('=')[0])
+        .filter((name) => THIRD_PARTY_PREFIXES.some((prefix) => name.startsWith(prefix)));
+      const host = location.hostname;
+      const dotted = `.${host.split('.').slice(-2).join('.')}`;
+      for (const name of names) {
+        // Host-only and dotted-domain are different keys to the browser: both must go.
+        for (const domain of [null, host, dotted]) {
+          document.cookie = `${name}=; Path=/; Max-Age=0${domain ? `; Domain=${domain}` : ''}`;
+        }
+      }
+    }
+
+    function showBanner(): void {
+      root!.hidden = false;
+      banner.hidden = false;
+    }
+
+    function hideBanner(): void {
+      banner.hidden = true;
+    }
+
+    /** The permanent entry point in the footer — only real once services exist. */
+    function revealPreferencesLink(open: () => void): void {
+      document.querySelectorAll<HTMLElement>('[data-consent-preferences]').forEach((el) => {
+        el.hidden = false;
+        el.addEventListener('click', (event) => {
+          event.preventDefault();
+          open();
+        });
+      });
+    }
+
+    async function start(): Promise<void> {
+      let config: Config;
+      try {
+        const response = await fetch(`${appUrl}/api/v1/consent/config?surface=site`, {
+          headers: { Accept: 'application/json' },
+        });
+        if (!response.ok) return; // rule 2: unknown means zero services
+        const payload = await response.json();
+        config = payload?.data;
+      } catch {
+        return; // same: a failed call is zero services, never "load anyway"
+      }
+
+      const services = Array.isArray(config?.services) ? config.services : [];
+      if (services.length === 0) return; // rule 2: nothing to consent to, so no banner
+
+      // ⚠️ Mutable on purpose. A choice made in this page load changes it, and
+      // three things read it afterwards: the dialog's initial toggles, the
+      // downgrade check, and the consentId — which the contract says is minted
+      // once and REUSED, so a second choice must not invent a new one.
+      let current = readStored();
+      const stale =
+        !current || current.v !== config.policyVersion || Date.now() - current.ts > REASK_AFTER_MS;
+
+      const analyticsToggle = root!.querySelector<HTMLInputElement>('[data-consent-toggle="analytics"]')!;
+      const marketingToggle = root!.querySelector<HTMLInputElement>('[data-consent-toggle="marketing"]')!;
+
+      // Only offer a category some configured service actually belongs to.
+      for (const category of ['analytics', 'marketing'] as const) {
+        const present = services.some((service) => service.category === category);
+        const row = root!.querySelector<HTMLElement>(`[data-consent-cat="${category}"]`);
+        if (row) row.hidden = !present;
+      }
+
+      function apply(action: Action, analytics: boolean, marketing: boolean): void {
+        const previous = current;
+        const state: Stored = {
+          v: config.policyVersion,
+          id: previous?.id ?? newId(),
+          a: analytics,
+          m: marketing,
+          ts: Date.now(),
+        };
+        writeStored(state, config.cookieDomain);
+        current = state;
+        record(action, state);
+        hideBanner();
+        if (dialog.open) dialog.close();
+
+        // ⚠️ ANY category going from granted to denied has to clear and reload —
+        // not only "everything off". A tracker injected earlier in this page load
+        // stays alive in memory, and switching one category off while another
+        // stays on would leave it running: a withdrawal that does not reload is a
+        // fake withdrawal (CONSENT-CONTRACT §7).
+        const downgraded = Boolean((previous?.a && !analytics) || (previous?.m && !marketing));
+        if (downgraded) {
+          clearThirdPartyCookies();
+          location.reload();
+          return;
+        }
+        injectConsented(services, state);
+      }
+
+      function openDialog(): void {
+        analyticsToggle.checked = current?.a ?? false;
+        marketingToggle.checked = current?.m ?? false;
+        root!.hidden = false;
+        dialog.showModal();
+      }
+
+      root!.querySelector('[data-consent-accept]')!.addEventListener('click', () =>
+        apply('ACCEPT_ALL', true, true),
+      );
+      root!.querySelector('[data-consent-reject]')!.addEventListener('click', () => {
+        const hadConsent = Boolean(current && (current.a || current.m));
+        apply(hadConsent ? 'WITHDRAW' : 'REJECT_ALL', false, false);
+      });
+      root!.querySelector('[data-consent-customise]')!.addEventListener('click', openDialog);
+      root!.querySelector('[data-consent-close]')!.addEventListener('click', () => dialog.close());
+      root!.querySelector('[data-consent-save]')!.addEventListener('click', () => {
+        const analytics = analyticsToggle.checked;
+        const marketing = marketingToggle.checked;
+        const hadConsent = Boolean(current && (current.a || current.m));
+        const action: Action =
+          hadConsent && !analytics && !marketing
+            ? 'WITHDRAW'
+            : analytics && marketing
+              ? 'ACCEPT_ALL'
+              : !analytics && !marketing
+                ? 'REJECT_ALL'
+                : 'CUSTOM';
+        apply(action, analytics, marketing);
+      });
+
+      revealPreferencesLink(openDialog);
+
+      if (stale) showBanner();
+      else if (current) injectConsented(services, current);
+    }
+
+    void start();
+  }
+</script>
+
+<style>
+  .consent-banner {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 90;
+    background-color: var(--surface);
+    border-top: 1px solid var(--line);
+    box-shadow: var(--shadow-lg);
+    padding: 1.1rem 0 calc(1.1rem + env(safe-area-inset-bottom, 0px));
+  }
+  .consent-inner {
+    width: min(72rem, 100% - 2.5rem);
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .consent-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--strong);
+  }
+  .consent-body {
+    margin-top: 0.35rem;
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.6;
+    max-width: 68ch;
+  }
+  .consent-body a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .consent-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .consent-btn {
+    font: inherit;
+    font-size: 0.92rem;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 1.1rem;
+    cursor: pointer;
+    border: 1px solid transparent;
+  }
+  /* Accept and reject share this class deliberately: same size, same weight,
+     same row. Making refusal quieter than acceptance is the one thing that
+     turns a compliant banner into a useless one. */
+  .consent-btn-primary {
+    background-color: var(--accent-solid);
+    color: var(--btn-fg);
+  }
+  .consent-btn-quiet {
+    background-color: transparent;
+    border-color: var(--line);
+    color: var(--ink);
+  }
+  .consent-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .consent-dialog {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background-color: var(--bg);
+    color: var(--ink);
+    padding: 0;
+    width: min(34rem, calc(100% - 2rem));
+    box-shadow: var(--shadow-lg);
+  }
+  .consent-dialog::backdrop {
+    background-color: rgb(0 0 0 / 45%);
+  }
+  .consent-dialog-form {
+    padding: 1.4rem;
+  }
+  .consent-dialog-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--strong);
+  }
+  .consent-dialog-body {
+    margin-top: 0.4rem;
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.6;
+  }
+  .consent-cats {
+    margin: 1.2rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .consent-cat {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 0.8rem 0.9rem;
+  }
+  .consent-cat-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .consent-cat-name {
+    font-weight: 650;
+    color: var(--strong);
+    font-size: 0.95rem;
+  }
+  .consent-cat-always {
+    color: var(--faint);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .consent-cat-desc {
+    margin-top: 0.35rem;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.55;
+  }
+  .consent-cat input[type='checkbox'] {
+    width: 1.1rem;
+    height: 1.1rem;
+    accent-color: var(--accent-solid);
+    cursor: pointer;
+  }
+  .consent-dialog-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  @media (min-width: 800px) {
+    .consent-inner {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+    .consent-actions {
+      flex: none;
+    }
+  }
+</style>

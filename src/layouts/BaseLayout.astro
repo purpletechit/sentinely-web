@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import ConsentBanner from '../components/ConsentBanner.astro';
 import BrandmarkSprite from '../components/BrandmarkSprite.astro';
 import { localizePath, stripLocale, useTranslations, type Lang } from '../i18n/utils';
 import { SITE_ORIGIN, OG_IMAGE } from '../config';
@@ -98,6 +99,7 @@ const ogLocaleAlt = lang === 'it' ? 'en_US' : 'it_IT';
       <slot />
     </main>
     <Footer />
+    <ConsentBanner />
 
     <style>
       .skip-link {
