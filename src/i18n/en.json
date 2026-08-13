@@ -61,6 +61,10 @@
       "title": "GDPR & DPA — Sentinely",
       "description": "Sentinely's approach to GDPR, data processing and data residency in the EU."
     },
+    "cookies": {
+      "title": "Cookie Policy — Sentinely",
+      "description": "What sentinely.eu and the Sentinely application store in your browser: today, no cookies at all."
+    },
     "blog": {
       "title": "Blog — Sentinely",
       "description": "Notes on DMARC, email authentication, deliverability and keeping domains safe from spoofing."
@@ -432,7 +436,8 @@
     "legal": {
       "privacy": "Privacy",
       "terms": "Terms",
-      "gdpr": "GDPR/DPA"
+      "gdpr": "GDPR/DPA",
+      "cookies": "Cookies"
     },
     "legalBar": "© 2026 Purple IT s.r.l. — Sentinely · VAT IT01881930661 · Perugia (PG), Italy."
   },
@@ -776,42 +781,7 @@
   },
   "legal": {
     "lastUpdated": "Last updated",
-    "lastUpdatedValue": "9 July 2026",
-    "placeholderNotice": "This page is a placeholder. The final, legally reviewed text will be published before go-live. For any question in the meantime, contact info@sentinely.eu.",
-    "contactHeading": "Data controller",
-    "privacy": {
-      "title": "Privacy Policy",
-      "intro": "This Privacy Policy explains how Purple IT s.r.l. (\"Sentinely\", \"we\") processes personal data when you visit this website, contact us, or use the Sentinely service.",
-      "sections": [
-        { "heading": "Who we are", "body": "Sentinely is a product of Purple IT s.r.l., Perugia (PG), Italy, VAT IT01881930661. We are the data controller for the personal data described here." },
-        { "heading": "What we collect", "body": "Website analytics kept to a minimum, the details you submit through our contact and affiliate forms, and — for customers — account data and the DMARC aggregate reports routed to the service." },
-        { "heading": "Why we process it", "body": "To answer your enquiries, provide and secure the service, comply with legal obligations, and communicate about your account. DMARC report data is processed to deliver the analysis, scoring and alerts you ask for." },
-        { "heading": "Your rights", "body": "You may request access, rectification, erasure, restriction or portability of your personal data, and object to certain processing. Contact info@sentinely.eu to exercise these rights." },
-        { "heading": "Retention & location", "body": "Data is processed and stored in the EU and retained no longer than necessary for the purposes above. See our GDPR/DPA page for processing details." }
-      ]
-    },
-    "terms": {
-      "title": "Terms of Service",
-      "intro": "These Terms govern access to and use of the Sentinely website and service, provided by Purple IT s.r.l. By using Sentinely you agree to these Terms.",
-      "sections": [
-        { "heading": "The service", "body": "Sentinely ingests DMARC aggregate reports and provides analysis, a protection score, alerts and a daily digest. Sentinely is a read-only analysis tool: it does not send, filter or reroute your email, and it does not publish or modify your DNS records." },
-        { "heading": "Accounts", "body": "You are responsible for the accuracy of the information you provide and for maintaining the security of your account and credentials." },
-        { "heading": "Acceptable use", "body": "You agree to use Sentinely only for domains you are authorised to manage, and not to misuse, disrupt or attempt to gain unauthorised access to the service." },
-        { "heading": "Plans & billing", "body": "Paid plans are billed as described at sign-up and payment is handled by Stripe or PayPal, depending on the method you choose at checkout. Prices shown on this site are in EUR and exclude VAT; annual billing is charged as ten monthly instalments." },
-        { "heading": "Liability", "body": "The service is provided \"as is\". To the extent permitted by law, Purple IT s.r.l. limits its liability as set out in the final Terms published before go-live." }
-      ]
-    },
-    "gdpr": {
-      "title": "GDPR & Data Processing",
-      "intro": "This page describes how Sentinely, a product of Purple IT s.r.l., approaches the GDPR and acts as a data processor for customer data, including DMARC aggregate reports.",
-      "sections": [
-        { "heading": "Roles", "body": "For customer account and report data processed on your behalf, Purple IT s.r.l. acts as data processor and you as data controller. For this website and our own communications, we are the controller." },
-        { "heading": "Data residency", "body": "Report data and account data are processed and stored within the European Union." },
-        { "heading": "Sub-processors", "body": "We use a limited set of vetted sub-processors (for hosting, email delivery and AI-generated insights). A current list is available on request and will be published here before go-live." },
-        { "heading": "Data Processing Agreement", "body": "A Data Processing Agreement (DPA) is available for customers. Request a copy at info@sentinely.eu." },
-        { "heading": "Security", "body": "We apply appropriate technical and organisational measures to protect personal data. Details are provided in the DPA and final documentation." }
-      ]
-    }
+    "contactHeading": "Data controller"
   },
   "about": {
     "eyebrow": "About",

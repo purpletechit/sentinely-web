@@ -13,7 +13,8 @@
     "preview": "astro preview",
     "check": "astro check",
     "astro": "astro",
-    "og": "node scripts/generate-og.mjs"
+    "og": "node scripts/generate-og.mjs",
+    "legal": "node scripts/legal-from-drafts.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",

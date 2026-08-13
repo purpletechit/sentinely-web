@@ -1,46 +1,83 @@
 ---
 import CompanyBlock from '../CompanyBlock.astro';
 import { useTranslations, type Lang } from '../../i18n/utils';
+import legalContent from '../../data/legal-content.json';
+
+/**
+ * Renders one legal document.
+ *
+ * The text is NOT in the i18n files: it is generated from the reviewed drafts by
+ * `npm run legal`, into `src/data/legal-content.json`. Keeping it out of `en.json`
+ * means a lawyer's revision is a re-run, not a merge — and marketing copy and legal
+ * text never end up edited in the same place by accident.
+ *
+ * Blocks carry HTML built by that script from Markdown (bold, inline code, links),
+ * which is why they are rendered with `set:html`. The source is our own repo, never
+ * user input.
+ */
 
 interface Props {
-  doc: 'privacy' | 'terms' | 'gdpr';
+  doc: 'privacy' | 'terms' | 'gdpr' | 'cookies';
 }
 const { doc } = Astro.props;
 
 const lang = (Astro.currentLocale ?? 'en') as Lang;
 const t = useTranslations(lang);
 
-type Section = { heading: string; body: string };
-const sections = t(`legal.${doc}.sections`) as Section[];
+type Block =
+  | { type: 'p'; html: string }
+  | { type: 'list'; items: string[] }
+  | { type: 'table'; columns: string[]; rows: string[][] };
+type Doc = {
+  title: string;
+  updated: string;
+  intro: Block[];
+  sections: { heading: string; blocks: Block[] }[];
+};
+
+const content = (legalContent as Record<string, Record<string, Doc>>)[lang][doc];
 ---
 
 <section class="legal-hero">
   <div class="container">
     <p class="eyebrow">{t('footer.colLegal')}</p>
-    <h1 class="legal-title">{t(`legal.${doc}.title`)}</h1>
-    <p class="legal-updated mono">{t('legal.lastUpdated')}: {t('legal.lastUpdatedValue')}</p>
+    <h1 class="legal-title">{content.title}</h1>
+    <p class="legal-updated mono">{t('legal.lastUpdated')}: {content.updated}</p>
   </div>
 </section>
 
 <section class="section section-top">
   <div class="container legal-grid">
     <div class="legal-content">
-      <div class="legal-notice">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
-          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"></circle>
-          <path d="M12 11v5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
-          <circle cx="12" cy="7.75" r="1.05" fill="currentColor"></circle>
-        </svg>
-        <p>{t('legal.placeholderNotice')}</p>
-      </div>
-
-      <p class="legal-intro">{t(`legal.${doc}.intro`)}</p>
+      {content.intro.map((block) => <p class="legal-intro" set:html={(block as { html: string }).html} />)}
 
       <div class="legal-sections">
-        {sections.map((section) => (
+        {content.sections.map((section) => (
           <section class="legal-section">
             <h2 class="legal-section-heading">{section.heading}</h2>
-            <p class="legal-section-body">{section.body}</p>
+
+            {section.blocks.map((block) =>
+              block.type === 'p' ? (
+                <p class="legal-section-body" set:html={block.html} />
+              ) : block.type === 'list' ? (
+                <ul class="legal-list">
+                  {block.items.map((item) => <li set:html={item} />)}
+                </ul>
+              ) : (
+                <div class="scroll-x legal-table-wrap">
+                  <table class="legal-table">
+                    <thead>
+                      <tr>{block.columns.map((column) => <th set:html={column} />)}</tr>
+                    </thead>
+                    <tbody>
+                      {block.rows.map((row) => (
+                        <tr>{row.map((cell) => <td set:html={cell} />)}</tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ),
+            )}
           </section>
         ))}
       </div>
@@ -73,31 +110,19 @@ const sections = t(`legal.${doc}.sections`) as Section[];
     gap: 2.5rem;
     align-items: start;
   }
-  .legal-notice {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.7rem;
-    padding: 1rem 1.1rem;
-    border-radius: var(--radius);
-    background-color: var(--warn-soft);
-    border: 1px solid color-mix(in srgb, var(--warn) 35%, var(--line));
-    color: var(--warn);
-    margin-bottom: 2rem;
-  }
-  .legal-notice svg {
-    flex: none;
-    margin-top: 0.1rem;
-  }
-  .legal-notice p {
-    font-size: 0.88rem;
-    line-height: 1.55;
-    font-weight: 550;
+  /* min-width:0 so a wide table scrolls inside its wrapper instead of stretching
+     the grid column — the same reason the signal panels do it. */
+  .legal-content {
+    min-width: 0;
   }
   .legal-intro {
     color: var(--ink);
     font-size: 1.05rem;
     line-height: 1.7;
     max-width: 65ch;
+    margin-bottom: 1.1rem;
+  }
+  .legal-intro:last-of-type {
     margin-bottom: 2rem;
   }
   .legal-sections {
@@ -116,6 +141,79 @@ const sections = t(`legal.${doc}.sections`) as Section[];
     font-size: 0.98rem;
     line-height: 1.7;
     max-width: 65ch;
+  }
+  .legal-section-body + .legal-section-body {
+    margin-top: 0.9rem;
+  }
+  .legal-list {
+    margin: 0.7rem 0 0;
+    padding-left: 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: 65ch;
+  }
+  .legal-list li {
+    color: var(--muted);
+    font-size: 0.98rem;
+    line-height: 1.7;
+    list-style: disc;
+  }
+  .legal-table-wrap {
+    margin-top: 0.9rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+  .legal-table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 34rem;
+    font-size: 0.9rem;
+  }
+  .legal-table th,
+  .legal-table td {
+    text-align: left;
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+  .legal-table th {
+    color: var(--strong);
+    font-weight: 650;
+    background-color: var(--surface);
+    white-space: nowrap;
+  }
+  .legal-table td {
+    color: var(--muted);
+  }
+  .legal-table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+  .legal-section-body :global(code),
+  .legal-list :global(code),
+  .legal-table :global(code) {
+    font-family: var(--font-mono, var(--mono));
+    font-size: 0.9em;
+    color: var(--strong);
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 0.05em 0.35em;
+    overflow-wrap: anywhere;
+  }
+  .legal-section-body :global(strong),
+  .legal-list :global(strong),
+  .legal-table :global(strong) {
+    color: var(--strong);
+    font-weight: 650;
+  }
+  .legal-section-body :global(a),
+  .legal-intro :global(a),
+  .legal-list :global(a) {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
   }
   @media (min-width: 900px) {
     .legal-grid {

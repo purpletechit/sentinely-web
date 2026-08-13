@@ -61,6 +61,10 @@
       "title": "GDPR e DPA — Sentinely",
       "description": "L'approccio di Sentinely al GDPR, al trattamento dei dati e alla residenza dei dati nell'UE."
     },
+    "cookies": {
+      "title": "Informativa sui cookie — Sentinely",
+      "description": "Che cosa sentinely.eu e l’applicazione Sentinely salvano nel tuo browser: oggi, nessun cookie."
+    },
     "blog": {
       "title": "Blog — Sentinely",
       "description": "Approfondimenti su DMARC, autenticazione email, deliverability e protezione dei domini dallo spoofing."
@@ -432,7 +436,8 @@
     "legal": {
       "privacy": "Privacy",
       "terms": "Termini",
-      "gdpr": "GDPR/DPA"
+      "gdpr": "GDPR/DPA",
+      "cookies": "Cookie"
     },
     "legalBar": "© 2026 Purple IT s.r.l. — Sentinely · P.IVA IT01881930661 · Perugia (PG), Italia."
   },
@@ -776,42 +781,7 @@
   },
   "legal": {
     "lastUpdated": "Ultimo aggiornamento",
-    "lastUpdatedValue": "9 luglio 2026",
-    "placeholderNotice": "Questa pagina è un segnaposto. Il testo definitivo, verificato legalmente, sarà pubblicato prima del go-live. Per qualsiasi domanda nel frattempo, scrivi a info@sentinely.eu.",
-    "contactHeading": "Titolare del trattamento",
-    "privacy": {
-      "title": "Informativa sulla privacy",
-      "intro": "Questa Informativa spiega come Purple IT s.r.l. (\"Sentinely\", \"noi\") tratta i dati personali quando visiti questo sito, ci contatti o usi il servizio Sentinely.",
-      "sections": [
-        { "heading": "Chi siamo", "body": "Sentinely è un prodotto di Purple IT s.r.l., Perugia (PG), Italia, P.IVA IT01881930661. Siamo il titolare del trattamento dei dati personali qui descritti." },
-        { "heading": "Cosa raccogliamo", "body": "Analisi del sito ridotte al minimo, i dati che invii tramite i form di contatto e affiliazione e — per i clienti — i dati dell'account e i report aggregati DMARC indirizzati al servizio." },
-        { "heading": "Perché li trattiamo", "body": "Per rispondere alle tue richieste, fornire e proteggere il servizio, adempiere agli obblighi di legge e comunicare in merito al tuo account. I dati dei report DMARC sono trattati per fornire l'analisi, il punteggio e gli avvisi che richiedi." },
-        { "heading": "I tuoi diritti", "body": "Puoi richiedere accesso, rettifica, cancellazione, limitazione o portabilità dei tuoi dati personali e opporti a determinati trattamenti. Scrivi a info@sentinely.eu per esercitare questi diritti." },
-        { "heading": "Conservazione e luogo", "body": "I dati sono trattati e conservati nell'UE e mantenuti non oltre il necessario per le finalità sopra indicate. Vedi la pagina GDPR/DPA per i dettagli del trattamento." }
-      ]
-    },
-    "terms": {
-      "title": "Termini di servizio",
-      "intro": "Questi Termini regolano l'accesso e l'uso del sito e del servizio Sentinely, forniti da Purple IT s.r.l. Usando Sentinely accetti questi Termini.",
-      "sections": [
-        { "heading": "Il servizio", "body": "Sentinely ingerisce i report aggregati DMARC e fornisce analisi, un punteggio di protezione, avvisi e un digest quotidiano. Sentinely è uno strumento di analisi in sola lettura: non invia, filtra o reindirizza la tua email, e non pubblica né modifica i tuoi record DNS." },
-        { "heading": "Account", "body": "Sei responsabile dell'accuratezza delle informazioni che fornisci e della sicurezza del tuo account e delle credenziali." },
-        { "heading": "Uso consentito", "body": "Ti impegni a usare Sentinely solo per domini che sei autorizzato a gestire e a non abusarne, comprometterne il funzionamento o tentare accessi non autorizzati." },
-        { "heading": "Piani e fatturazione", "body": "I piani a pagamento sono fatturati come indicato in fase di registrazione e il pagamento avviene tramite Stripe o PayPal, secondo il metodo che scegli al momento dell'acquisto. I prezzi mostrati su questo sito sono in EUR e IVA esclusa; l'annuale è addebitato come dieci mensilità." },
-        { "heading": "Responsabilità", "body": "Il servizio è fornito \"così com'è\". Nei limiti consentiti dalla legge, Purple IT s.r.l. limita la propria responsabilità come indicato nei Termini definitivi pubblicati prima del go-live." }
-      ]
-    },
-    "gdpr": {
-      "title": "GDPR e trattamento dei dati",
-      "intro": "Questa pagina descrive come Sentinely, un prodotto di Purple IT s.r.l., affronta il GDPR e agisce come responsabile del trattamento per i dati dei clienti, inclusi i report aggregati DMARC.",
-      "sections": [
-        { "heading": "Ruoli", "body": "Per i dati di account e dei report trattati per tuo conto, Purple IT s.r.l. agisce come responsabile del trattamento e tu come titolare. Per questo sito e le nostre comunicazioni, siamo noi il titolare." },
-        { "heading": "Residenza dei dati", "body": "I dati dei report e dell'account sono trattati e conservati all'interno dell'Unione Europea." },
-        { "heading": "Sub-responsabili", "body": "Utilizziamo un insieme limitato di sub-responsabili selezionati (per hosting, invio email e insight generati con l'AI). L'elenco aggiornato è disponibile su richiesta e sarà pubblicato qui prima del go-live." },
-        { "heading": "Accordo sul trattamento dei dati", "body": "Un Accordo sul trattamento dei dati (DPA) è disponibile per i clienti. Richiedine una copia a info@sentinely.eu." },
-        { "heading": "Sicurezza", "body": "Applichiamo misure tecniche e organizzative adeguate per proteggere i dati personali. I dettagli sono forniti nel DPA e nella documentazione definitiva." }
-      ]
-    }
+    "contactHeading": "Titolare del trattamento"
   },
   "about": {
     "eyebrow": "Chi siamo",

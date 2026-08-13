@@ -1,0 +1,982 @@
+{
+  "en": {
+    "privacy": {
+      "title": "Privacy Policy",
+      "updated": "1 August 2026",
+      "intro": [
+        {
+          "type": "p",
+          "html": "This Privacy Policy explains how <strong>Purple IT s.r.l.</strong> processes personal data when you visit <code>sentinely.eu</code>, contact us, or use the Sentinely service at <code>app.sentinely.eu</code>."
+        },
+        {
+          "type": "p",
+          "html": "<strong>Data controller:</strong> Purple IT s.r.l., Perugia (PG), Italy — VAT IT01881930661 — <code>info@sentinely.eu</code>."
+        }
+      ],
+      "sections": [
+        {
+          "heading": "Two different roles, and it matters which one applies",
+          "blocks": [
+            {
+              "type": "list",
+              "items": [
+                "For the <strong>website</strong>, our marketing, and your <strong>account data</strong>, we are the <strong>data controller</strong>: we decide why and how those data are processed.",
+                "For the <strong>DMARC reports</strong> you route to the service and everything derived from them, we act as <strong>data processor on your behalf</strong>: you remain the controller of that data. The terms of that processing are in our <a href=\"/gdpr/\">Data Processing Agreement</a>."
+              ]
+            }
+          ]
+        },
+        {
+          "heading": "What we process, and why",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "<strong>When you visit the website.</strong> Technical data needed to serve the pages (IP address, browser, pages viewed) and, <strong>only if you consent</strong>, analytics and marketing cookies. See the <a href=\"/cookies/\">Cookie Policy</a>. Legal basis: our legitimate interest in a working, secure site (art. 6(1)(f)) and your consent for anything beyond that (art. 6(1)(a))."
+            },
+            {
+              "type": "p",
+              "html": "<strong>When you contact us.</strong> The details you send us, to answer you. Legal basis: art. 6(1)(b) and (f)."
+            },
+            {
+              "type": "p",
+              "html": "<strong>When you use the service.</strong> Account data (name, email address, preferences, language, authentication identifiers), billing data, and audit records of significant actions. Legal basis: performance of the contract (art. 6(1)(b)) and our legal obligations (art. 6(1)(c))."
+            },
+            {
+              "type": "p",
+              "html": "<strong>The DMARC reports themselves.</strong> Aggregate reports contain the <strong>IP addresses of the servers that sent email using your domain</strong> — which can be personal data of third parties. We process them only to produce the analysis, score, alerts and digests you asked for, <strong>as your processor</strong>, and never for our own purposes. Legal basis: your instructions as controller, under the DPA."
+            },
+            {
+              "type": "p",
+              "html": "<strong>AI-generated commentary.</strong> If enabled for your plan, the digest may include a written comment produced by <strong>Anthropic</strong>. Only the domain data needed for that comment is sent. This is stated explicitly because it is the question customers ask most often."
+            }
+          ]
+        },
+        {
+          "heading": "Who else sees the data",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "We use a limited set of sub-processors, each for a specific purpose. The current list, with what each one receives, is published on our <a href=\"/gdpr/\">GDPR &amp; DPA page</a>."
+            }
+          ]
+        },
+        {
+          "heading": "Where the data is",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "Account data and report data are processed and stored in the <strong>European Union</strong>, on infrastructure operated by Aruba S.p.A. in Italy, with email delivery in the AWS <code>eu-west-1</code> region."
+            },
+            {
+              "type": "p",
+              "html": "Some sub-processors and the optional analytics and marketing services may transfer data to the <strong>United States</strong>, under the EU-U.S. Data Privacy Framework or standard contractual clauses. Where this applies it is stated in the sub-processor list and in the Cookie Policy."
+            }
+          ]
+        },
+        {
+          "heading": "How long we keep it",
+          "blocks": [
+            {
+              "type": "list",
+              "items": [
+                "<strong>Account data:</strong> for as long as your account exists, then removed or anonymised.",
+                "<strong>DMARC reports and derived data:</strong> according to the retention period of your plan, after which they are purged automatically.",
+                "<strong>Cookie consent records:</strong> 24 months (see the <a href=\"/cookies/\">Cookie Policy</a>).",
+                "<strong>Billing records:</strong> for the period required by Italian tax law."
+              ]
+            }
+          ]
+        },
+        {
+          "heading": "Your rights",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "You may request <strong>access, rectification, erasure, restriction and portability</strong> of your personal data, and <strong>object</strong> to processing based on legitimate interest. Where processing is based on consent, you may <strong>withdraw it at any time</strong>, without affecting what was done before."
+            },
+            {
+              "type": "p",
+              "html": "Write to <code>info@sentinely.eu</code>. You also have the right to lodge a complaint with the Italian supervisory authority, the <strong>Garante per la protezione dei dati personali</strong> (<code>garanteprivacy.it</code>)."
+            },
+            {
+              "type": "p",
+              "html": "If your request concerns data inside DMARC reports processed on behalf of a customer, we will refer you to that customer, who is the controller for those data."
+            }
+          ]
+        },
+        {
+          "heading": "Changes",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "We publish the date of the last update at the top of this page. Substantial changes affecting cookies also trigger a new consent request."
+            }
+          ]
+        }
+      ]
+    },
+    "terms": {
+      "title": "Terms of Service",
+      "updated": "1 August 2026",
+      "intro": [
+        {
+          "type": "p",
+          "html": "These Terms govern access to and use of the Sentinely website and service, provided by <strong>Purple IT s.r.l.</strong>, Perugia (PG), Italy — VAT IT01881930661 (\"we\"). By creating an account or using the service you accept these Terms."
+        }
+      ],
+      "sections": [
+        {
+          "heading": "1. The service",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "Sentinely ingests DMARC aggregate reports and provides analysis, a protection score, alerts, digests, exportable reports and a read-only public API."
+            },
+            {
+              "type": "p",
+              "html": "<strong>Sentinely is an analysis tool.</strong> It does not send, filter or reroute your email, and it does not publish or modify your DNS records. Recommendations are informative: acting on them is your decision and your responsibility."
+            },
+            {
+              "type": "p",
+              "html": "Some free tools on our website — such as the email header analyser — are provided without an account, as-is, and <strong>retain nothing</strong>: what you paste is analysed and discarded."
+            }
+          ]
+        },
+        {
+          "heading": "2. Accounts",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "You are responsible for the accuracy of the information you provide, for the security of your credentials, and for the activity of the users you invite to your organisation."
+            }
+          ]
+        },
+        {
+          "heading": "3. Acceptable use",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "You agree to use Sentinely only for domains you are authorised to manage, and not to misuse, disrupt or attempt to gain unauthorised access to the service."
+            },
+            {
+              "type": "p",
+              "html": "<strong>Sharing reports by email.</strong> The service lets you email a report to recipients you choose, sent from our sending domain. You are responsible for having a legitimate reason to contact those recipients. <strong>Because those messages leave from our domain, abuse damages the email deliverability of every other customer.</strong> We apply per-send limits and rate limits, we keep a record of each send, and we may suspend this feature — or the account — where we detect abuse."
+            }
+          ]
+        },
+        {
+          "heading": "4. Plans, billing and taxes",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "Plans are described at sign-up. Prices are in EUR and exclude VAT. Payments are handled by <strong>Stripe or PayPal</strong>, depending on the method you choose at checkout; we never see or store your full payment credentials. Annual billing is charged as ten monthly instalments."
+            },
+            {
+              "type": "p",
+              "html": "Plans may include usage limits (for example the number of domains, users, or processed messages) and optional add-ons. Where a plan is agreed individually, the agreed terms prevail over the published price list."
+            },
+            {
+              "type": "p",
+              "html": "Subscriptions renew automatically until cancelled. Cancellation takes effect at the end of the current period; access continues until then."
+            }
+          ]
+        },
+        {
+          "heading": "5. Free plan and trials",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "A free plan and trial periods may be offered, with reduced limits that we may change for future periods. Reaching a limit restricts the corresponding feature; it never deletes data that has already been collected."
+            }
+          ]
+        },
+        {
+          "heading": "6. Your data",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "You retain all rights to your data. We process the personal data contained in your DMARC reports <strong>as your processor</strong>, under our <a href=\"/privacy/\">Privacy Policy</a> and <a href=\"/gdpr/\">DPA</a>. Retention follows the period of your plan."
+            },
+            {
+              "type": "p",
+              "html": "You may permanently delete a domain and all of its data at any time. <strong>That deletion is irreversible.</strong>"
+            }
+          ]
+        },
+        {
+          "heading": "7. Availability and support",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "We aim for continuous availability but do not guarantee uninterrupted service. Maintenance, third-party failures and force majeure may cause interruptions. Support is provided by email at <code>info@sentinely.eu</code>."
+            }
+          ]
+        },
+        {
+          "heading": "8. Suspension",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "We may suspend an account for non-payment, for breach of these Terms, or where required by law. Where circumstances allow, we give notice first."
+            }
+          ]
+        },
+        {
+          "heading": "9. Liability",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "The service is provided \"as is\". To the extent permitted by law, our liability is limited as set out in this section — *[da completare con l'avvocato: massimale, esclusione dei danni indiretti, deroghe imperative]*."
+            }
+          ]
+        },
+        {
+          "heading": "10. Changes to these Terms",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "We may update these Terms. Substantial changes are notified at least 30 days in advance, and continued use after they take effect constitutes acceptance."
+            }
+          ]
+        },
+        {
+          "heading": "11. Governing law",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "These Terms are governed by Italian law. Competent court: Tribunale di Perugia (PG)."
+            }
+          ]
+        }
+      ]
+    },
+    "gdpr": {
+      "title": "GDPR & Data Processing",
+      "updated": "1 August 2026",
+      "intro": [],
+      "sections": [
+        {
+          "heading": "Our role",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "<strong>Purple IT s.r.l.</strong> (Perugia, Italy — VAT IT01881930661) provides Sentinely."
+            },
+            {
+              "type": "list",
+              "items": [
+                "For the personal data contained in the <strong>DMARC aggregate reports</strong> routed to the service, and everything derived from them, we act as <strong>data processor</strong>. The customer is the controller.",
+                "For <strong>account data</strong>, billing, this website and our own communications, we are the <strong>controller</strong>."
+              ]
+            },
+            {
+              "type": "p",
+              "html": "DMARC aggregate reports contain the IP addresses of the servers that sent email using a customer's domain. These can be personal data belonging to third parties, and we treat them as such."
+            }
+          ]
+        },
+        {
+          "heading": "Data Processing Agreement",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "A Data Processing Agreement (DPA) compliant with art. 28 GDPR is available to all customers. Request it at <code>info@sentinely.eu</code>. It covers the subject matter and duration of the processing, the categories of data and of data subjects, our obligations of confidentiality and security, the rules on sub-processors, assistance with data subject requests, breach notification, and what happens to the data when the contract ends."
+            }
+          ]
+        },
+        {
+          "heading": "Sub-processors of the service",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "Each of these receives only what its purpose requires:"
+            },
+            {
+              "type": "table",
+              "columns": [
+                "Sub-processor",
+                "Purpose",
+                "Data received",
+                "Location"
+              ],
+              "rows": [
+                [
+                  "<strong>Aruba S.p.A.</strong>",
+                  "Hosting of the application and database",
+                  "All service data at rest",
+                  "Italy (EU)"
+                ],
+                [
+                  "<strong>Clerk</strong>",
+                  "Authentication and identity",
+                  "Email, name, session identifiers",
+                  "USA (DPF / SCC)"
+                ],
+                [
+                  "<strong>Amazon Web Services (SES)</strong>",
+                  "Delivery of all email",
+                  "Recipient addresses, content of digests and alerts",
+                  "EU (<code>eu-west-1</code>)"
+                ],
+                [
+                  "<strong>Stripe</strong>",
+                  "Payments",
+                  "Billing and payment data",
+                  "EU / USA (DPF / SCC)"
+                ],
+                [
+                  "<strong>PayPal</strong>",
+                  "Payments",
+                  "Billing and payment data",
+                  "EU / USA (DPF / SCC)"
+                ],
+                [
+                  "<strong>Anthropic</strong>",
+                  "AI-written commentary in digests, where the plan includes it",
+                  "Domain analysis data needed for the comment",
+                  "USA (DPF / SCC)"
+                ],
+                [
+                  "<strong>Cloudflare</strong>",
+                  "DNS, report-delivery verification, website delivery",
+                  "Request metadata",
+                  "EU / global network"
+                ]
+              ]
+            },
+            {
+              "type": "p",
+              "html": "We notify customers before adding or replacing a sub-processor, so that they can object."
+            }
+          ]
+        },
+        {
+          "heading": "Website analytics and advertising",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "The services used on <code>sentinely.eu</code> for statistics and advertising — Google Analytics, Matomo and the Meta Pixel — concern <strong>visitors to the website</strong>, not customer data, and run <strong>only with consent</strong>. They are described in the <a href=\"/cookies/\">Cookie Policy</a>. None of them is used inside the application at <code>app.sentinely.eu</code>, which loads no third-party tracking script at all."
+            }
+          ]
+        },
+        {
+          "heading": "Data residency",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "Account data and report data are processed and stored in the <strong>European Union</strong>. Transfers outside the EU occur only through the sub-processors marked above, under the EU-U.S. Data Privacy Framework or standard contractual clauses."
+            }
+          ]
+        },
+        {
+          "heading": "Security",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "Access to production data is restricted and authenticated. Data is encrypted in transit. Backups are taken automatically and restore procedures are documented. Administrative access to a customer's data for support purposes is technically restricted to read-only and recorded in an immutable audit log. Details are provided in the DPA."
+            }
+          ]
+        },
+        {
+          "heading": "Retention and deletion",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "Report data is retained for the period of the customer's plan and then purged automatically. On termination, customer data is deleted according to the terms of the DPA. Permanent deletion of a domain and all its data can be requested at any time and is irreversible."
+            }
+          ]
+        },
+        {
+          "heading": "Contact",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "Data protection enquiries: <code>info@sentinely.eu</code>."
+            }
+          ]
+        }
+      ]
+    },
+    "cookies": {
+      "title": "Cookie Policy",
+      "updated": "12 August 2026 · Version: 2026-08-12",
+      "intro": [
+        {
+          "type": "p",
+          "html": "This Cookie Policy explains what <code>sentinely.eu</code> and <code>app.sentinely.eu</code> store in your browser, and how you can control it. It complements our <a href=\"/privacy/\">Privacy Policy</a>."
+        },
+        {
+          "type": "p",
+          "html": "The data controller is <strong>Purple IT s.r.l.</strong>, Perugia (PG), Italy — VAT IT01881930661 — <code>info@sentinely.eu</code>."
+        }
+      ],
+      "sections": [
+        {
+          "heading": "What cookies are",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "Cookies are small text files that the sites you visit store on your device. Some are necessary for a site to work; others are placed only if you agree to them."
+            }
+          ]
+        },
+        {
+          "heading": "This website sets no cookies",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "<strong><code>sentinely.eu</code> sets no cookies at all</strong> — none for statistics, none for advertising, and none of its own for technical purposes. That is also why you have not been shown a consent banner: there is nothing here to consent to, and asking permission for nothing would be an obstacle without a purpose."
+            },
+            {
+              "type": "p",
+              "html": "Nor does the site load anything from third parties. Scripts, fonts, styles and images all come from our own domains, with the single exception described below — no external provider learns the address of your browser merely because you are reading this page."
+            }
+          ]
+        },
+        {
+          "heading": "The one third-party script: the check on our forms",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "The contact form and the affiliate form load <strong>Cloudflare Turnstile</strong>, the check that tells a person apart from an automated script. It runs on those two pages only, for the sole purpose of letting the form be submitted. It is not a statistics or advertising tool: it measures nothing about you and builds no profile. Without it the forms would be filled by bots within days, so it is a security measure needed to deliver a service you asked for — which is why it does not require consent."
+            },
+            {
+              "type": "p",
+              "html": "Turnstile is provided by <strong>Cloudflare, Inc.</strong>, which also delivers this website."
+            }
+          ]
+        },
+        {
+          "heading": "What is stored in your browser",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "One thing, and it is not a cookie. If you switch between the light and the dark theme, your choice is saved in your browser's <strong>local storage</strong> under <code>theme</code>. It stays on your device, is never sent with any request, and exists so that the site does not show you the wrong colours on your next visit. Clearing your browsing data removes it."
+            }
+          ]
+        },
+        {
+          "heading": "The application",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "<code>app.sentinely.eu</code> — the product you sign in to — uses <strong>only technical cookies</strong>: the ones that keep you signed in and remember your preferences. It carries no statistics or advertising cookie, and loads no third-party tracking script. Technical cookies require no consent (art. 122 of the Italian Privacy Code, and its European equivalent, exempt them), but they do require that we tell you they exist — which is what this section does."
+            }
+          ]
+        },
+        {
+          "heading": "If this ever changes",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "We may one day add website statistics or advertising measurement. If we do, this page will be updated <strong>before</strong> anything is loaded, and a banner will ask you first: refusing will be exactly as easy as accepting, and no third-party script will run — not even in the background — until you have chosen. Until you see that banner, what you have just read is the whole picture."
+            }
+          ]
+        },
+        {
+          "heading": "How to control what is stored",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "Every browser lets you inspect, delete and block cookies and local storage. Since this site sets no cookies, blocking them changes nothing here: the only effect is that we can no longer remember your theme."
+            },
+            {
+              "type": "p",
+              "html": "To exercise your rights over your personal data, see the <a href=\"/privacy/\">Privacy Policy</a> or write to <code>info@sentinely.eu</code>."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "it": {
+    "privacy": {
+      "title": "Informativa sulla privacy",
+      "updated": "1 agosto 2026",
+      "intro": [
+        {
+          "type": "p",
+          "html": "Questa informativa spiega come <strong>Purple IT s.r.l.</strong> tratta i dati personali quando visiti <code>sentinely.eu</code>, ci contatti o utilizzi il servizio Sentinely su <code>app.sentinely.eu</code>."
+        },
+        {
+          "type": "p",
+          "html": "<strong>Titolare del trattamento:</strong> Purple IT s.r.l., Perugia (PG), Italia — P.IVA IT01881930661 — <code>info@sentinely.eu</code>."
+        }
+      ],
+      "sections": [
+        {
+          "heading": "Due ruoli diversi, e conta quale si applica",
+          "blocks": [
+            {
+              "type": "list",
+              "items": [
+                "Per il <strong>sito</strong>, le nostre comunicazioni e i <strong>dati del tuo account</strong> siamo <strong>titolari del trattamento</strong>: decidiamo noi perché e come quei dati vengono trattati.",
+                "Per i <strong>report DMARC</strong> che indirizzi al servizio e per tutto ciò che ne deriva agiamo come <strong>responsabili del trattamento per tuo conto</strong>: il titolare di quei dati resti tu. Le condizioni sono nel nostro <a href=\"/it/gdpr/\">accordo sul trattamento dei dati</a>."
+              ]
+            }
+          ]
+        },
+        {
+          "heading": "Cosa trattiamo, e perché",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "<strong>Quando visiti il sito.</strong> I dati tecnici necessari a servire le pagine (indirizzo IP, browser, pagine viste) e, <strong>solo se acconsenti</strong>, i cookie statistici e di marketing. Vedi l'<a href=\"/it/cookies/\">informativa sui cookie</a>. Basi giuridiche: il legittimo interesse a un sito funzionante e sicuro (art. 6(1)(f)) e il tuo consenso per tutto ciò che va oltre (art. 6(1)(a))."
+            },
+            {
+              "type": "p",
+              "html": "<strong>Quando ci contatti.</strong> I dati che ci invii, per risponderti. Basi giuridiche: art. 6(1)(b) e (f)."
+            },
+            {
+              "type": "p",
+              "html": "<strong>Quando usi il servizio.</strong> Dati di account (nome, indirizzo email, preferenze, lingua, identificativi di autenticazione), dati di fatturazione e registrazioni delle operazioni rilevanti. Basi giuridiche: esecuzione del contratto (art. 6(1)(b)) e obblighi di legge (art. 6(1)(c))."
+            },
+            {
+              "type": "p",
+              "html": "<strong>I report DMARC.</strong> I report aggregati contengono gli <strong>indirizzi IP dei server che hanno inviato posta usando il tuo dominio</strong>, che possono costituire dati personali di terzi. Li trattiamo esclusivamente per produrre l'analisi, il punteggio, gli avvisi e i digest che hai richiesto, <strong>in qualità di responsabile</strong>, e mai per finalità nostre. Base giuridica: le tue istruzioni di titolare, secondo l'accordo sul trattamento."
+            },
+            {
+              "type": "p",
+              "html": "<strong>Commenti generati dall'IA.</strong> Se previsto dal tuo piano, il digest può includere un commento scritto prodotto da <strong>Anthropic</strong>. Vengono inviati solo i dati del dominio necessari a quel commento. Lo dichiariamo esplicitamente perché è la domanda che i clienti fanno più spesso."
+            }
+          ]
+        },
+        {
+          "heading": "Chi altro vede i dati",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "Ci avvaliamo di un numero limitato di responsabili, ciascuno per una finalità precisa. L'elenco aggiornato, con l'indicazione di cosa riceve ognuno, è pubblicato sulla <a href=\"/it/gdpr/\">pagina GDPR e DPA</a>."
+            }
+          ]
+        },
+        {
+          "heading": "Dove si trovano i dati",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "I dati di account e i dati dei report sono trattati e conservati nell'<strong>Unione Europea</strong>, su infrastruttura gestita da Aruba S.p.A. in Italia, con l'invio delle email nella region AWS <code>eu-west-1</code>."
+            },
+            {
+              "type": "p",
+              "html": "Alcuni responsabili e i servizi facoltativi di statistica e marketing possono trasferire dati negli <strong>Stati Uniti</strong>, sulla base del Data Privacy Framework UE-USA o di clausole contrattuali standard. Dove accade è indicato nell'elenco dei responsabili e nell'informativa sui cookie."
+            }
+          ]
+        },
+        {
+          "heading": "Per quanto tempo",
+          "blocks": [
+            {
+              "type": "list",
+              "items": [
+                "<strong>Dati di account:</strong> finché esiste il tuo account, poi cancellati o resi anonimi.",
+                "<strong>Report DMARC e dati derivati:</strong> secondo il periodo di conservazione del tuo piano, dopo il quale vengono eliminati automaticamente.",
+                "<strong>Registro dei consensi ai cookie:</strong> 24 mesi (vedi l'<a href=\"/it/cookies/\">informativa sui cookie</a>).",
+                "<strong>Documenti contabili:</strong> per il periodo imposto dalla normativa fiscale italiana."
+              ]
+            }
+          ]
+        },
+        {
+          "heading": "I tuoi diritti",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "Puoi chiedere <strong>accesso, rettifica, cancellazione, limitazione e portabilità</strong> dei tuoi dati personali e <strong>opporti</strong> ai trattamenti fondati sul legittimo interesse. Quando il trattamento si basa sul consenso, puoi <strong>revocarlo in qualsiasi momento</strong>, senza che ciò pregiudichi quanto fatto in precedenza."
+            },
+            {
+              "type": "p",
+              "html": "Scrivi a <code>info@sentinely.eu</code>. Hai inoltre il diritto di proporre reclamo al <strong>Garante per la protezione dei dati personali</strong> (<code>garanteprivacy.it</code>)."
+            },
+            {
+              "type": "p",
+              "html": "Se la tua richiesta riguarda dati contenuti nei report DMARC trattati per conto di un cliente, ti indirizzeremo a quel cliente, che di quei dati è titolare."
+            }
+          ]
+        },
+        {
+          "heading": "Modifiche",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "La data dell'ultimo aggiornamento è in cima a questa pagina. Le modifiche sostanziali che riguardano i cookie comportano anche una nuova richiesta di consenso."
+            }
+          ]
+        }
+      ]
+    },
+    "terms": {
+      "title": "Termini di servizio",
+      "updated": "1 agosto 2026",
+      "intro": [
+        {
+          "type": "p",
+          "html": "I presenti Termini disciplinano l'accesso e l'uso del sito e del servizio Sentinely, forniti da <strong>Purple IT s.r.l.</strong>, Perugia (PG) — P.IVA IT01881930661 (\"noi\"). Creando un account o utilizzando il servizio accetti questi Termini."
+        }
+      ],
+      "sections": [
+        {
+          "heading": "1. Il servizio",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "Sentinely acquisisce i report DMARC aggregati e fornisce analisi, un punteggio di protezione, avvisi, digest, report esportabili e un'API pubblica in sola lettura."
+            },
+            {
+              "type": "p",
+              "html": "<strong>Sentinely è uno strumento di analisi.</strong> Non invia, non filtra e non reinstrada la tua posta, e non pubblica né modifica i tuoi record DNS. I suggerimenti hanno natura informativa: agire di conseguenza è una tua decisione e una tua responsabilità."
+            },
+            {
+              "type": "p",
+              "html": "Alcuni strumenti gratuiti presenti sul sito — come l'analizzatore di intestazioni email — sono offerti senza account, così come sono, e <strong>non conservano nulla</strong>: ciò che incolli viene analizzato e dimenticato."
+            }
+          ]
+        },
+        {
+          "heading": "2. Account",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "Sei responsabile della correttezza delle informazioni che fornisci, della sicurezza delle tue credenziali e dell'attività degli utenti che inviti nella tua organizzazione."
+            }
+          ]
+        },
+        {
+          "heading": "3. Uso accettabile",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "Ti impegni a usare Sentinely solo per domini che sei autorizzato a gestire e a non abusare del servizio, comprometterlo o tentare di accedervi senza autorizzazione."
+            },
+            {
+              "type": "p",
+              "html": "<strong>Condivisione dei report via email.</strong> Il servizio consente di inviare un report a destinatari scelti da te, spedito dal nostro dominio mittente. Sei responsabile di avere un motivo legittimo per contattare quei destinatari. <strong>Poiché quei messaggi partono dal nostro dominio, un abuso danneggia il recapito della posta di tutti gli altri clienti.</strong> Applichiamo limiti per invio e limiti di frequenza, conserviamo traccia di ogni invio e possiamo sospendere questa funzione — o l'account — in presenza di abusi."
+            }
+          ]
+        },
+        {
+          "heading": "4. Piani, fatturazione e imposte",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "I piani sono descritti in fase di iscrizione. I prezzi sono in EUR e non comprendono l'IVA. I pagamenti sono gestiti da <strong>Stripe o PayPal</strong>, secondo il metodo che scegli al momento dell'acquisto; non vediamo né conserviamo i dati completi del tuo strumento di pagamento. La fatturazione annuale è addebitata in dieci rate mensili."
+            },
+            {
+              "type": "p",
+              "html": "I piani possono prevedere limiti d'uso (ad esempio numero di domini, utenti o messaggi elaborati) e componenti aggiuntivi facoltativi. Quando un piano è concordato individualmente, le condizioni pattuite prevalgono sul listino pubblicato."
+            },
+            {
+              "type": "p",
+              "html": "Gli abbonamenti si rinnovano automaticamente fino alla disdetta. La disdetta ha effetto al termine del periodo in corso; fino a quel momento l'accesso prosegue."
+            }
+          ]
+        },
+        {
+          "heading": "5. Piano gratuito e periodi di prova",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "Possono essere offerti un piano gratuito e periodi di prova, con limiti ridotti che potremo modificare per i periodi successivi. Il raggiungimento di un limite comporta la restrizione della funzione corrispondente; non comporta mai la cancellazione dei dati già raccolti."
+            }
+          ]
+        },
+        {
+          "heading": "6. I tuoi dati",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "I diritti sui tuoi dati restano tuoi. Trattiamo i dati personali contenuti nei tuoi report DMARC <strong>in qualità di responsabili</strong>, secondo l'<a href=\"/it/privacy/\">informativa sulla privacy</a> e il <a href=\"/it/gdpr/\">DPA</a>. La conservazione segue il periodo previsto dal tuo piano."
+            },
+            {
+              "type": "p",
+              "html": "Puoi cancellare definitivamente un dominio e tutti i suoi dati in qualsiasi momento. <strong>Tale cancellazione è irreversibile.</strong>"
+            }
+          ]
+        },
+        {
+          "heading": "7. Disponibilità e assistenza",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "Puntiamo alla continuità del servizio ma non ne garantiamo l'assenza di interruzioni. Manutenzioni, guasti di terze parti e cause di forza maggiore possono determinare interruzioni. L'assistenza è fornita via email all'indirizzo <code>info@sentinely.eu</code>."
+            }
+          ]
+        },
+        {
+          "heading": "8. Sospensione",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "Possiamo sospendere un account per mancato pagamento, per violazione dei presenti Termini o quando imposto dalla legge. Ove le circostanze lo consentano, avvisiamo prima."
+            }
+          ]
+        },
+        {
+          "heading": "9. Responsabilità",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "Il servizio è fornito \"così com'è\". Nei limiti consentiti dalla legge, la nostra responsabilità è limitata come previsto in questa sezione — *[da completare con l'avvocato: massimale, esclusione dei danni indiretti, deroghe inderogabili]*."
+            }
+          ]
+        },
+        {
+          "heading": "10. Modifiche ai Termini",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "Possiamo aggiornare i presenti Termini. Le modifiche sostanziali sono comunicate con almeno 30 giorni di anticipo; l'uso continuato dopo la loro entrata in vigore ne costituisce accettazione."
+            }
+          ]
+        },
+        {
+          "heading": "11. Legge applicabile",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "I presenti Termini sono regolati dalla legge italiana. Foro competente: Tribunale di Perugia (PG)."
+            }
+          ]
+        }
+      ]
+    },
+    "gdpr": {
+      "title": "GDPR e trattamento dei dati",
+      "updated": "1 agosto 2026",
+      "intro": [],
+      "sections": [
+        {
+          "heading": "Il nostro ruolo",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "<strong>Purple IT s.r.l.</strong> (Perugia — P.IVA IT01881930661) fornisce Sentinely."
+            },
+            {
+              "type": "list",
+              "items": [
+                "Per i dati personali contenuti nei <strong>report DMARC aggregati</strong> indirizzati al servizio, e per tutto ciò che ne deriva, agiamo come <strong>responsabili del trattamento</strong>. Il titolare è il cliente.",
+                "Per i <strong>dati di account</strong>, la fatturazione, questo sito e le nostre comunicazioni siamo <strong>titolari</strong>."
+              ]
+            },
+            {
+              "type": "p",
+              "html": "I report DMARC aggregati contengono gli indirizzi IP dei server che hanno inviato posta usando il dominio di un cliente. Possono costituire dati personali di terzi, e come tali li trattiamo."
+            }
+          ]
+        },
+        {
+          "heading": "Accordo sul trattamento dei dati",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "Un accordo sul trattamento dei dati (DPA) conforme all'art. 28 GDPR è disponibile per tutti i clienti. Puoi richiederlo a <code>info@sentinely.eu</code>. Disciplina oggetto e durata del trattamento, categorie di dati e di interessati, obblighi di riservatezza e sicurezza, regole sui sub-responsabili, assistenza nelle richieste degli interessati, notifica delle violazioni e destino dei dati alla fine del contratto."
+            }
+          ]
+        },
+        {
+          "heading": "Sub-responsabili del servizio",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "Ciascuno riceve solo ciò che la sua finalità richiede:"
+            },
+            {
+              "type": "table",
+              "columns": [
+                "Sub-responsabile",
+                "Finalità",
+                "Dati ricevuti",
+                "Luogo"
+              ],
+              "rows": [
+                [
+                  "<strong>Aruba S.p.A.</strong>",
+                  "Hosting dell'applicazione e del database",
+                  "Tutti i dati del servizio a riposo",
+                  "Italia (UE)"
+                ],
+                [
+                  "<strong>Clerk</strong>",
+                  "Autenticazione e identità",
+                  "Email, nome, identificativi di sessione",
+                  "USA (DPF / SCC)"
+                ],
+                [
+                  "<strong>Amazon Web Services (SES)</strong>",
+                  "Invio di tutte le email",
+                  "Indirizzi dei destinatari, contenuto di digest e avvisi",
+                  "UE (<code>eu-west-1</code>)"
+                ],
+                [
+                  "<strong>Stripe</strong>",
+                  "Pagamenti",
+                  "Dati di fatturazione e pagamento",
+                  "UE / USA (DPF / SCC)"
+                ],
+                [
+                  "<strong>PayPal</strong>",
+                  "Pagamenti",
+                  "Dati di fatturazione e pagamento",
+                  "UE / USA (DPF / SCC)"
+                ],
+                [
+                  "<strong>Anthropic</strong>",
+                  "Commento scritto dall'IA nei digest, dove il piano lo prevede",
+                  "Dati di analisi del dominio necessari al commento",
+                  "USA (DPF / SCC)"
+                ],
+                [
+                  "<strong>Cloudflare</strong>",
+                  "DNS, verifica della ricezione dei report, distribuzione del sito",
+                  "Metadati di richiesta",
+                  "UE / rete globale"
+                ]
+              ]
+            },
+            {
+              "type": "p",
+              "html": "Comunichiamo ai clienti l'aggiunta o la sostituzione di un sub-responsabile prima che avvenga, così che possano opporsi."
+            }
+          ]
+        },
+        {
+          "heading": "Statistiche e pubblicità del sito",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "I servizi usati su <code>sentinely.eu</code> per statistiche e pubblicità — Google Analytics, Matomo e il Meta Pixel — riguardano i <strong>visitatori del sito</strong>, non i dati dei clienti, e funzionano <strong>solo previo consenso</strong>. Sono descritti nell'<a href=\"/it/cookies/\">informativa sui cookie</a>. Nessuno di essi è utilizzato nell'applicazione su <code>app.sentinely.eu</code>, che non carica alcuno script di tracciamento di terze parti."
+            }
+          ]
+        },
+        {
+          "heading": "Residenza dei dati",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "I dati di account e i dati dei report sono trattati e conservati nell'<strong>Unione Europea</strong>. I trasferimenti extra-UE avvengono solo tramite i sub-responsabili indicati sopra, sulla base del Data Privacy Framework UE-USA o di clausole contrattuali standard."
+            }
+          ]
+        },
+        {
+          "heading": "Sicurezza",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "L'accesso ai dati di produzione è ristretto e autenticato. I dati sono cifrati in transito. I backup sono automatici e le procedure di ripristino sono documentate. L'accesso amministrativo ai dati di un cliente per finalità di assistenza è tecnicamente limitato alla sola lettura e registrato in un log immutabile. I dettagli sono nel DPA."
+            }
+          ]
+        },
+        {
+          "heading": "Conservazione e cancellazione",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "I dati dei report sono conservati per il periodo previsto dal piano del cliente e poi eliminati automaticamente. Alla cessazione, i dati del cliente sono cancellati secondo quanto previsto dal DPA. La cancellazione definitiva di un dominio e di tutti i suoi dati può essere richiesta in qualsiasi momento ed è irreversibile."
+            }
+          ]
+        },
+        {
+          "heading": "Contatti",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "Richieste in materia di protezione dei dati: <code>info@sentinely.eu</code>."
+            }
+          ]
+        }
+      ]
+    },
+    "cookies": {
+      "title": "Informativa sui cookie",
+      "updated": "12 agosto 2026 · Versione: 2026-08-12",
+      "intro": [
+        {
+          "type": "p",
+          "html": "Questa informativa spiega che cosa <code>sentinely.eu</code> e <code>app.sentinely.eu</code> salvano nel tuo browser, e come puoi controllarlo. Integra la nostra <a href=\"/it/privacy/\">Informativa sulla privacy</a>."
+        },
+        {
+          "type": "p",
+          "html": "Il titolare del trattamento è <strong>Purple IT s.r.l.</strong>, Perugia (PG), Italia — P.IVA IT01881930661 — <code>info@sentinely.eu</code>."
+        }
+      ],
+      "sections": [
+        {
+          "heading": "Cosa sono i cookie",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "I cookie sono piccoli file di testo che i siti che visiti salvano sul tuo dispositivo. Alcuni sono necessari al funzionamento del sito; altri vengono installati solo se acconsenti."
+            }
+          ]
+        },
+        {
+          "heading": "Questo sito non installa cookie",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "<strong><code>sentinely.eu</code> non installa alcun cookie</strong> — né statistici, né di marketing, né tecnici propri. È anche il motivo per cui non ti è comparso alcun banner: non c'è nulla a cui prestare consenso, e chiedere il permesso per niente sarebbe un ostacolo senza scopo."
+            },
+            {
+              "type": "p",
+              "html": "Il sito non carica nemmeno nulla da terze parti. Script, caratteri, fogli di stile e immagini arrivano tutti dai nostri domini, con la sola eccezione descritta qui sotto: nessun fornitore esterno viene a conoscenza dell'indirizzo del tuo browser per il solo fatto che stai leggendo questa pagina."
+            }
+          ]
+        },
+        {
+          "heading": "L'unico script di terze parti: il controllo sui moduli",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "Il modulo di contatto e quello per gli affiliati caricano <strong>Cloudflare Turnstile</strong>, il controllo che distingue una persona da uno script automatico. Funziona soltanto su quelle due pagine e al solo scopo di permettere l'invio del modulo. Non è uno strumento di statistica né di pubblicità: non misura nulla di te e non costruisce alcun profilo. Senza, i moduli sarebbero riempiti dai bot nel giro di pochi giorni: è quindi una misura di sicurezza necessaria a fornire un servizio che hai richiesto, e per questo non richiede consenso."
+            },
+            {
+              "type": "p",
+              "html": "Turnstile è fornito da <strong>Cloudflare, Inc.</strong>, che distribuisce anche questo sito."
+            }
+          ]
+        },
+        {
+          "heading": "Cosa viene salvato nel tuo browser",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "Una cosa sola, e non è un cookie. Se passi dal tema chiaro a quello scuro, la tua scelta viene salvata nella <strong>memoria locale</strong> del browser sotto la voce <code>theme</code>. Resta sul tuo dispositivo, non viene inviata con alcuna richiesta ed esiste perché alla visita successiva il sito non ti mostri i colori sbagliati. Cancellando i dati di navigazione sparisce."
+            }
+          ]
+        },
+        {
+          "heading": "L'applicazione",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "<code>app.sentinely.eu</code> — il prodotto in cui accedi — utilizza <strong>soltanto cookie tecnici</strong>: quelli che ti tengono autenticato e ricordano le tue preferenze. Non contiene alcun cookie statistico o di marketing e non carica alcuno script di tracciamento di terze parti. I cookie tecnici non richiedono consenso (l'art. 122 del Codice privacy, e il suo equivalente europeo, li esentano), ma richiedono che ti sia detto che esistono: è ciò che fa questa sezione."
+            }
+          ]
+        },
+        {
+          "heading": "Se un domani cambierà",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "Potremmo un giorno introdurre statistiche di sito o misurazione pubblicitaria. Se accadrà, questa pagina sarà aggiornata <strong>prima</strong> che venga caricato alcunché, e un banner te lo chiederà per primo: rifiutare sarà esattamente facile quanto accettare, e nessuno script di terze parti verrà eseguito — nemmeno in secondo piano — finché non avrai scelto. Finché non vedi quel banner, quello che hai appena letto è tutto."
+            }
+          ]
+        },
+        {
+          "heading": "Come controllare ciò che viene salvato",
+          "blocks": [
+            {
+              "type": "p",
+              "html": "Ogni browser permette di consultare, cancellare e bloccare cookie e memoria locale. Dato che questo sito non installa cookie, bloccarli qui non cambia nulla: l'unico effetto è che non potremo più ricordare il tuo tema."
+            },
+            {
+              "type": "p",
+              "html": "Per esercitare i tuoi diritti sui dati personali vedi l'<a href=\"/it/privacy/\">Informativa sulla privacy</a> o scrivi a <code>info@sentinely.eu</code>."
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
