@@ -485,13 +485,22 @@ const policyHref = localizePath('/cookies', lang);
     outline-offset: 2px;
   }
 
+  /* Tailwind's preflight sets `margin: 0` on everything, which wipes out the
+     `margin: auto` a browser uses to centre a modal <dialog> — leaving it pinned
+     to the top-left corner. Centring it explicitly is the fix; max-height keeps
+     it inside a short window (a phone in landscape) instead of overflowing. */
   .consent-dialog {
+    position: fixed;
+    inset: 0;
+    margin: auto;
     border: 1px solid var(--line);
     border-radius: var(--radius);
     background-color: var(--bg);
     color: var(--ink);
     padding: 0;
     width: min(34rem, calc(100% - 2rem));
+    max-height: calc(100dvh - 2rem);
+    overflow-y: auto;
     box-shadow: var(--shadow-lg);
   }
   .consent-dialog::backdrop {
