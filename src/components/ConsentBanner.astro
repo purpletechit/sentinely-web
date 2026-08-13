@@ -1,4 +1,5 @@
 ---
+import Brandmark from './Brandmark.astro';
 import { APP_URL } from '../config';
 import { localizePath, useTranslations, type Lang } from '../i18n/utils';
 
@@ -69,9 +70,17 @@ const policyHref = localizePath('/cookies', lang);
     </div>
   </section>
 
-  <dialog class="consent-dialog" data-consent-dialog aria-labelledby="consent-prefs-title">
+  <dialog
+    class="consent-dialog"
+    data-consent-dialog
+    data-invert-theme
+    aria-labelledby="consent-prefs-title"
+  >
     <form method="dialog" class="consent-dialog-form">
-      <h2 class="consent-dialog-title" id="consent-prefs-title">{t('consent.prefsTitle')}</h2>
+      <h2 class="consent-dialog-title" id="consent-prefs-title">
+        <Brandmark />
+        <span>{t('consent.prefsTitle')}</span>
+      </h2>
       <p class="consent-dialog-body">{t('consent.prefsBody')}</p>
 
       <ul class="consent-cats">
@@ -489,6 +498,9 @@ const policyHref = localizePath('/cookies', lang);
      `margin: auto` a browser uses to centre a modal <dialog> — leaving it pinned
      to the top-left corner. Centring it explicitly is the fix; max-height keeps
      it inside a short window (a phone in landscape) instead of overflowing. */
+  /* data-invert-theme (see global.css) paints this panel in the opposite theme
+     to the page, so it reads as a separate object rather than more page. Every
+     colour below is a token, so the swap needs nothing else here. */
   .consent-dialog {
     position: fixed;
     inset: 0;
@@ -510,6 +522,9 @@ const policyHref = localizePath('/cookies', lang);
     padding: 1.4rem;
   }
   .consent-dialog-title {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
     font-size: 1.1rem;
     font-weight: 700;
     color: var(--strong);

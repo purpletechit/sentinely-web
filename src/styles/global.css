@@ -132,6 +132,82 @@
   --shadow-lg: 0 2px 6px rgb(0 0 0 / 0.4), 0 30px 70px -20px rgb(0 0 0 / 0.7);
 }
 
+/* ---- Inverted scope: a surface that deliberately contrasts the page ----------
+   `[data-invert-theme]` re-declares the tokens with the OTHER palette, so an
+   element painted with them reads as a panel from the opposite theme: dark on a
+   light page, light on a dark one. Used by the cookie preferences dialog, which
+   should feel like a separate object rather than more page.
+
+   ⚠️ The values below are the same two palettes as above, swapped. If you change
+   a colour up there, change it here too — which is why this block sits next to
+   them rather than in the component that uses it. The four cases mirror the four
+   above exactly: default, system dark, forced light, forced dark. -------------- */
+[data-invert-theme] {
+  color-scheme: dark;
+  --bg: #131009;
+  --surface: #1c1710;
+  --surface-2: #231d14;
+  --ink: #ece5da;
+  --strong: #fbf6ee;
+  --muted: #a79b8b;
+  --faint: #6f6557;
+  --line: #2e271d;
+  --accent: #eb8c4e;
+  --accent-solid: #e67423;
+  --btn-fg: #241206;
+  --shadow-lg: 0 2px 6px rgb(0 0 0 / 0.4), 0 30px 70px -20px rgb(0 0 0 / 0.7);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) [data-invert-theme] {
+    color-scheme: light;
+    --bg: #f6f5f2;
+    --surface: #ffffff;
+    --surface-2: #efece6;
+    --ink: #241d16;
+    --strong: #120d08;
+    --muted: #6a6156;
+    --faint: #948a7d;
+    --line: #e4dfd7;
+    --accent: #a8521c;
+    --accent-solid: #e67423;
+    --btn-fg: #251206;
+    --shadow-lg: 0 2px 4px rgb(18 13 8 / 0.05), 0 24px 60px -20px rgb(18 13 8 / 0.22);
+  }
+}
+
+:root[data-theme="light"] [data-invert-theme] {
+  color-scheme: dark;
+  --bg: #131009;
+  --surface: #1c1710;
+  --surface-2: #231d14;
+  --ink: #ece5da;
+  --strong: #fbf6ee;
+  --muted: #a79b8b;
+  --faint: #6f6557;
+  --line: #2e271d;
+  --accent: #eb8c4e;
+  --accent-solid: #e67423;
+  --btn-fg: #241206;
+  --shadow-lg: 0 2px 6px rgb(0 0 0 / 0.4), 0 30px 70px -20px rgb(0 0 0 / 0.7);
+}
+
+:root[data-theme="dark"] [data-invert-theme] {
+  color-scheme: light;
+  --bg: #f6f5f2;
+  --surface: #ffffff;
+  --surface-2: #efece6;
+  --ink: #241d16;
+  --strong: #120d08;
+  --muted: #6a6156;
+  --faint: #948a7d;
+  --line: #e4dfd7;
+  --accent: #a8521c;
+  --accent-solid: #e67423;
+  --btn-fg: #251206;
+  --shadow-lg: 0 2px 4px rgb(18 13 8 / 0.05), 0 24px 60px -20px rgb(18 13 8 / 0.22);
+}
+
 /* ============================================================================
    Base
    ============================================================================ */
