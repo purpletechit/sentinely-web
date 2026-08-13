@@ -318,7 +318,7 @@
     "whiteLabelIncluded": "White-label included — app, emails and PDFs",
     "whiteLabelFrom": "White-label is included in Business, and available as an add-on from {price}/mo on every paid plan.",
     "whiteLabelStarterL": "White-label is included in Business, and available as an add-on on Starter L for {price}/mo.",
-    "footnote": "Prices in EUR, excluding VAT. Payment is handled by Stripe. AI Insights is an optional add-on on every paid plan by design — it isn't bundled into any of them. Need more than 100 domains? Talk to us.",
+    "footnote": "Prices in EUR, excluding VAT. Payment is handled by Stripe or PayPal. AI Insights is an optional add-on on every paid plan by design — it isn't bundled into any of them. Need more than 100 domains? Talk to us.",
     "plans": {
       "starterS": {
         "name": "Starter S",
@@ -797,7 +797,7 @@
         { "heading": "The service", "body": "Sentinely ingests DMARC aggregate reports and provides analysis, a protection score, alerts and a daily digest. Sentinely is a read-only analysis tool: it does not send, filter or reroute your email, and it does not publish or modify your DNS records." },
         { "heading": "Accounts", "body": "You are responsible for the accuracy of the information you provide and for maintaining the security of your account and credentials." },
         { "heading": "Acceptable use", "body": "You agree to use Sentinely only for domains you are authorised to manage, and not to misuse, disrupt or attempt to gain unauthorised access to the service." },
-        { "heading": "Plans & billing", "body": "Paid plans are billed as described at sign-up and payment is handled by Stripe. Prices shown on this site are in EUR and exclude VAT; annual billing is charged as ten monthly instalments." },
+        { "heading": "Plans & billing", "body": "Paid plans are billed as described at sign-up and payment is handled by Stripe or PayPal, depending on the method you choose at checkout. Prices shown on this site are in EUR and exclude VAT; annual billing is charged as ten monthly instalments." },
         { "heading": "Liability", "body": "The service is provided \"as is\". To the extent permitted by law, Purple IT s.r.l. limits its liability as set out in the final Terms published before go-live." }
       ]
     },

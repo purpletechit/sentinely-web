@@ -318,7 +318,7 @@
     "whiteLabelIncluded": "White-label incluso — applicazione, email e PDF",
     "whiteLabelFrom": "Il white-label è incluso nel piano Business ed è disponibile come add-on a partire da {price}/mese su tutti i piani a pagamento.",
     "whiteLabelStarterL": "Il white-label è incluso nel piano Business ed è disponibile come add-on su Starter L a {price}/mese.",
-    "footnote": "Prezzi in EUR, IVA esclusa. Il pagamento avviene tramite Stripe. Gli AI Insights sono un add-on opzionale su tutti i piani a pagamento per scelta: non sono inclusi in nessuno. Ti servono più di 100 domini? Parliamone.",
+    "footnote": "Prezzi in EUR, IVA esclusa. Il pagamento avviene tramite Stripe o PayPal. Gli AI Insights sono un add-on opzionale su tutti i piani a pagamento per scelta: non sono inclusi in nessuno. Ti servono più di 100 domini? Parliamone.",
     "plans": {
       "starterS": {
         "name": "Starter S",
@@ -797,7 +797,7 @@
         { "heading": "Il servizio", "body": "Sentinely ingerisce i report aggregati DMARC e fornisce analisi, un punteggio di protezione, avvisi e un digest quotidiano. Sentinely è uno strumento di analisi in sola lettura: non invia, filtra o reindirizza la tua email, e non pubblica né modifica i tuoi record DNS." },
         { "heading": "Account", "body": "Sei responsabile dell'accuratezza delle informazioni che fornisci e della sicurezza del tuo account e delle credenziali." },
         { "heading": "Uso consentito", "body": "Ti impegni a usare Sentinely solo per domini che sei autorizzato a gestire e a non abusarne, comprometterne il funzionamento o tentare accessi non autorizzati." },
-        { "heading": "Piani e fatturazione", "body": "I piani a pagamento sono fatturati come indicato in fase di registrazione e il pagamento avviene tramite Stripe. I prezzi mostrati su questo sito sono in EUR e IVA esclusa; l'annuale è addebitato come dieci mensilità." },
+        { "heading": "Piani e fatturazione", "body": "I piani a pagamento sono fatturati come indicato in fase di registrazione e il pagamento avviene tramite Stripe o PayPal, secondo il metodo che scegli al momento dell'acquisto. I prezzi mostrati su questo sito sono in EUR e IVA esclusa; l'annuale è addebitato come dieci mensilità." },
         { "heading": "Responsabilità", "body": "Il servizio è fornito \"così com'è\". Nei limiti consentiti dalla legge, Purple IT s.r.l. limita la propria responsabilità come indicato nei Termini definitivi pubblicati prima del go-live." }
       ]
     },
