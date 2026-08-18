@@ -1,11 +1,23 @@
 ---
 import { alternatePath, useTranslations, type Lang } from '../i18n/utils';
 
+interface Props {
+  /**
+   * Where each language actually lives, for pages the "/it in front of the same
+   * path" rule does not describe. Blog posts are the case: a post can be
+   * published in one language only, or under a different slug in the other, so
+   * the rule would send readers to a URL that does not exist.
+   */
+  targets?: Partial<Record<Lang, string>>;
+}
+
+const { targets } = Astro.props;
+
 const lang = (Astro.currentLocale ?? 'en') as Lang;
 const t = useTranslations(lang);
 const pathname = Astro.url.pathname;
-const enHref = alternatePath(pathname, 'en');
-const itHref = alternatePath(pathname, 'it');
+const enHref = targets?.en ?? alternatePath(pathname, 'en');
+const itHref = targets?.it ?? alternatePath(pathname, 'it');
 ---
 
 <div class="lang-switch" role="group" aria-label={t('common.langSwitch')}>

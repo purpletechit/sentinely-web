@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../../../../../layouts/BaseLayout.astro';
+import BlogListingBody from '../../../../../components/pages/BlogListingBody.astro';
+import { termPaths, type TermPageProps } from '../../../../../lib/blog-routes';
+import { feedPath, termPath } from '../../../../../lib/blog';
+import { interpolate, useTranslations, type Lang } from '../../../../../i18n/utils';
+
+/** Only categories that actually have published posts — never an empty page. */
+export async function getStaticPaths() {
+  return termPaths('it', 'category');
+}
+
+const { term, page, alternates, switchTo, categories, tags } = Astro.props as TermPageProps;
+
+const lang = (Astro.currentLocale ?? 'it') as Lang;
+const t = useTranslations(lang);
+
+// The term name arrives from the API already in this language.
+const name = term.data.name;
+const heading = interpolate(t('blog.categoryHeading'), { name });
+const title =
+  page.current === 1
+    ? `${heading} — Sentinely`
+    : `${heading} — ${interpolate(t('blog.pagination.page'), { current: page.current })} — Sentinely`;
+---
+
+<BaseLayout
+  title={title}
+  description={interpolate(t('blog.categoryDescription'), { name })}
+  alternates={alternates}
+  switchTo={switchTo}
+  feed={{ href: feedPath(lang), title: t('blog.feedTitle') }}
+>
+  <BlogListingBody
+    lang={lang}
+    eyebrow={t('blog.categories')}
+    title={name}
+    sub={interpolate(t('blog.categoryDescription'), { name })}
+    page={page}
+    pageHref={(target) => termPath(lang, 'category', term.data.slug, target)}
+    categories={categories}
+    tags={tags}
+    activeTermSlug={term.data.slug}
+    showBackLink
+  />
+</BaseLayout>

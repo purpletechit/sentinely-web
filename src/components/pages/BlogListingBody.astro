@@ -1,0 +1,90 @@
+---
+/**
+ * The shared body of every "list of posts" page: the blog index, a category
+ * and a tag. They differ only in their heading and in which posts they show.
+ */
+import PageHero from '../PageHero.astro';
+import PostGrid from '../blog/PostGrid.astro';
+import Pagination from '../blog/Pagination.astro';
+import TermList from '../blog/TermList.astro';
+import { blogIndexPath, type Paged, type PostEntry, type TermEntry } from '../../lib/blog';
+import { useTranslations, type Lang } from '../../i18n/utils';
+
+interface Props {
+  lang: Lang;
+  eyebrow?: string;
+  title: string;
+  sub?: string;
+  page: Paged<PostEntry>;
+  /** Href for a given page number of this listing. */
+  pageHref: (page: number) => string;
+  categories: TermEntry[];
+  tags: TermEntry[];
+  activeTermSlug?: string;
+  /** Show the "all posts" link — the taxonomy pages need a way back. */
+  showBackLink?: boolean;
+}
+
+const {
+  lang,
+  eyebrow,
+  title,
+  sub,
+  page,
+  pageHref,
+  categories,
+  tags,
+  activeTermSlug,
+  showBackLink = false,
+} = Astro.props;
+
+const t = useTranslations(lang);
+---
+
+<PageHero eyebrow={eyebrow} title={title} sub={sub} />
+
+<section class="section" style="padding-top:1rem">
+  <div class="container">
+    {
+      showBackLink && (
+        <a href={blogIndexPath(lang)} class="back-link">
+          ← {t('blog.allPosts')}
+        </a>
+      )
+    }
+
+    {
+      (categories.length > 0 || tags.length > 0) && (
+        <div class="term-groups">
+          <TermList lang={lang} label={t('blog.categories')} terms={categories} activeSlug={activeTermSlug} />
+          <TermList lang={lang} label={t('blog.tags')} terms={tags} activeSlug={activeTermSlug} />
+        </div>
+      )
+    }
+
+    <PostGrid posts={page.items} lang={lang} firstPage={page.current === 1} />
+
+    <Pagination lang={lang} current={page.current} total={page.total} href={pageHref} />
+  </div>
+</section>
+
+<style>
+  .back-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 550;
+  }
+  .back-link:hover {
+    color: var(--accent);
+  }
+  .term-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    padding-bottom: 2rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--line);
+  }
+</style>

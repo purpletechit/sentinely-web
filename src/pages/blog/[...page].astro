@@ -1,0 +1,47 @@
+---
+/**
+ * The blog index. Page 1 is `/blog/`, later pages are `/blog/2/` and so on.
+ *
+ * Note the sibling route `[slug].astro` also lives one segment under /blog/.
+ * The two never collide because static generation only emits the paths each
+ * one declares — page numbers here, real slugs there.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BlogListingBody from '../../components/pages/BlogListingBody.astro';
+import { listingPaths, type ListingPageProps } from '../../lib/blog-routes';
+import { blogIndexPath, feedPath } from '../../lib/blog';
+import { interpolate, useTranslations, type Lang } from '../../i18n/utils';
+
+export async function getStaticPaths() {
+  return listingPaths('en');
+}
+
+const { page, alternates, categories, tags } = Astro.props as ListingPageProps;
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+
+// Page 2 onwards says so in the title, so the pages are not near-duplicates in
+// search results. Each is canonical to itself.
+const title =
+  page.current === 1
+    ? t('pages.blog.title')
+    : `${t('pages.blog.title')} — ${interpolate(t('blog.pagination.page'), { current: page.current })}`;
+---
+
+<BaseLayout
+  title={title}
+  description={t('pages.blog.description')}
+  alternates={alternates}
+  feed={{ href: feedPath(lang), title: t('blog.feedTitle') }}
+>
+  <BlogListingBody
+    lang={lang}
+    title={t('blog.heading')}
+    sub={t('blog.sub')}
+    page={page}
+    pageHref={(target) => blogIndexPath(lang, target)}
+    categories={categories}
+    tags={tags}
+  />
+</BaseLayout>

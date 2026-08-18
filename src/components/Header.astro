@@ -6,6 +6,13 @@ import { localizePath, useTranslations, type Lang } from '../i18n/utils';
 import { segments } from '../data/segments';
 import { APP_LOGIN_URL, APP_SIGNUP_URL } from '../config';
 
+interface Props {
+  /** Passed through to the language switch — see LangSwitch for why. */
+  langTargets?: Partial<Record<Lang, string>>;
+}
+
+const { langTargets } = Astro.props;
+
 const lang = (Astro.currentLocale ?? 'en') as Lang;
 const t = useTranslations(lang);
 const homeHref = localizePath('/', lang);
@@ -82,7 +89,7 @@ const tools = [
     </nav>
 
     <div class="header-actions">
-      <LangSwitch />
+      <LangSwitch targets={langTargets} />
       <ThemeToggle />
       <a href={APP_LOGIN_URL} class="btn btn-ghost btn-sm">{t('cta.login')}</a>
       <a href={APP_SIGNUP_URL} class="btn btn-primary btn-sm">{t('cta.startTrial')}</a>
@@ -124,7 +131,7 @@ const tools = [
       <a href={APP_SIGNUP_URL} class="btn btn-primary btn-block">{t('cta.startTrial')}</a>
     </div>
     <div class="mobile-lang">
-      <LangSwitch />
+      <LangSwitch targets={langTargets} />
     </div>
   </div>
 </header>

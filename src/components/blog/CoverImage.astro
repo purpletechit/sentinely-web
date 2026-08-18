@@ -1,0 +1,44 @@
+---
+/**
+ * A post cover, served from our own origin and optimised by Astro.
+ *
+ * The API can report `width`/`height` as null when it could not measure the
+ * file. We never fill that in with a guess — but we do have the actual bytes on
+ * disk, so Astro measures them itself and the browser still gets real
+ * dimensions to reserve space with. SVGs skip the transform pipeline (there is
+ * nothing to resample) and keep their aspect ratio from the CSS.
+ */
+import { Image } from 'astro:assets';
+import { resolveCover, coverWidths } from '../../lib/blog-images';
+
+interface Props {
+  file: string;
+  /** `null` from the API means decorative: an empty alt beats an invented one. */
+  alt: string | null;
+  sizes: string;
+  widths: number[];
+  loading?: 'lazy' | 'eager';
+  class?: string;
+}
+
+const { file, alt, sizes, widths, loading = 'lazy', class: className } = Astro.props;
+
+const image = await resolveCover(file);
+const isVector = file.toLowerCase().endsWith('.svg');
+---
+
+{
+  isVector ? (
+    <img src={image.src} alt={alt ?? ''} class={className} loading={loading} decoding="async" />
+  ) : (
+    <Image
+      src={image}
+      alt={alt ?? ''}
+      widths={coverWidths(image, widths)}
+      sizes={sizes}
+      loading={loading}
+      decoding="async"
+      class={className}
+    />
+  )
+}

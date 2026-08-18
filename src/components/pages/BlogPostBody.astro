@@ -1,0 +1,240 @@
+---
+import { render } from 'astro:content';
+import CoverImage from '../blog/CoverImage.astro';
+import {
+  blogIndexPath,
+  formatDate,
+  postPath,
+  termPath,
+  type PostEntry,
+} from '../../lib/blog';
+import { interpolate, languageNames, useTranslations, type Lang } from '../../i18n/utils';
+
+interface Props {
+  post: PostEntry;
+}
+
+const { post } = Astro.props;
+const lang = post.data.locale as Lang;
+const t = useTranslations(lang);
+
+const { Content } = await render(post);
+const date = formatDate(post.data.publishedAt, lang);
+const { cover, category, tags, translations } = post.data;
+---
+
+<article class="section blog-article">
+  <div class="container">
+    <div class="article-head">
+      <a href={blogIndexPath(lang)} class="back-link">← {t('blog.allPosts')}</a>
+
+      {
+        category && (
+          <a href={termPath(lang, 'category', category.slug)} class="article-cat">
+            {category.name}
+          </a>
+        )
+      }
+
+      <h1 class="article-title">{post.data.title}</h1>
+      <p class="article-excerpt">{post.data.excerpt}</p>
+
+      <p class="article-meta">
+        <span>{interpolate(t('blog.byAuthor'), { name: post.data.authorName })}</span>
+        {
+          date && (
+            <>
+              <span class="dot" aria-hidden="true">·</span>
+              <time class="mono" datetime={post.data.publishedAt?.toISOString()}>{date}</time>
+            </>
+          )
+        }
+      </p>
+    </div>
+
+    {
+      cover && (
+        <figure class="article-cover">
+          <CoverImage
+            file={cover.file}
+            alt={cover.alt}
+            widths={[480, 768, 1024, 1440]}
+            sizes="(min-width: 1100px) 60rem, 94vw"
+            loading="eager"
+            class="article-cover-img"
+          />
+        </figure>
+      )
+    }
+
+    <div class="prose article-body">
+      <Content />
+    </div>
+
+    {
+      tags.length > 0 && (
+        <nav class="article-tags" aria-label={t('blog.tags')}>
+          <span class="article-tags-label">{t('blog.tags')}</span>
+          <ul>
+            {tags.map((tag) => (
+              <li>
+                <a href={termPath(lang, 'tag', tag.slug)} class="article-tag">
+                  {/* Localised by the API in the language we asked for. */}
+                  {tag.name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )
+    }
+
+    {
+      translations.length > 0 && (
+        <aside class="article-langs">
+          <span class="article-langs-label">{t('blog.alsoIn')}</span>
+          <ul>
+            {translations.map((translation) => (
+              <li>
+                <a
+                  href={postPath(translation.locale as Lang, translation.slug)}
+                  hreflang={translation.locale}
+                  lang={translation.locale}
+                >
+                  {languageNames[translation.locale as Lang]}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </aside>
+      )
+    }
+  </div>
+</article>
+
+<style>
+  .blog-article .container {
+    max-width: 62rem;
+  }
+  .article-head {
+    max-width: 46rem;
+  }
+  .back-link {
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 550;
+  }
+  .back-link:hover {
+    color: var(--accent);
+  }
+  .article-cat {
+    display: inline-block;
+    margin-top: 1.4rem;
+    font-size: 0.72rem;
+    font-weight: 650;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent-line);
+    border-radius: 999px;
+    padding: 0.2rem 0.7rem;
+  }
+  .article-cat:hover {
+    background-color: var(--accent-soft);
+  }
+  .article-title {
+    font-size: clamp(1.9rem, 1.4rem + 2.4vw, 2.7rem);
+    line-height: 1.15;
+    margin-top: 1rem;
+  }
+  .article-excerpt {
+    margin-top: 1rem;
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+  .article-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.2rem;
+    color: var(--faint);
+    font-size: 0.85rem;
+  }
+  .article-meta .dot {
+    color: var(--line);
+  }
+  .article-cover {
+    margin: 2.5rem 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background-color: var(--surface-2);
+  }
+  /* No fixed aspect ratio: the API may not know the file's dimensions, and the
+     downloaded image is the authority on its own shape. */
+  .article-cover :global(.article-cover-img) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .article-body {
+    margin-top: 2.5rem;
+  }
+  /* Images inside the body are ours too — downloaded at build time into
+     public/blog-media/ and rewritten, so nothing calls the product API. */
+  .article-body :global(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+  }
+  .article-tags,
+  .article-langs {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+    max-width: 46rem;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+  }
+  .article-langs {
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 0;
+  }
+  .article-tags-label,
+  .article-langs-label {
+    color: var(--faint);
+    font-size: 0.75rem;
+    font-weight: 650;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .article-tags ul,
+  .article-langs ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    list-style: none;
+  }
+  .article-tag {
+    display: inline-block;
+    padding: 0.25rem 0.7rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  .article-tag:hover {
+    border-color: var(--accent-line);
+    color: var(--accent);
+  }
+  .article-langs a {
+    color: var(--accent);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+</style>

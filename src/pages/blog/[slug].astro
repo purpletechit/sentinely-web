@@ -1,0 +1,61 @@
+---
+import { getImage } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BlogPostBody from '../../components/pages/BlogPostBody.astro';
+import { postPaths, type PostPageProps } from '../../lib/blog-routes';
+import { absoluteUrl, blogPostingJsonLd, feedPath, metaDescription, metaTitle } from '../../lib/blog';
+import { resolveCover, coverWidths } from '../../lib/blog-images';
+import { useTranslations, type Lang } from '../../i18n/utils';
+
+export async function getStaticPaths() {
+  return postPaths('en');
+}
+
+const { post, alternates, switchTo } = Astro.props as PostPageProps;
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+
+/**
+ * Share image: the post cover if it has one, resolved to the file that will
+ * really be served so the URL in the metadata is the URL that exists. SVG
+ * covers skip the transform — there is nothing to resample — and fall back to
+ * the site image, which social scrapers handle far better anyway.
+ */
+const cover = post.data.cover;
+let ogImage: string | undefined;
+let ogImageSize: { width: number; height: number } | undefined;
+
+if (cover && !cover.file.toLowerCase().endsWith('.svg')) {
+  const source = await resolveCover(cover.file);
+  const rendered = await getImage({
+    src: source,
+    width: coverWidths(source, [1200])[0],
+    format: 'jpg',
+  });
+  ogImage = rendered.src;
+  ogImageSize = { width: rendered.attributes.width, height: rendered.attributes.height };
+}
+
+const jsonLd = blogPostingJsonLd(post, ogImage ? absoluteUrl(ogImage) : undefined);
+---
+
+<BaseLayout
+  title={`${metaTitle(post)} — Sentinely`}
+  description={metaDescription(post)}
+  image={ogImage}
+  imageSize={ogImageSize}
+  alternates={alternates}
+  switchTo={switchTo}
+  ogType="article"
+  article={{
+    publishedTime: post.data.publishedAt?.toISOString(),
+    author: post.data.authorName,
+    section: post.data.category?.name,
+    tags: post.data.tags.map((tag) => tag.name),
+  }}
+  jsonLd={jsonLd}
+  feed={{ href: feedPath(lang), title: t('blog.feedTitle') }}
+>
+  <BlogPostBody post={post} />
+</BaseLayout>

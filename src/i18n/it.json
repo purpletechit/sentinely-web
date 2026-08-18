@@ -829,8 +829,23 @@
     "sub": "Approfondimenti su DMARC, autenticazione email e protezione dei domini dallo spoofing.",
     "empty": "Ancora nessun articolo — stiamo preparando i primi. Torna presto.",
     "allPosts": "Tutti gli articoli",
-    "draftBadge": "Bozza",
-    "readMore": "Leggi"
+    "readMore": "Leggi",
+    "byAuthor": "Di {name}",
+    "categories": "Categorie",
+    "tags": "Tag",
+    "categoryHeading": "Articoli in {name}",
+    "categoryDescription": "Articoli nella categoria {name}.",
+    "tagHeading": "Articoli con il tag {name}",
+    "tagDescription": "Articoli con il tag {name}.",
+    "alsoIn": "Disponibile anche in",
+    "feedTitle": "Blog Sentinely",
+    "pagination": {
+      "label": "Paginazione",
+      "prev": "Più recenti",
+      "next": "Meno recenti",
+      "page": "Pagina {current}",
+      "status": "Pagina {current} di {total}"
+    }
   },
   "headerAnalyzer": {
     "eyebrow": "Strumento gratuito",

@@ -1,0 +1,151 @@
+---
+import CoverImage from './CoverImage.astro';
+import { formatDate, postPath, termPath, type PostEntry } from '../../lib/blog';
+import { interpolate, useTranslations, type Lang } from '../../i18n/utils';
+
+interface Props {
+  post: PostEntry;
+  /** The first card of the first page carries the LCP image. */
+  eager?: boolean;
+}
+
+const { post, eager = false } = Astro.props;
+const lang = post.data.locale as Lang;
+const t = useTranslations(lang);
+
+const href = postPath(lang, post.data.slug);
+const date = formatDate(post.data.publishedAt, lang);
+const { cover, category } = post.data;
+---
+
+<article class="post-card">
+  {
+    cover && (
+      <div class="post-card-media">
+        <CoverImage
+          file={cover.file}
+          alt={cover.alt}
+          widths={[320, 480, 720, 960]}
+          sizes="(min-width: 1024px) 20rem, (min-width: 720px) 45vw, 92vw"
+          loading={eager ? 'eager' : 'lazy'}
+          class="post-card-img"
+        />
+      </div>
+    )
+  }
+
+  <div class="post-card-body">
+    <div class="post-card-meta">
+      {date && (
+        <time class="mono post-card-date" datetime={post.data.publishedAt?.toISOString()}>
+          {date}
+        </time>
+      )}
+      {category && (
+        <a class="post-card-cat" href={termPath(lang, 'category', category.slug)}>
+          {category.name}
+        </a>
+      )}
+    </div>
+
+    <h2 class="post-card-title">
+      <a href={href} class="post-card-link">{post.data.title}</a>
+    </h2>
+
+    <p class="post-card-excerpt">{post.data.excerpt}</p>
+
+    <p class="post-card-author">
+      {interpolate(t('blog.byAuthor'), { name: post.data.authorName })}
+    </p>
+  </div>
+</article>
+
+<style>
+  .post-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    overflow: hidden;
+    transition: border-color 0.16s ease, box-shadow 0.16s ease;
+  }
+  .post-card:hover {
+    border-color: var(--accent-line);
+    box-shadow: var(--shadow);
+  }
+  .post-card-media {
+    /* Holds the space whether or not the API knew the file's dimensions. */
+    aspect-ratio: 16 / 9;
+    background-color: var(--surface-2);
+    border-bottom: 1px solid var(--line);
+  }
+  .post-card-media :global(.post-card-img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .post-card-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 1.4rem;
+  }
+  .post-card-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+  }
+  .post-card-date {
+    color: var(--faint);
+    font-size: 0.75rem;
+  }
+  .post-card-cat {
+    /* Above the title's stretched overlay, so it stays clickable. */
+    position: relative;
+    z-index: 1;
+    font-size: 0.72rem;
+    font-weight: 650;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent-line);
+    border-radius: 999px;
+    padding: 0.15rem 0.6rem;
+  }
+  .post-card-cat:hover {
+    background-color: var(--accent-soft);
+  }
+  .post-card-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--strong);
+    margin: 0.6rem 0 0.5rem;
+  }
+  .post-card-link::after {
+    /* Whole card clickable, one link in the accessibility tree. */
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .post-card-link:focus-visible {
+    outline: 2px solid var(--accent-solid);
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+  .post-card-excerpt {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  .post-card-author {
+    margin-top: auto;
+    padding-top: 1rem;
+    color: var(--faint);
+    font-size: 0.8rem;
+  }
+</style>

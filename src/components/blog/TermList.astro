@@ -1,0 +1,88 @@
+---
+import { termPath, type TermEntry } from '../../lib/blog';
+import type { Lang } from '../../i18n/utils';
+
+interface Props {
+  lang: Lang;
+  label: string;
+  terms: TermEntry[];
+  /** Slug of the term whose page we are on, if any. */
+  activeSlug?: string;
+}
+
+const { lang, label, terms, activeSlug } = Astro.props;
+---
+
+{
+  terms.length > 0 && (
+    <nav class="term-list" aria-label={label}>
+      <span class="term-label">{label}</span>
+      <ul>
+        {terms.map((term) => (
+          <li>
+            <a
+              href={termPath(lang, term.data.kind, term.data.slug)}
+              class:list={['term', { 'is-active': term.data.slug === activeSlug }]}
+              aria-current={term.data.slug === activeSlug ? 'page' : undefined}
+            >
+              {/* Already localised by the API. */}
+              {term.data.name}
+              <span class="term-count">{term.data.postCount}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
+
+<style>
+  .term-list {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+  }
+  .term-label {
+    color: var(--faint);
+    font-size: 0.75rem;
+    font-weight: 650;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .term-list ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    list-style: none;
+  }
+  .term {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.28rem 0.7rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background-color: var(--surface);
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 550;
+    transition: border-color 0.16s ease, color 0.16s ease;
+  }
+  .term:hover {
+    border-color: var(--accent-line);
+    color: var(--accent);
+  }
+  .term.is-active {
+    border-color: var(--accent-solid);
+    background-color: var(--accent-soft);
+    color: var(--accent);
+  }
+  .term-count {
+    color: var(--faint);
+    font-size: 0.75rem;
+  }
+  .term.is-active .term-count {
+    color: inherit;
+  }
+</style>

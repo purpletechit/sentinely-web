@@ -829,8 +829,23 @@
     "sub": "Notes on DMARC, email authentication and keeping domains safe from spoofing.",
     "empty": "No posts yet — we're working on the first ones. Check back soon.",
     "allPosts": "All posts",
-    "draftBadge": "Draft",
-    "readMore": "Read more"
+    "readMore": "Read more",
+    "byAuthor": "By {name}",
+    "categories": "Categories",
+    "tags": "Tags",
+    "categoryHeading": "Articles in {name}",
+    "categoryDescription": "Articles filed under {name}.",
+    "tagHeading": "Articles tagged {name}",
+    "tagDescription": "Articles tagged {name}.",
+    "alsoIn": "Also available in",
+    "feedTitle": "Sentinely Blog",
+    "pagination": {
+      "label": "Pagination",
+      "prev": "Newer",
+      "next": "Older",
+      "page": "Page {current}",
+      "status": "Page {current} of {total}"
+    }
   },
   "headerAnalyzer": {
     "eyebrow": "Free tool",
