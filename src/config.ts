@@ -10,7 +10,11 @@ export const APP_URL = 'https://app.sentinely.eu';
 /**
  * Registration. A public route of the application: someone who has never signed
  * up lands on the sign-up form, not on a login screen they cannot get past.
- * This is where every acquisition CTA belongs.
+ *
+ * EVERY acquisition CTA on the site points here — the header button, the hero,
+ * the closing panel, and all six of the pricing section's (Free, Trial and the
+ * four plan cards). There is deliberately no second constant for "the app root
+ * but for a CTA": choosing a plan is still choosing to sign up.
  */
 export const APP_SIGNUP_URL = `${APP_URL}/sign-up`;
 
@@ -21,14 +25,6 @@ export const APP_SIGNUP_URL = `${APP_URL}/sign-up`;
  * do not have an account yet.
  */
 export const APP_LOGIN_URL = APP_URL;
-
-/**
- * The pricing-section CTAs (Free, Trial, and the four plan cards) still point at
- * the app root — i.e. at that same login form. Left as they were on purpose:
- * the owner is deciding separately whether they should go to sign-up too.
- * Point this at APP_SIGNUP_URL to move all six in one edit.
- */
-export const APP_PLAN_CTA_URL = APP_URL;
 
 /**
  * Cloudflare Turnstile SITE key — PUBLIC (embedded in the page and validated by

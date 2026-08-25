@@ -14,7 +14,7 @@ import {
   type Plan,
 } from '../data/pricing';
 import { interpolate, useTranslations, type Lang } from '../i18n/utils';
-import { APP_PLAN_CTA_URL } from '../config';
+import { APP_SIGNUP_URL } from '../config';
 
 const lang = (Astro.currentLocale ?? 'en') as Lang;
 const t = useTranslations(lang);
@@ -176,7 +176,7 @@ const whiteLabelNote = interpolate(
               ))}
             </ul>
           )}
-          <a href={APP_PLAN_CTA_URL} class="btn btn-ghost entry-cta">
+          <a href={APP_SIGNUP_URL} class="btn btn-ghost entry-cta">
             {entry.cta}
             <Icon name="arrow-right" size={16} />
           </a>

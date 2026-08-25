@@ -1,4 +1,4 @@
-import { APP_PLAN_CTA_URL } from '../config';
+import { APP_SIGNUP_URL } from '../config';
 import type { Lang } from '../i18n/utils';
 
 /**
@@ -43,7 +43,7 @@ export type Plan = {
   /** EUR/month per domain beyond `domains`; `null` when the plan doesn't allow it. */
   extraDomain: number | null;
   highlighted: boolean;
-  /** 'app' → the application (APP_PLAN_CTA_URL); 'contact' → localized /contact page. */
+  /** 'app' → the sign-up form (APP_SIGNUP_URL); 'contact' → localized /contact page. */
   ctaKind: 'app' | 'contact';
   ctaHref: string;
 };
@@ -70,7 +70,7 @@ export const freePlan: Plan = {
   extraDomain: null,
   highlighted: false,
   ctaKind: 'app',
-  ctaHref: APP_PLAN_CTA_URL,
+  ctaHref: APP_SIGNUP_URL,
 };
 
 /** The 30-day trial: the front door, with every feature and add-on switched on. */
@@ -96,7 +96,7 @@ export const paidPlans: Plan[] = [
     extraDomain: null,
     highlighted: false,
     ctaKind: 'app',
-    ctaHref: APP_PLAN_CTA_URL,
+    ctaHref: APP_SIGNUP_URL,
   },
   {
     id: 'starterM',
@@ -111,7 +111,7 @@ export const paidPlans: Plan[] = [
     extraDomain: null,
     highlighted: true,
     ctaKind: 'app',
-    ctaHref: APP_PLAN_CTA_URL,
+    ctaHref: APP_SIGNUP_URL,
   },
   {
     id: 'starterL',
@@ -126,7 +126,7 @@ export const paidPlans: Plan[] = [
     extraDomain: 4,
     highlighted: false,
     ctaKind: 'app',
-    ctaHref: APP_PLAN_CTA_URL,
+    ctaHref: APP_SIGNUP_URL,
   },
   {
     id: 'business',
@@ -141,7 +141,7 @@ export const paidPlans: Plan[] = [
     extraDomain: null,
     highlighted: false,
     ctaKind: 'app',
-    ctaHref: APP_PLAN_CTA_URL,
+    ctaHref: APP_SIGNUP_URL,
   },
 ];
 
