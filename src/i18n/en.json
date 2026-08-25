@@ -10,7 +10,6 @@
     "langSwitch": "Switch language",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
-    "soon": "soon",
     "backToTop": "Back to top"
   },
   "nav": {
@@ -24,7 +23,7 @@
   },
   "cta": {
     "login": "Log in",
-    "startTrial": "Start free trial",
+    "startFreeShort": "Start free",
     "startFree": "Start free — no card",
     "seeHow": "See how it works",
     "contact": "Contact us",
@@ -827,6 +826,10 @@
   "blog": {
     "heading": "Blog",
     "sub": "Notes on DMARC, email authentication and keeping domains safe from spoofing.",
+    "home": {
+      "eyebrow": "From the blog",
+      "heading": "Latest articles"
+    },
     "empty": "No posts yet — we're working on the first ones. Check back soon.",
     "allPosts": "All posts",
     "readMore": "Read more",

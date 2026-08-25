@@ -55,12 +55,7 @@ const solutions = segments.map((segment) => ({
       <h2 class="footer-heading">{t('footer.colCompany')}</h2>
       <ul>
         <li><a href={p('/about')} class="footer-link">{t('footer.company.about')}</a></li>
-        <li>
-          <a href={p('/blog')} class="footer-link is-soon">
-            {t('footer.company.blog')}
-            <span class="soon-tag">{t('common.soon')}</span>
-          </a>
-        </li>
+        <li><a href={p('/blog')} class="footer-link">{t('footer.company.blog')}</a></li>
         <li><a href={p('/affiliates')} class="footer-link">{t('footer.company.affiliates')}</a></li>
         <li><a href={p('/contact')} class="footer-link">{t('footer.company.contact')}</a></li>
       </ul>
@@ -158,16 +153,6 @@ const solutions = segments.map((segment) => ({
     padding: 0;
     cursor: pointer;
     text-align: left;
-  }
-  .soon-tag {
-    font-family: var(--mono);
-    font-size: 0.6rem;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: var(--faint);
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    padding: 0.1rem 0.4rem;
   }
   .footer-legal {
     border-top: 1px solid var(--line);

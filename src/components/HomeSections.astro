@@ -8,6 +8,7 @@ import ChangeWatch from './ChangeWatch.astro';
 import DigestShowcase from './DigestShowcase.astro';
 import PricingTable from './PricingTable.astro';
 import Faq from './Faq.astro';
+import LatestPosts from './LatestPosts.astro';
 import FinalCta from './FinalCta.astro';
 ---
 
@@ -20,4 +21,8 @@ import FinalCta from './FinalCta.astro';
 <DigestShowcase />
 <PricingTable />
 <Faq />
+{/* Trust material, after everything that explains the product and before
+    the final ask — it must not compete with the first conversion block.
+    Renders nothing at all when this language has no published posts. */}
+<LatestPosts />
 <FinalCta />

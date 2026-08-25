@@ -1,17 +1,34 @@
 /**
  * Central site configuration.
  * The marketing site lives on the apex (sentinely.eu); the product app lives on
- * app.sentinely.eu. Every "Log in / Start free trial / Try it free" CTA points
- * at the app. See README for the apex cutover note (owner's responsibility).
+ * app.sentinely.eu. Every "Log in / Start free / Try it free" CTA points at the
+ * app. See README for the apex cutover note (owner's responsibility).
  */
 export const SITE_ORIGIN = 'https://sentinely.eu';
 export const APP_URL = 'https://app.sentinely.eu';
 
-// CTA targets. Per the brief, all CTAs point at the app (https://app.sentinely.eu).
-// They default to the app root to avoid assuming sub-routes; if the app exposes
-// dedicated paths (e.g. /register, /login), point these there.
-export const APP_SIGNUP_URL = APP_URL;
+/**
+ * Registration. A public route of the application: someone who has never signed
+ * up lands on the sign-up form, not on a login screen they cannot get past.
+ * This is where every acquisition CTA belongs.
+ */
+export const APP_SIGNUP_URL = `${APP_URL}/sign-up`;
+
+/**
+ * Sign-in. The app root sends an unauthenticated visitor to the login form, so
+ * the root IS the login entry point. Only "Log in" may point here — sending an
+ * acquisition CTA to the root is what put a login form in front of people who
+ * do not have an account yet.
+ */
 export const APP_LOGIN_URL = APP_URL;
+
+/**
+ * The pricing-section CTAs (Free, Trial, and the four plan cards) still point at
+ * the app root — i.e. at that same login form. Left as they were on purpose:
+ * the owner is deciding separately whether they should go to sign-up too.
+ * Point this at APP_SIGNUP_URL to move all six in one edit.
+ */
+export const APP_PLAN_CTA_URL = APP_URL;
 
 /**
  * Cloudflare Turnstile SITE key — PUBLIC (embedded in the page and validated by

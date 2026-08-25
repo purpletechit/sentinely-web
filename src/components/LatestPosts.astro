@@ -1,0 +1,103 @@
+---
+/**
+ * The three most recent posts, in the language of the page, on the home page.
+ *
+ * The data is read from the same content collection the /blog pages read — the
+ * loader fills it from the product API during the build. No second fetch, and
+ * nothing fetched from the browser.
+ *
+ * ⚠️ With no published posts in this language the component renders NOTHING: no
+ * heading, no "articles coming soon". A section that reports "nothing here"
+ * every time teaches people to skip it. Each language decides alone — Italian
+ * can be empty on a build where English is not.
+ *
+ * ⚠️ This puts the home page on the same build-time dependency the blog already
+ * has: if the API is unreachable the build fails and Cloudflare Pages keeps the
+ * previous deployment online. See src/loaders/blog.ts for why that is the point.
+ */
+import SectionHeading from './SectionHeading.astro';
+import PostGrid from './blog/PostGrid.astro';
+import { blogIndexPath, getPosts } from '../lib/blog';
+import { useTranslations, type Lang } from '../i18n/utils';
+
+/** How many fit the card grid without leaving a hole on a wide screen. */
+const COUNT = 3;
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+
+// Already filtered by locale and sorted newest first.
+const posts = (await getPosts(lang)).slice(0, COUNT);
+---
+
+{
+  posts.length > 0 && (
+    <section class="section latest-posts">
+      <div class="container">
+        <div class="latest-head reveal">
+          <SectionHeading
+            eyebrow={t('blog.home.eyebrow')}
+            title={t('blog.home.heading')}
+            sub={t('blog.sub')}
+          />
+          <a href={blogIndexPath(lang)} class="latest-all">
+            {t('blog.allPosts')}
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
+              <path
+                d="M5 12h14m-6-6 6 6-6 6"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </a>
+        </div>
+
+        {/* firstPage={false}: these covers sit far below the fold, so none of
+            them is loaded eagerly — the hero keeps the home page's LCP. */}
+        <PostGrid posts={posts} lang={lang} firstPage={false} />
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .latest-posts {
+    border-top: 1px solid var(--line);
+  }
+  .latest-head {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+    margin-bottom: 2.25rem;
+  }
+  .latest-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex: none;
+    color: var(--accent);
+    font-size: 0.94rem;
+    font-weight: 600;
+  }
+  .latest-all svg {
+    transition: transform 0.16s ease;
+  }
+  .latest-all:hover svg {
+    transform: translateX(3px);
+  }
+
+  /* Wide enough for the two to sit on one line: the heading on the left, the
+     way through to the whole blog on the right, aligned to the last line of
+     the heading block rather than floating at its top. */
+  @media (min-width: 900px) {
+    .latest-head {
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+  }
+</style>

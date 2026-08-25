@@ -10,7 +10,6 @@
     "langSwitch": "Cambia lingua",
     "openMenu": "Apri menu",
     "closeMenu": "Chiudi menu",
-    "soon": "presto",
     "backToTop": "Torna su"
   },
   "nav": {
@@ -24,7 +23,7 @@
   },
   "cta": {
     "login": "Accedi",
-    "startTrial": "Inizia la prova gratuita",
+    "startFreeShort": "Inizia gratis",
     "startFree": "Inizia gratis — senza carta",
     "seeHow": "Scopri come funziona",
     "contact": "Contattaci",
@@ -827,6 +826,10 @@
   "blog": {
     "heading": "Blog",
     "sub": "Approfondimenti su DMARC, autenticazione email e protezione dei domini dallo spoofing.",
+    "home": {
+      "eyebrow": "Dal blog",
+      "heading": "Ultimi articoli"
+    },
     "empty": "Ancora nessun articolo — stiamo preparando i primi. Torna presto.",
     "allPosts": "Tutti gli articoli",
     "readMore": "Leggi",

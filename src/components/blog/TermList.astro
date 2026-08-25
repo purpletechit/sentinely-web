@@ -8,21 +8,33 @@ interface Props {
   terms: TermEntry[];
   /** Slug of the term whose page we are on, if any. */
   activeSlug?: string;
+  /**
+   * 'primary' is the same control one rung up: a slightly larger label and more
+   * room around it. Categories take it because there are a handful of them and
+   * they divide the blog, while the tags cut across it and are four times as
+   * many. One step, not a second design — the two lists have to stay legible as
+   * the same family of filter.
+   */
+  variant?: 'default' | 'primary';
 }
 
-const { lang, label, terms, activeSlug } = Astro.props;
+const { lang, label, terms, activeSlug, variant = 'default' } = Astro.props;
+const primary = variant === 'primary';
 ---
 
 {
   terms.length > 0 && (
-    <nav class="term-list" aria-label={label}>
+    <nav class:list={['term-list', { 'term-list--primary': primary }]} aria-label={label}>
       <span class="term-label">{label}</span>
       <ul>
         {terms.map((term) => (
           <li>
             <a
               href={termPath(lang, term.data.kind, term.data.slug)}
-              class:list={['term', { 'is-active': term.data.slug === activeSlug }]}
+              class:list={[
+                'term',
+                { 'term--primary': primary, 'is-active': term.data.slug === activeSlug },
+              ]}
               aria-current={term.data.slug === activeSlug ? 'page' : undefined}
             >
               {/* Already localised by the API. */}
@@ -81,6 +93,20 @@ const { lang, label, terms, activeSlug } = Astro.props;
   .term-count {
     color: var(--faint);
     font-size: 0.75rem;
+  }
+
+  /* The primary rung. Only size and spacing change: same shape, same colours,
+     same states, so the two lists still read as one set of controls. */
+  .term-list--primary .term-label {
+    color: var(--muted);
+  }
+  .term--primary {
+    padding: 0.42rem 0.95rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+  .term--primary .term-count {
+    font-size: 0.8rem;
   }
   .term.is-active .term-count {
     color: inherit;

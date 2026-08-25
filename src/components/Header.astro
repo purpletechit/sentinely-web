@@ -17,12 +17,15 @@ const lang = (Astro.currentLocale ?? 'en') as Lang;
 const t = useTranslations(lang);
 const homeHref = localizePath('/', lang);
 
+/**
+ * The top-level row, desktop and mobile alike. Contact is deliberately not here:
+ * it lives in the footer, which every page carries.
+ */
 const nav = [
   { href: `${homeHref}#features`, label: t('nav.features') },
   { href: `${homeHref}#how`, label: t('nav.how') },
   { href: `${homeHref}#pricing`, label: t('nav.pricing') },
   { href: `${homeHref}#faq`, label: t('nav.faq') },
-  { href: localizePath('/contact', lang), label: t('nav.contact') },
 ];
 
 const solutions = segments.map((segment) => ({
@@ -92,7 +95,7 @@ const tools = [
       <LangSwitch targets={langTargets} />
       <ThemeToggle />
       <a href={APP_LOGIN_URL} class="btn btn-ghost btn-sm">{t('cta.login')}</a>
-      <a href={APP_SIGNUP_URL} class="btn btn-primary btn-sm">{t('cta.startTrial')}</a>
+      <a href={APP_SIGNUP_URL} class="btn btn-primary btn-sm">{t('cta.startFreeShort')}</a>
     </div>
 
     <div class="header-mobile">
@@ -128,7 +131,7 @@ const tools = [
     </nav>
     <div class="mobile-cta">
       <a href={APP_LOGIN_URL} class="btn btn-ghost btn-block">{t('cta.login')}</a>
-      <a href={APP_SIGNUP_URL} class="btn btn-primary btn-block">{t('cta.startTrial')}</a>
+      <a href={APP_SIGNUP_URL} class="btn btn-primary btn-block">{t('cta.startFreeShort')}</a>
     </div>
     <div class="mobile-lang">
       <LangSwitch targets={langTargets} />

@@ -56,7 +56,13 @@ const t = useTranslations(lang);
     {
       (categories.length > 0 || tags.length > 0) && (
         <div class="term-groups">
-          <TermList lang={lang} label={t('blog.categories')} terms={categories} activeSlug={activeTermSlug} />
+          <TermList
+            lang={lang}
+            label={t('blog.categories')}
+            terms={categories}
+            activeSlug={activeTermSlug}
+            variant="primary"
+          />
           <TermList lang={lang} label={t('blog.tags')} terms={tags} activeSlug={activeTermSlug} />
         </div>
       )
