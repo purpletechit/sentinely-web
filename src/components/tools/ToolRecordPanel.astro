@@ -1,0 +1,158 @@
+---
+/**
+ * "This is the record we read." Shared by both DNS tools, because showing the
+ * text the answer was derived from is what lets somebody check the answer
+ * instead of believing it.
+ *
+ * Three states, and they are three different things:
+ *   found === true   the record, printed verbatim
+ *   found === false  nothing published at that name
+ *   found === null   ⚠️ we could not read the DNS just now — which is NOT the
+ *                    same as "not found", and must never be shown as one
+ *
+ * `<slot />` takes the one fact each tool has and the other has not: the DMARC
+ * policy on one side, the SPF `all` qualifier on the other.
+ */
+interface Props {
+  heading: string;
+  queriedLabel: string;
+  rawLabel: string;
+  issuesLabel: string;
+}
+
+const { heading, queriedLabel, rawLabel, issuesLabel } = Astro.props;
+---
+
+<section class="tr panel">
+  <h2 class="tr-heading">{heading}</h2>
+
+  <dl class="tr-facts">
+    <div class="tr-fact">
+      <dt class="label">{queriedLabel}</dt>
+      <dd class="mono" data-tool-record-queried></dd>
+    </div>
+    <slot />
+  </dl>
+
+  {/* Either the record itself, or the sentence that says why there is none. */}
+  <p class="tr-raw-label label">{rawLabel}</p>
+  <div class="scroll-x">
+    <pre class="tr-raw mono" data-tool-record-raw hidden></pre>
+  </div>
+  <p class="tr-state" data-tool-record-state hidden></p>
+
+  <div class="tr-issues" data-tool-record-issues-wrap hidden>
+    <p class="tr-issues-label label">{issuesLabel}</p>
+    <ul data-tool-record-issues></ul>
+  </div>
+
+  {/* Cloned rather than built with createElement so it keeps these styles. */}
+  <template data-tpl-issue>
+    <li class="tr-issue">
+      <span class="chip chip-xs" data-sev></span>
+      <span class="tr-issue-text" data-message></span>
+    </li>
+  </template>
+</section>
+
+<style>
+  [hidden] {
+    display: none !important;
+  }
+
+  .tr {
+    padding: 1.5rem;
+  }
+  .tr-heading {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--strong);
+    letter-spacing: -0.01em;
+  }
+
+  .tr-facts {
+    display: grid;
+    gap: 0.85rem;
+    margin-top: 1.1rem;
+  }
+  .tr-fact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-width: 0;
+  }
+  .tr-fact dd {
+    font-size: 0.9rem;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+  }
+
+  .tr-raw-label {
+    margin-top: 1.4rem;
+    display: block;
+  }
+  /* The record wraps rather than scrolling: an SPF record is one very long line
+     and reading it beats scrolling it. The .scroll-x wrapper stays as the
+     backstop for a single unbreakable token. */
+  .tr-raw {
+    margin-top: 0.5rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-2);
+    color: var(--ink);
+    font-size: 0.82rem;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .tr-state {
+    margin-top: 0.5rem;
+    color: var(--muted);
+    font-size: 0.94rem;
+    line-height: 1.65;
+    max-width: 76ch;
+  }
+
+  .tr-issues {
+    margin-top: 1.4rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--line);
+  }
+  .tr-issues ul {
+    margin-top: 0.7rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .tr-issue {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
+  .tr-issue .chip {
+    flex: none;
+    margin-top: 0.1rem;
+  }
+  .tr-issue-text {
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.6;
+    max-width: 72ch;
+  }
+
+  .chip-xs {
+    font-size: 0.68rem;
+    padding: 0.2rem 0.45rem;
+  }
+  .chip-muted {
+    color: var(--muted);
+  }
+
+  @media (min-width: 620px) {
+    .tr-facts {
+      grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+      gap: 1.2rem;
+    }
+  }
+</style>

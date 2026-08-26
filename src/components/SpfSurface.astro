@@ -1,0 +1,827 @@
+---
+/**
+ * "How wide is your SPF?" — a domain, the arithmetic, and the `include:` tree
+ * the number came out of.
+ *
+ * Four rules shape the rendering, and each of them is the difference between a
+ * true number and a plausible one.
+ *
+ * 1. ⚠️ **`null` is not `0`.** `ipv4Addresses` comes back `null` when the record
+ *    uses mechanisms that resolve per message, so there is no list to count.
+ *    Printing `0` would say the opposite of the truth — that record authorises
+ *    MORE, not nothing. A missing count prints as the em dash the API's own
+ *    summary uses. This holds for every branch of the tree too.
+ *
+ * 2. ⚠️ **`complete: false` means the number is a MINIMUM,** and the API's
+ *    `summary` already says so in the right words — it even distinguishes the
+ *    two reasons, a branch that could not be read from a mechanism that cannot
+ *    be enumerated. So the summary is printed verbatim rather than rebuilt from
+ *    the flags; rebuilding it is what once shipped a defect to production.
+ *
+ * 3. ⚠️ **IPv6 is shown in BLOCKS, never in addresses.** A single IPv6 /32 is
+ *    2^96 addresses — a number that means nothing next to an IPv4 count. The
+ *    API does not provide one, and this page never derives one.
+ *
+ * 4. ⚠️ **`determinable: false` is not "no record".** A DNS that would not
+ *    answer leaves `surface` null and the sections that depend on it hidden;
+ *    the summary says why, and the page does not turn it into a verdict.
+ *
+ * Everything the API returns is written with `textContent`: an SPF record is a
+ * stranger's text and must never be parsed as HTML.
+ */
+import DomainToolField from './tools/DomainToolField.astro';
+import ToolRecordPanel from './tools/ToolRecordPanel.astro';
+import ToolNotesSection from './tools/ToolNotesSection.astro';
+import { useTranslations, type Lang } from '../i18n/utils';
+import { SPF_SURFACE_ENDPOINT } from '../config';
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+
+/** Strings the script picks at runtime. `<` escaped so none can close the tag. */
+const strings = {
+  submit: t('spfSurface.form.submit'),
+  submitBusy: t('spfSurface.form.submitBusy'),
+  statusBusy: t('spfSurface.form.statusBusy'),
+  statusDone: t('spfSurface.form.statusDone'),
+  errors: t('spfSurface.errors'),
+  severity: t('spfSurface.result.notes.severity'),
+  notFound: t('spfSurface.result.record.notFound'),
+  unreadable: t('spfSurface.result.record.unreadable'),
+  lookupsUsed: t('spfSurface.result.lookups.used'),
+  minimum: t('spfSurface.result.surface.minimum'),
+  stats: t('spfSurface.result.tree.stats'),
+  notRead: t('spfSurface.result.tree.notRead'),
+};
+const stringsJson = JSON.stringify(strings).replace(/</g, '\\u003c');
+---
+
+<div class="sp" data-spf-tool data-lang={lang} data-endpoint={SPF_SURFACE_ENDPOINT}>
+  <DomainToolField
+    id="sp-domain"
+    label={t('spfSurface.form.label')}
+    hint={t('spfSurface.form.hint')}
+    placeholder={t('spfSurface.form.placeholder')}
+    submit={t('spfSurface.form.submit')}
+    clear={t('spfSurface.form.clear')}
+    privacyTitle={t('spfSurface.privacy.title')}
+    privacyBody={t('spfSurface.privacy.body')}
+    noscript={t('spfSurface.errors.network')}
+  />
+
+  <div class="sp-result" data-tool-result hidden tabindex="-1">
+    <section class="sp-summary panel">
+      <p class="eyebrow">{t('spfSurface.result.eyebrow')}</p>
+      <p class="sp-domain mono" data-sp-domain></p>
+      {/* ⚠️ Verbatim. It already distinguishes a minimum from a total, and why. */}
+      <p class="sp-summary-text" data-sp-summary></p>
+    </section>
+
+    <ToolRecordPanel
+      heading={t('spfSurface.result.record.heading')}
+      queriedLabel={t('spfSurface.result.record.queried')}
+      rawLabel={t('spfSurface.result.record.raw')}
+      issuesLabel={t('spfSurface.result.record.issues')}
+    >
+      <div class="tr-fact" data-sp-all-wrap hidden>
+        <dt class="label">{t('spfSurface.result.record.allQualifier')}</dt>
+        <dd class="mono" data-sp-all></dd>
+      </div>
+    </ToolRecordPanel>
+
+    <section class="sp-block panel" data-sp-surface-wrap hidden>
+      <h2 class="sp-h" data-sp-surface-title></h2>
+      <div class="sp-kpis">
+        <div class="sp-kpi">
+          <p class="label">{t('spfSurface.result.surface.ipv4Addresses')}</p>
+          <p class="sp-kpi-value mono" data-sp-ipv4></p>
+          <span class="chip chip-xs chip-warn sp-kpi-flag" data-sp-minimum hidden></span>
+        </div>
+        <div class="sp-kpi">
+          <p class="label">{t('spfSurface.result.surface.ipv4Blocks')}</p>
+          <p class="sp-kpi-value mono" data-sp-ipv4-blocks></p>
+        </div>
+        {/* ⚠️ Blocks. An IPv6 address count is never shown, and never derived. */}
+        <div class="sp-kpi">
+          <p class="label">{t('spfSurface.result.surface.ipv6Blocks')}</p>
+          <p class="sp-kpi-value mono" data-sp-ipv6-blocks></p>
+        </div>
+      </div>
+      <p class="sp-sub" data-sp-surface-desc></p>
+
+      <details class="sp-details" data-sp-ranges-wrap hidden>
+        <summary class="sp-details-summary">{t('spfSurface.result.surface.ranges')}</summary>
+        <div class="sp-details-body">
+          <div data-sp-ipv4-ranges-wrap hidden>
+            <p class="label">{t('spfSurface.result.surface.ipv4Blocks')}</p>
+            <ul class="sp-ranges" data-sp-ipv4-ranges></ul>
+          </div>
+          <div data-sp-ipv6-ranges-wrap hidden>
+            <p class="label">{t('spfSurface.result.surface.ipv6Blocks')}</p>
+            <ul class="sp-ranges" data-sp-ipv6-ranges></ul>
+          </div>
+        </div>
+      </details>
+
+      <div class="sp-mechanisms" data-sp-mechanisms-wrap hidden>
+        <p class="label">{t('spfSurface.result.surface.nonEnumerable')}</p>
+        <ul class="sp-mechanism-list" data-sp-mechanisms></ul>
+      </div>
+    </section>
+
+    <section class="sp-block panel" data-sp-lookups-wrap hidden>
+      <div class="sp-lookups-head">
+        <h2 class="sp-h" data-sp-lookups-title></h2>
+        <p class="sp-lookups-count mono" data-sp-lookups-count></p>
+      </div>
+      <div class="sp-meter" data-sp-meter>
+        <span class="sp-meter-fill" data-sp-meter-fill></span>
+      </div>
+      <p class="sp-sub" data-sp-lookups-desc></p>
+    </section>
+
+    {/* The part that makes the number checkable: where each address came from. */}
+    <section class="sp-block panel" data-sp-tree-wrap hidden>
+      <h2 class="sp-h" data-sp-tree-title></h2>
+      <p class="sp-sub" data-sp-tree-desc></p>
+      <ul class="sp-tree" data-sp-tree></ul>
+    </section>
+
+    <section class="sp-block panel" data-sp-unresolved-wrap hidden>
+      <h2 class="sp-h">{t('spfSurface.result.unresolved.heading')}</h2>
+      <p class="sp-sub">{t('spfSurface.result.unresolved.sub')}</p>
+      <ul class="sp-unresolved" data-sp-unresolved></ul>
+    </section>
+
+    <ToolNotesSection heading={t('spfSurface.result.notes.heading')} />
+  </div>
+
+  {/* Cloned rather than built with createElement so they keep these styles. */}
+  <template data-tpl-branch>
+    <li class="sp-branch">
+      <div class="sp-branch-head">
+        <span class="sp-branch-target mono" data-target></span>
+        <span class="chip chip-xs chip-warn" data-status hidden></span>
+      </div>
+      <p class="sp-branch-stats" data-stats></p>
+      <p class="sp-branch-label" data-label></p>
+      <ul class="sp-branch-children" data-children></ul>
+    </li>
+  </template>
+
+  <template data-tpl-stat>
+    <span class="sp-stat">
+      <span class="sp-stat-k" data-k></span>
+      <span class="sp-stat-v mono" data-v></span>
+    </span>
+  </template>
+
+  <template data-tpl-range>
+    <li class="sp-range mono" data-value></li>
+  </template>
+
+  <template data-tpl-mechanism>
+    <li class="sp-mechanism">
+      <span class="chip chip-xs mono" data-title></span>
+      <span class="sp-mechanism-detail" data-detail></span>
+    </li>
+  </template>
+
+  <template data-tpl-unresolved>
+    <li class="sp-unresolved-item">
+      <span class="sp-branch-target mono" data-target></span>
+      <span class="sp-unresolved-reason" data-reason></span>
+    </li>
+  </template>
+
+  <script type="application/json" data-tool-strings is:inline set:html={stringsJson}></script>
+</div>
+
+<style>
+  [hidden] {
+    display: none !important;
+  }
+
+  .sp,
+  .sp-result {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .sp-result:focus {
+    outline: none;
+  }
+
+  .sp-summary {
+    padding: 1.6rem 1.5rem;
+  }
+  .sp-domain {
+    margin-top: 0.7rem;
+    font-size: 1.05rem;
+    font-weight: 650;
+    color: var(--strong);
+    overflow-wrap: anywhere;
+  }
+  .sp-summary-text {
+    margin-top: 0.6rem;
+    color: var(--ink);
+    font-size: 1rem;
+    line-height: 1.7;
+    max-width: 72ch;
+  }
+
+  .sp-block {
+    padding: 1.5rem;
+  }
+  .sp-h {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--strong);
+    letter-spacing: -0.01em;
+  }
+  .sp-sub {
+    margin-top: 0.9rem;
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.7;
+    max-width: 76ch;
+  }
+
+  /* ---- Surface ---- */
+  .sp-kpis {
+    margin-top: 1.2rem;
+    display: grid;
+    gap: 0.9rem;
+    grid-template-columns: 1fr;
+  }
+  .sp-kpi {
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background-color: var(--surface-2);
+    min-width: 0;
+  }
+  .sp-kpi-value {
+    margin-top: 0.45rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--strong);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+  }
+  .sp-kpi-flag {
+    margin-top: 0.5rem;
+  }
+
+  .sp-details {
+    margin-top: 1.3rem;
+    border-top: 1px solid var(--line);
+    padding-top: 1.1rem;
+  }
+  .sp-details-summary {
+    cursor: pointer;
+    font-weight: 620;
+    font-size: 0.92rem;
+    color: var(--accent);
+    list-style: none;
+  }
+  .sp-details-summary::-webkit-details-marker {
+    display: none;
+  }
+  .sp-details-summary::before {
+    content: "+ ";
+    font-family: var(--mono);
+  }
+  .sp-details[open] .sp-details-summary::before {
+    content: "− ";
+  }
+  .sp-details-body {
+    margin-top: 1rem;
+    display: grid;
+    gap: 1.2rem;
+  }
+  .sp-ranges {
+    margin-top: 0.55rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .sp-range {
+    padding: 0.35rem 0.6rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-2);
+    color: var(--ink);
+    font-size: 0.78rem;
+    overflow-wrap: anywhere;
+  }
+
+  .sp-mechanisms {
+    margin-top: 1.3rem;
+    border-top: 1px solid var(--line);
+    padding-top: 1.1rem;
+  }
+  .sp-mechanism-list {
+    margin-top: 0.7rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .sp-mechanism {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
+  .sp-mechanism .chip {
+    flex: none;
+    margin-top: 0.1rem;
+  }
+  .sp-mechanism-detail {
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    max-width: 72ch;
+  }
+
+  /* ---- Lookups ---- */
+  .sp-lookups-head {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .sp-lookups-count {
+    margin-left: auto;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--strong);
+  }
+  .sp-meter {
+    margin-top: 0.9rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background-color: var(--surface-2);
+    border: 1px solid var(--line);
+    overflow: hidden;
+  }
+  .sp-meter-fill {
+    display: block;
+    height: 100%;
+    background-color: var(--accent-solid);
+    transition: width 0.3s ease;
+  }
+  .sp-meter[data-over] .sp-meter-fill {
+    background-color: var(--fail);
+  }
+
+  /* ---- Tree ---- */
+  .sp-tree {
+    margin-top: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+  .sp-branch-children {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    margin-top: 0.9rem;
+    /* The indent, plus the rule that makes the nesting readable at a glance. */
+    padding-left: 1rem;
+    border-left: 2px solid var(--line);
+  }
+  .sp-branch-children:empty {
+    display: none;
+  }
+  .sp-branch-head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .sp-branch-target {
+    font-size: 0.86rem;
+    font-weight: 650;
+    color: var(--strong);
+    overflow-wrap: anywhere;
+  }
+  .sp-branch-stats {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .sp-branch-stats:empty {
+    display: none;
+  }
+  /* Labelled pills rather than a sentence: a stat that is missing is simply a
+     pill reading "—", and no plural has to agree with anything. */
+  .sp-stat {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    padding: 0.28rem 0.55rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-2);
+  }
+  .sp-stat-k {
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+  }
+  .sp-stat-v {
+    font-size: 0.8rem;
+    font-weight: 650;
+    color: var(--ink);
+  }
+  .sp-branch-label {
+    margin-top: 0.5rem;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.6;
+    max-width: 72ch;
+  }
+  .sp-branch-label:empty {
+    display: none;
+  }
+
+  /* ---- Unresolved ---- */
+  .sp-unresolved {
+    margin-top: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+  .sp-unresolved-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background-color: var(--surface-2);
+  }
+  .sp-unresolved-reason {
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    max-width: 76ch;
+  }
+
+  .chip-xs {
+    font-size: 0.68rem;
+    padding: 0.2rem 0.45rem;
+  }
+  .chip-muted {
+    color: var(--muted);
+  }
+
+  @media (min-width: 620px) {
+    .sp-kpis {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .sp-branch-children {
+      padding-left: 1.5rem;
+    }
+  }
+</style>
+
+<script>
+  import {
+    formatCount,
+    formatNumber,
+    readStrings,
+    setupDomainTool,
+    severityChip,
+    type DomainToolData,
+    type DomainToolStrings,
+    type Note,
+    type RecordIssue,
+  } from '../scripts/domain-tool';
+
+  /* ── The shape the API returns ────────────────────────────────────────────
+     Mirrors `SpfSurface` in the product. ⚠️ Every count is `number | null`, and
+     `null` means "there is no number to give", never zero.
+  */
+  interface Mechanism {
+    mechanism: string;
+    title: string;
+    detail: string;
+  }
+
+  interface Branch {
+    kind: string;
+    target: string;
+    depth: number;
+    status: string;
+    explored: boolean;
+    lookups: number | null;
+    ipv4Addresses: number | null;
+    ipv4Blocks: number | null;
+    ipv6Blocks: number | null;
+    nonEnumerable: string[];
+    complete: boolean;
+    /** Localised: "Read in full", or why it could not be. Printed verbatim. */
+    label: string;
+    children: Branch[];
+  }
+
+  interface Surface extends DomainToolData {
+    record: {
+      found: boolean | null;
+      queriedName: string;
+      raw: string | null;
+      valid: boolean | null;
+      allQualifier: string | null;
+      issues: RecordIssue[];
+    };
+    lookups: {
+      count: number | null;
+      limit: number;
+      exceeded: boolean;
+      title: string;
+      description: string;
+    };
+    surface: {
+      ipv4Addresses: number | null;
+      ipv4Blocks: number | null;
+      ipv6Blocks: number | null;
+      ipv4Ranges: string[];
+      ipv6Ranges: string[];
+      nonEnumerable: Mechanism[];
+      complete: boolean;
+      title: string;
+      description: string;
+    } | null;
+    tree: { branches: Branch[]; title: string; description: string };
+    unresolved: { kind: string; target: string; depth: number; status: string; reason: string }[];
+    notes: Note[];
+  }
+
+  interface Strings extends DomainToolStrings {
+    /** ⚠️ "nothing published" and "we could not read it" — never the same line. */
+    notFound: string;
+    unreadable: string;
+    lookupsUsed: string;
+    /** Chip on a count the API says is a floor rather than a total. */
+    minimum: string;
+    /** Pill keys on a tree branch. */
+    stats: { ipv4: string; ipv4Blocks: string; ipv6Blocks: string; lookups: string };
+    notRead: string;
+  }
+
+  const root = document.querySelector<HTMLElement>('[data-spf-tool]');
+
+  if (root) {
+    const S = readStrings<Strings>(root);
+    const lang = root.dataset.lang === 'it' ? 'it' : 'en';
+    const endpoint = root.dataset.endpoint ?? '';
+
+    const q = <T extends Element>(sel: string, scope: ParentNode = root) =>
+      scope.querySelector<T>(sel);
+
+    const resultEl = q<HTMLElement>('[data-tool-result]')!;
+
+    const clone = (name: string): DocumentFragment =>
+      q<HTMLTemplateElement>(`[data-tpl-${name}]`)!.content.cloneNode(true) as DocumentFragment;
+
+    const setText = (el: Element | null, value: string | null | undefined) => {
+      if (el) el.textContent = value ?? '';
+    };
+
+    const show = (el: Element | null, visible: boolean) => {
+      if (el) (el as HTMLElement).hidden = !visible;
+    };
+
+    const interpolate = (tpl: string, vars: Record<string, string | number>) =>
+      tpl.replace(/\{(\w+)\}/g, (m, k: string) => (k in vars ? String(vars[k]) : m));
+
+    const fillList = (list: HTMLElement | null, values: string[]) => {
+      if (!list) return;
+      list.replaceChildren();
+      for (const value of values) {
+        const row = clone('range');
+        setText(q('[data-value]', row), value);
+        list.append(row);
+      }
+    };
+
+    // ── The record we read ────────────────────────────────────────────────
+
+    const renderRecord = (d: Surface) => {
+      setText(q('[data-tool-record-queried]'), d.record.queriedName);
+
+      show(q('[data-sp-all-wrap]'), Boolean(d.record.allQualifier));
+      setText(q('[data-sp-all]'), d.record.allQualifier && `${d.record.allQualifier}all`);
+
+      const rawEl = q<HTMLElement>('[data-tool-record-raw]')!;
+      const stateEl = q<HTMLElement>('[data-tool-record-state]')!;
+      if (d.record.raw) {
+        setText(rawEl, d.record.raw);
+        show(rawEl, true);
+        show(stateEl, false);
+      } else {
+        show(rawEl, false);
+        // ⚠️ `false` is "nothing published"; `null` is "we could not read it".
+        setText(stateEl, d.record.found === false ? S.notFound : S.unreadable);
+        show(stateEl, true);
+      }
+
+      const list = q<HTMLElement>('[data-tool-record-issues]')!;
+      list.replaceChildren();
+      show(q('[data-tool-record-issues-wrap]'), d.record.issues.length > 0);
+      for (const issue of d.record.issues) {
+        const node = clone('issue');
+        const sev = q<HTMLElement>('[data-sev]', node)!;
+        sev.className = severityChip(issue.severity);
+        sev.textContent = S.severity[issue.severity] ?? issue.severity;
+        setText(q('[data-message]', node), issue.message);
+        list.append(node);
+      }
+    };
+
+    // ── Surface ───────────────────────────────────────────────────────────
+
+    const renderSurface = (d: Surface) => {
+      const wrap = q<HTMLElement>('[data-sp-surface-wrap]')!;
+      // No record, or a DNS that would not answer: there is no surface, and an
+      // empty set of KPIs would read as three zeroes.
+      if (!d.surface) {
+        wrap.hidden = true;
+        return;
+      }
+      wrap.hidden = false;
+
+      // title and description arrive localised.
+      setText(q('[data-sp-surface-title]'), d.surface.title);
+      setText(q('[data-sp-surface-desc]'), d.surface.description);
+
+      // ⚠️ formatCount prints an em dash for null. Never `0`.
+      setText(q('[data-sp-ipv4]'), formatCount(d.surface.ipv4Addresses, lang));
+      setText(q('[data-sp-ipv4-blocks]'), formatCount(d.surface.ipv4Blocks, lang));
+      setText(q('[data-sp-ipv6-blocks]'), formatCount(d.surface.ipv6Blocks, lang));
+
+      const minimum = q<HTMLElement>('[data-sp-minimum]')!;
+      minimum.textContent = S.minimum;
+      // Only worth flagging when there IS a number for it to qualify; with no
+      // number the summary above is already the whole story.
+      show(minimum, !d.surface.complete && typeof d.surface.ipv4Addresses === 'number');
+
+      fillList(q<HTMLElement>('[data-sp-ipv4-ranges]'), d.surface.ipv4Ranges);
+      fillList(q<HTMLElement>('[data-sp-ipv6-ranges]'), d.surface.ipv6Ranges);
+      show(q('[data-sp-ipv4-ranges-wrap]'), d.surface.ipv4Ranges.length > 0);
+      show(q('[data-sp-ipv6-ranges-wrap]'), d.surface.ipv6Ranges.length > 0);
+      show(
+        q('[data-sp-ranges-wrap]'),
+        d.surface.ipv4Ranges.length + d.surface.ipv6Ranges.length > 0,
+      );
+
+      const mechanisms = q<HTMLElement>('[data-sp-mechanisms]')!;
+      mechanisms.replaceChildren();
+      for (const mechanism of d.surface.nonEnumerable) {
+        const node = clone('mechanism');
+        setText(q('[data-title]', node), mechanism.title);
+        setText(q('[data-detail]', node), mechanism.detail);
+        mechanisms.append(node);
+      }
+      show(q('[data-sp-mechanisms-wrap]'), d.surface.nonEnumerable.length > 0);
+    };
+
+    // ── Lookups ───────────────────────────────────────────────────────────
+
+    const renderLookups = (d: Surface) => {
+      const wrap = q<HTMLElement>('[data-sp-lookups-wrap]')!;
+      if (typeof d.lookups.count !== 'number') {
+        // No record to walk, so there is no lookup budget to report. The count
+        // is blanked as well as hidden: a stale number is the one thing this
+        // page must never leave lying around.
+        setText(q('[data-sp-lookups-count]'), null);
+        wrap.hidden = true;
+        return;
+      }
+      wrap.hidden = false;
+
+      setText(q('[data-sp-lookups-title]'), d.lookups.title);
+      setText(q('[data-sp-lookups-desc]'), d.lookups.description);
+      setText(
+        q('[data-sp-lookups-count]'),
+        interpolate(S.lookupsUsed, {
+          count: formatNumber(d.lookups.count, lang),
+          limit: formatNumber(d.lookups.limit, lang),
+        }),
+      );
+
+      const meter = q<HTMLElement>('[data-sp-meter]')!;
+      const fill = q<HTMLElement>('[data-sp-meter-fill]')!;
+      const ratio = Math.min(1, d.lookups.count / Math.max(1, d.lookups.limit));
+      fill.style.width = `${Math.round(ratio * 100)}%`;
+      meter.toggleAttribute('data-over', d.lookups.exceeded);
+    };
+
+    // ── The include: tree ─────────────────────────────────────────────────
+
+    /** One labelled pill. A `null` count becomes an em dash, never a zero. */
+    const appendStat = (row: HTMLElement, key: string, value: number | null) => {
+      const node = clone('stat');
+      setText(q('[data-k]', node), key);
+      setText(q('[data-v]', node), formatCount(value, lang));
+      row.append(node);
+    };
+
+    const renderBranch = (branch: Branch): DocumentFragment => {
+      const node = clone('branch');
+
+      // `include:_spf.example.com` — SPF's own syntax, which needs no
+      // translating and tells a reader exactly which line to look for.
+      setText(q('[data-target]', node), `${branch.kind}:${branch.target}`);
+
+      const status = q<HTMLElement>('[data-status]', node)!;
+      show(status, branch.status !== 'resolved');
+      status.textContent = S.notRead;
+
+      const stats = q<HTMLElement>('[data-stats]', node)!;
+      appendStat(stats, S.stats.ipv4, branch.ipv4Addresses);
+      appendStat(stats, S.stats.ipv4Blocks, branch.ipv4Blocks);
+      appendStat(stats, S.stats.ipv6Blocks, branch.ipv6Blocks);
+      appendStat(stats, S.stats.lookups, branch.lookups);
+
+      // Localised by the API: "Read in full", or the reason it was not.
+      setText(q('[data-label]', node), branch.label);
+
+      const children = q<HTMLElement>('[data-children]', node)!;
+      for (const child of branch.children) children.append(renderBranch(child));
+
+      return node;
+    };
+
+    const renderTree = (d: Surface) => {
+      const list = q<HTMLElement>('[data-sp-tree]')!;
+      list.replaceChildren();
+      setText(q('[data-sp-tree-title]'), d.tree.title);
+      setText(q('[data-sp-tree-desc]'), d.tree.description);
+      for (const branch of d.tree.branches) list.append(renderBranch(branch));
+      show(q('[data-sp-tree-wrap]'), d.tree.branches.length > 0);
+    };
+
+    const renderUnresolved = (d: Surface) => {
+      const list = q<HTMLElement>('[data-sp-unresolved]')!;
+      list.replaceChildren();
+      for (const entry of d.unresolved) {
+        const node = clone('unresolved');
+        setText(q('[data-target]', node), `${entry.kind}:${entry.target}`);
+        // Localised by the API, and careful to say this is our limit, not the
+        // other domain's fault. Printed verbatim.
+        setText(q('[data-reason]', node), entry.reason);
+        list.append(node);
+      }
+      show(q('[data-sp-unresolved-wrap]'), d.unresolved.length > 0);
+    };
+
+    // ── Notes ─────────────────────────────────────────────────────────────
+
+    const renderNotes = (d: Surface) => {
+      const list = q<HTMLElement>('[data-tool-notes]')!;
+      list.replaceChildren();
+      show(q('[data-tool-notes-section]'), d.notes.length > 0);
+
+      for (const note of d.notes) {
+        const node = clone('note');
+        const sev = q<HTMLElement>('[data-sev]', node)!;
+        sev.className = severityChip(note.severity);
+        sev.textContent = S.severity[note.severity] ?? note.severity;
+        // Titles and details arrive already localised — rendered verbatim.
+        setText(q('[data-title]', node), note.title);
+        setText(q('[data-detail]', node), note.detail);
+        list.append(node);
+      }
+    };
+
+    const render = (d: Surface) => {
+      setText(q('[data-sp-domain]'), d.unicodeDomain || d.domain);
+      setText(q('[data-sp-summary]'), d.summary);
+
+      renderRecord(d);
+      renderSurface(d);
+      renderLookups(d);
+      renderTree(d);
+      renderUnresolved(d);
+      renderNotes(d);
+
+      resultEl.hidden = false;
+      resultEl.focus();
+    };
+
+    setupDomainTool<Surface>({
+      root,
+      endpoint,
+      lang,
+      strings: S,
+      onData: render,
+      onReset: () => {
+        resultEl.hidden = true;
+      },
+    });
+  }
+</script>

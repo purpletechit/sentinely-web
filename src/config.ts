@@ -55,6 +55,20 @@ export const HEADER_ANALYSIS_ENDPOINT = `${APP_URL}/api/v1/tools/header-analysis
  */
 export const HEADER_ANALYSIS_MAX_BYTES = 64 * 1024;
 
+/**
+ * The two public domain-lookup tools, on the same product API and under the
+ * same rule as the analysis above: the browser calls them DIRECTLY. Both are
+ * rate-limited per IP product-side — 10/min for the DMARC report delivery,
+ * 5/min for the SPF surface, which is lower because a single request there can
+ * cost ten DNS queries. A Pages Function in front would hand Cloudflare's IP to
+ * every request, so one abuser would spend the whole allowance for everyone.
+ *
+ * ⚠️ Neither fetch may send `credentials`: the API's CORS refuses them on
+ * purpose, and sending them fails the request outright.
+ */
+export const DMARC_REPORT_DELIVERY_ENDPOINT = `${APP_URL}/api/v1/tools/dmarc-report-delivery`;
+export const SPF_SURFACE_ENDPOINT = `${APP_URL}/api/v1/tools/spf-surface`;
+
 /** Company / contact details (Purple IT s.r.l.). */
 export const CONTACT_EMAIL = 'info@sentinely.eu';
 

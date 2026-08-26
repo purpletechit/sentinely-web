@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SpfSurfaceBody from '../../components/pages/SpfSurfaceBody.astro';
+import { useTranslations, type Lang } from '../../i18n/utils';
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+---
+
+<BaseLayout
+  title={t('pages.spfSurface.title')}
+  description={t('pages.spfSurface.description')}
+>
+  <SpfSurfaceBody />
+</BaseLayout>

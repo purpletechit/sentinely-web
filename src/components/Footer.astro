@@ -13,8 +13,18 @@ const product = [
   { href: `${homeHref}#how`, label: t('footer.product.how') },
   { href: `${homeHref}#pricing`, label: t('footer.product.pricing') },
   { href: `${homeHref}#faq`, label: t('footer.product.faq') },
-  // Slug stays English in both locales, like the segment pages.
-  { href: p('/tools/email-header-analyzer'), label: t('footer.product.tools') },
+];
+
+/**
+ * The free tools, in a column of their own rather than as one line under
+ * Product. There are three of them now, each its own entry point from search,
+ * and a footer is where somebody who scrolled past the header goes looking.
+ * Slugs stay English in both locales, like the segment pages.
+ */
+const tools = [
+  { href: p('/tools/email-header-analyzer'), label: t('footer.tools.headerAnalyzer') },
+  { href: p('/tools/dmarc-report-delivery'), label: t('footer.tools.dmarcDelivery') },
+  { href: p('/tools/spf-surface'), label: t('footer.tools.spfSurface') },
 ];
 
 const solutions = segments.map((segment) => ({
@@ -37,6 +47,15 @@ const solutions = segments.map((segment) => ({
       <h2 class="footer-heading">{t('footer.colProduct')}</h2>
       <ul>
         {product.map((item) => (
+          <li><a href={item.href} class="footer-link">{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <nav class="footer-col" aria-label={t('footer.colTools')}>
+      <h2 class="footer-heading">{t('footer.colTools')}</h2>
+      <ul>
+        {tools.map((item) => (
           <li><a href={item.href} class="footer-link">{item.label}</a></li>
         ))}
       </ul>
@@ -125,6 +144,11 @@ const solutions = segments.map((segment) => ({
     color: var(--faint);
     margin-bottom: 0.9rem;
   }
+  /* min-width:0 so a long link wraps inside its column instead of widening the
+     track and pushing the row past the container. */
+  .footer-col {
+    min-width: 0;
+  }
   .footer-col ul {
     list-style: none;
     display: flex;
@@ -167,16 +191,22 @@ const solutions = segments.map((segment) => ({
 
   @media (min-width: 640px) {
     .footer-grid {
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
     .footer-brand {
       grid-column: 1 / -1;
     }
   }
-  @media (min-width: 900px) {
+  /* Five columns need more room than four did, so the single row starts later
+     than it used to. Below this the columns stay in the 640px arrangement,
+     which simply takes a second line — better than five tracks too narrow to
+     read. Even at 1100 the longest labels ("DMARC report delivery", "Recapito
+     dei report DMARC") take two lines; fitting them on one would need a
+     ~1350px viewport, which is not worth distorting the row for. */
+  @media (min-width: 1100px) {
     .footer-grid {
-      grid-template-columns: 1.6fr repeat(4, 1fr);
-      gap: 2.25rem;
+      grid-template-columns: 1.5fr repeat(5, minmax(0, 1fr));
+      gap: 2rem;
     }
     .footer-brand {
       grid-column: auto;

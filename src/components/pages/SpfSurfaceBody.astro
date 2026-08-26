@@ -1,0 +1,97 @@
+---
+/**
+ * The public "how wide is your SPF record?" page.
+ *
+ * The tool is the page; the section under it ("what the answer tells you — and
+ * what it cannot") is where the number is made honest — that a blank count is
+ * not a zero, that IPv6 is blocks and never addresses, that ten lookups is a
+ * ceiling and not a suggestion.
+ *
+ * 📌 No related-article panel yet, deliberately. The piece on SPF surface is not
+ * published, and this site does not link articles that do not exist. Adding it
+ * when it ships is three things: a `spfSurface.related` block in `en.json` and
+ * `it.json` (same four keys as `dmarcDelivery.related`), the
+ * `postPathByEnglishSlug` lookup, and the `<aside class="related">` — copy all
+ * three from `DmarcDeliveryBody.astro`, which already does exactly this. The
+ * lookup returns `null` until the article is really published, so wiring it
+ * early cannot produce a broken link.
+ */
+import PageHero from '../PageHero.astro';
+import SectionHeading from '../SectionHeading.astro';
+import FeatureCard from '../FeatureCard.astro';
+import Faq from '../Faq.astro';
+import FinalCta from '../FinalCta.astro';
+import SpfSurface from '../SpfSurface.astro';
+import { useTranslations, type Lang } from '../../i18n/utils';
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+
+type Card = { title: string; body: string };
+const readCards = t('spfSurface.read.cards') as Card[];
+
+/** Icons follow the order of the cards in the dictionaries. */
+const readIcons = ['gauge', 'eye-off', 'layers', 'ban', 'scope', 'radar'];
+---
+
+<PageHero
+  eyebrow={t('spfSurface.eyebrow')}
+  title={t('spfSurface.title')}
+  sub={t('spfSurface.sub')}
+/>
+
+<section class="section section-tool">
+  <div class="container">
+    <SpfSurface />
+  </div>
+</section>
+
+<section class="section section-tight">
+  <div class="container">
+    <SectionHeading
+      eyebrow={t('spfSurface.read.eyebrow')}
+      title={t('spfSurface.read.heading')}
+    />
+    <div class="read-grid">
+      {readCards.map((card, i) => (
+        <FeatureCard
+          icon={readIcons[i] ?? 'shield'}
+          title={card.title}
+          body={card.body}
+          delay={(i % 3) * 70}
+        />
+      ))}
+    </div>
+  </div>
+</section>
+
+<Faq keyPrefix="spfSurface.faq" id="tool-faq" />
+
+<FinalCta heading={t('spfSurface.cta.heading')} sub={t('spfSurface.cta.sub')} />
+
+<style>
+  .section-tool {
+    padding-top: 1rem;
+  }
+  .section-tight {
+    padding-top: 0;
+  }
+
+  .read-grid {
+    margin-top: 2.75rem;
+    display: grid;
+    gap: 1.1rem;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 620px) {
+    .read-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 980px) {
+    .read-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>

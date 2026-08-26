@@ -71,6 +71,14 @@
     "headerAnalyzer": {
       "title": "Email header analyzer — free, no sign-up — Sentinely",
       "description": "Paste the raw headers of any email and read them in plain language: what the receiving server reported for SPF, DKIM and DMARC, whether the domains align, the route the message took and where it lost time. Free, no sign-up, and nothing you paste is stored."
+    },
+    "dmarcDelivery": {
+      "title": "Where do your DMARC reports go? — free rua= checker — Sentinely",
+      "description": "Enter a domain and see whether its DMARC record asks for reports at all, and exactly which addresses the rua= and ruf= tags send them to. Free, no sign-up, and the domain you look up is never stored."
+    },
+    "spfSurface": {
+      "title": "How wide is your SPF record? — free surface and lookup checker — Sentinely",
+      "description": "Enter a domain and see how many IPv4 addresses its SPF record authorises, how many of the ten DNS lookups it spends, and the include: tree the count was read out of. Free, no sign-up, and the domain you look up is never stored."
     }
   },
   "hero": {
@@ -419,12 +427,17 @@
     "colSolutions": "Solutions",
     "colCompany": "Company",
     "colLegal": "Legal",
+    "colTools": "Free tools",
     "product": {
       "features": "Features",
       "how": "How it works",
       "pricing": "Pricing",
-      "faq": "FAQ",
-      "tools": "Header analyzer"
+      "faq": "FAQ"
+    },
+    "tools": {
+      "headerAnalyzer": "Header analyzer",
+      "dmarcDelivery": "DMARC report delivery",
+      "spfSurface": "SPF surface"
     },
     "company": {
       "about": "About",
@@ -1091,5 +1104,270 @@
     },
     "nav": "Email header analyzer",
     "navHint": "Free. Read any email’s headers in plain language."
+  },
+  "dmarcDelivery": {
+    "eyebrow": "Free tool",
+    "title": "Where do your DMARC reports go?",
+    "sub": "Type a domain and read the answer straight off its DNS: whether its DMARC record asks for reports at all, and which addresses receive them. Aggregate and failure reports are shown apart, because they are not the same thing — and the tool never decides for you whether the addresses are the right ones.",
+    "nav": "DMARC report delivery",
+    "navHint": "Free. See which addresses receive your reports.",
+    "form": {
+      "label": "Domain to look up",
+      "hint": "The domain your email comes from — the part after the @. We read its public DNS and nothing else; a whole address or a pasted URL works too.",
+      "placeholder": "example.com",
+      "submit": "Look it up",
+      "submitBusy": "Looking up…",
+      "clear": "Clear",
+      "statusBusy": "Reading the DNS…",
+      "statusDone": "Answer ready."
+    },
+    "privacy": {
+      "title": "Nothing you look up is stored",
+      "body": "The domain you type goes from your browser to our lookup API, which reads public DNS and answers: no sign-up, no email address to leave, nothing written to a database, a file or a log. This page keeps nothing either — no history, no browser storage, and the domain never reaches any analytics tool. Close the tab and it's gone."
+    },
+    "errors": {
+      "empty": "Type a domain first.",
+      "invalid": "That is not a domain we can look up. Enter a public domain, for example example.com.",
+      "rateLimited": "That's several lookups in a short time. Wait a minute and try again — the limit is what keeps the tool open to everyone without a sign-up.",
+      "network": "The lookup couldn't be reached. Check your connection and try again.",
+      "server": "The lookup didn't answer as expected. Try again in a moment."
+    },
+    "result": {
+      "eyebrow": "The answer",
+      "record": {
+        "heading": "The record we read",
+        "queried": "DNS name queried",
+        "policy": "Policy",
+        "raw": "Record as published",
+        "notFound": "Nothing is published at this name.",
+        "unreadable": "We could not read this name just now.",
+        "issues": "In the record itself"
+      },
+      "destinations": {
+        "addresses": "Reports go to",
+        "otherUris": "Other destinations",
+        "requested": "requested",
+        "notRequested": "not requested",
+        "absent": "The record does not set this tag, so nothing is asked for here."
+      },
+      "question": {
+        "eyebrow": "Over to you",
+        "sub": "We can read where the reports are sent. We cannot know whether that mailbox belongs to the provider you chose last month or to one you stopped using three years ago — and from the outside the two look identical. That part only you can answer."
+      },
+      "notes": {
+        "heading": "What stands out",
+        "severity": {
+          "info": "note",
+          "warning": "worth a look",
+          "critical": "problem"
+        }
+      }
+    },
+    "read": {
+      "eyebrow": "Reading the result",
+      "heading": "What the answer tells you — and what it cannot",
+      "cards": [
+        {
+          "title": "rua and ruf are not one thing",
+          "body": "The aggregate tag (rua=) asks for the daily summary every provider already compiles about your domain — the data all DMARC monitoring is built on. The failure tag (ruf=) asks for a copy of individual messages that failed authentication, which most providers never send at all. A record can set one, both or neither, so they are shown as the two separate questions they are."
+        },
+        {
+          "title": "We do not judge the addresses",
+          "body": "The tool reads where reports are sent. It does not decide whether that is right, because it cannot: dmarc@some-vendor.example may be the platform you signed up for last month or a leftover from an agency you left three years ago, and both look the same in DNS. That is why the answer ends in a question rather than a verdict."
+        },
+        {
+          "title": "A record can be perfect and send nothing",
+          "body": "Reports are only sent if the record carries a rua= tag. Everything else — the policy, the alignment settings, the syntax — can be exactly right while no provider has anywhere to put a summary. It is the most common reason a domain has DMARC and no data to show for it."
+        },
+        {
+          "title": "Not readable is not the same as not there",
+          "body": "When the DNS does not answer, this page says so instead of reporting an absence. A failed lookup is a fact about the lookup, not about the domain — resolvers time out, networks blip, DNSSEC validation fails. Try again in a moment before concluding anything."
+        },
+        {
+          "title": "Nothing at the far end is checked",
+          "body": "We read the DMARC record and stop there. Whether the mailbox accepts reports, whether it is full, whether the address still exists, whether anybody reads what lands in it — none of that is visible from DNS. A published address is a claim like every other line in a record."
+        },
+        {
+          "title": "This is a record, not your mail",
+          "body": "One DNS lookup describes what a domain asks for, not what it sends. How much mail leaves in your name, who else sends as you, and whether any of it authenticates lives in the reports themselves — which is exactly what starts arriving once the address is right."
+        }
+      ]
+    },
+    "related": {
+      "eyebrow": "Keep reading",
+      "heading": "The record is right and the reports still aren't arriving",
+      "body": "A missing rua= is the first thing to rule out, and often the only thing anybody checks. When the tag is set correctly and the mailbox is still empty a week later, six other things can be in the way — in the order they are worth ruling out.",
+      "cta": "Read the article"
+    },
+    "faq": {
+      "eyebrow": "Questions",
+      "heading": "About this tool",
+      "items": [
+        {
+          "q": "Do I need an account?",
+          "a": "No. No sign-up, no email address to leave, no limit per person — just a cap of a few lookups a minute, so the tool stays open to everyone."
+        },
+        {
+          "q": "Do you store the domain I type?",
+          "a": "No. It goes from your browser to the lookup API, which reads public DNS and answers without writing the domain to a database, a file or a log. The page keeps nothing either: no history, no browser storage, nothing handed to analytics."
+        },
+        {
+          "q": "It says my record has no rua= tag. What do I add?",
+          "a": "A rua=mailto: entry pointing at a mailbox that can take the volume — providers send roughly one summary per domain per day each, so a domain with a wide reach can mean dozens of messages daily, most of them XML attachments. Reports usually start arriving within 24 to 48 hours of publishing the tag."
+        },
+        {
+          "q": "Should I set ruf= as well?",
+          "a": "Usually there is little to gain. Failure reports can carry recipient addresses and subject lines, which is precisely why most providers stopped sending them, and the few that do send very little. The picture you are looking for is in the aggregate reports."
+        },
+        {
+          "q": "I recognise one address but not the other. Is that bad?",
+          "a": "It is worth finding out, not worth panicking about. Domains commonly send reports to two places on purpose — a monitoring platform and an internal mailbox — and old entries survive supplier changes for years. Find out who owns the address before removing it: deleting an entry stops data arriving somewhere that may still be in use."
+        },
+        {
+          "q": "Can somebody else read my DMARC reports?",
+          "a": "Anybody can read the addresses in your record: it is public DNS, which is how this tool works at all. What they cannot do is receive the reports — providers send those only to the addresses the record names, and only after checking that a mailbox on another domain has agreed to accept them."
+        }
+      ]
+    },
+    "cta": {
+      "heading": "The address is right. Now what arrives there?",
+      "sub": "Point rua= at Sentinely and the daily summaries stop being XML attachments: every source sending in your name, named, with what authenticated and what did not — for the whole domain, every day."
+    }
+  },
+  "spfSurface": {
+    "eyebrow": "Free tool",
+    "title": "How wide is your SPF record?",
+    "sub": "Type a domain and see how many machines its SPF record really authorises to send email as it — with the arithmetic, the blocks the total comes from, and the include: tree each number was read out of.",
+    "nav": "SPF surface",
+    "navHint": "Free. Count the addresses your SPF authorises.",
+    "form": {
+      "label": "Domain to look up",
+      "hint": "The domain your email comes from — the part after the @. One request here can cost ten DNS queries, so the tool allows a few a minute.",
+      "placeholder": "example.com",
+      "submit": "Measure the record",
+      "submitBusy": "Measuring…",
+      "clear": "Clear",
+      "statusBusy": "Reading the record and everything it includes…",
+      "statusDone": "Answer ready."
+    },
+    "privacy": {
+      "title": "Nothing you look up is stored",
+      "body": "The domain you type goes from your browser to our lookup API, which reads public DNS and answers: no sign-up, no email address to leave, nothing written to a database, a file or a log. This page keeps nothing either — no history, no browser storage, and the domain never reaches any analytics tool. Close the tab and it's gone."
+    },
+    "errors": {
+      "empty": "Type a domain first.",
+      "invalid": "That is not a domain we can look up. Enter a public domain, for example example.com.",
+      "rateLimited": "That's several measurements in a short time. Wait a minute and try again — one request here can cost ten DNS queries, and the limit is what keeps the tool open to everyone without a sign-up.",
+      "network": "The lookup couldn't be reached. Check your connection and try again.",
+      "server": "The lookup didn't answer as expected. Try again in a moment."
+    },
+    "result": {
+      "eyebrow": "The answer",
+      "record": {
+        "heading": "The record we read",
+        "queried": "DNS name queried",
+        "allQualifier": "Ends in",
+        "raw": "Record as published",
+        "notFound": "Nothing published at this name starts with v=spf1.",
+        "unreadable": "We could not read this name just now.",
+        "issues": "In the record itself"
+      },
+      "lookups": {
+        "used": "{count} of {limit}"
+      },
+      "surface": {
+        "ipv4Addresses": "IPv4 addresses",
+        "ipv4Blocks": "IPv4 blocks",
+        "ipv6Blocks": "IPv6 blocks",
+        "minimum": "at least",
+        "ranges": "Show every block",
+        "nonEnumerable": "Mechanisms that cannot be counted"
+      },
+      "tree": {
+        "stats": {
+          "ipv4": "IPv4",
+          "ipv4Blocks": "blocks",
+          "ipv6Blocks": "IPv6 blocks",
+          "lookups": "lookups"
+        },
+        "notRead": "not read"
+      },
+      "unresolved": {
+        "heading": "The branches we could not read",
+        "sub": "Our lookup got no answer for these parts of the tree. That is a limit of the lookup and not a statement about those domains — and it is why the count above is a floor rather than a total."
+      },
+      "notes": {
+        "heading": "What stands out",
+        "severity": {
+          "info": "note",
+          "warning": "worth a look",
+          "critical": "problem"
+        }
+      }
+    },
+    "read": {
+      "eyebrow": "Reading the result",
+      "heading": "What the answer tells you — and what it cannot",
+      "cards": [
+        {
+          "title": "The number counts machines, not senders",
+          "body": "Every address inside the record is a machine that could send email as your domain and pass SPF. Most of them belong to platforms doing exactly what you asked them to. The figure is not a score and there is no threshold to stay under: it is the size of the set you are vouching for, which is worth knowing before it is worth judging."
+        },
+        {
+          "title": "Some records have no number at all",
+          "body": "A mechanism like exists: or a: is resolved fresh for every message, so there is no list to read — the authorised set can change without the record changing a character. Where that happens the count is left blank rather than filled with a zero. Those records authorise more than a fixed list, not nothing."
+        },
+        {
+          "title": "IPv6 is measured in blocks",
+          "body": "A single IPv6 /32 holds 2^96 addresses. Printing that beside an IPv4 count would drown it and mean nothing, so IPv6 is only ever reported as a number of blocks. Nothing on this page turns those blocks into an address count."
+        },
+        {
+          "title": "Ten lookups is a hard ceiling",
+          "body": "Every include:, a, mx, ptr, exists and redirect= costs one DNS lookup, and the ones inside an included record count towards the same total. Past ten, receiving providers stop evaluating and the check fails — however correct the rest of the record is."
+        },
+        {
+          "title": "The tree is the working, not decoration",
+          "body": "Each branch shows what it contributes on its own, including everything it includes in turn. The branches deliberately do not add up to the total: a range two providers both declare is counted once at the top. Reading down the tree is how you find out which supplier a surprising width actually belongs to."
+        },
+        {
+          "title": "One record is not deliverability",
+          "body": "SPF says who may send. It does not say whether a message aligned with the From address your reader sees, whether DKIM signed it, or whether it arrived at all. A record can be immaculate and the mail can still fail DMARC — that part lives in the reports."
+        }
+      ]
+    },
+    "faq": {
+      "eyebrow": "Questions",
+      "heading": "About this tool",
+      "items": [
+        {
+          "q": "What counts as too wide?",
+          "a": "There is no threshold, and anybody selling you one is guessing. A single email platform legitimately authorises tens of thousands of addresses. What is worth acting on is a branch you cannot account for — a supplier you stopped using, an include: nobody remembers adding — which is what the tree is there to surface."
+        },
+        {
+          "q": "Why does it sometimes say “at least”?",
+          "a": "Because part of the record could not be reduced to a list: either a branch our lookup could not read, or a mechanism that resolves per message and has no list to read at any time. Rather than present a partial count as a total, the tool says which of the two happened and leaves the number as a floor."
+        },
+        {
+          "q": "My record uses 10 of 10 lookups. Is that a failure?",
+          "a": "Not yet — ten is allowed, eleven is not. But it leaves no room at all: the next supplier you add, or an include: that grows on the provider's side without telling you, puts the record over the limit while you never touched it. That is the usual way SPF breaks."
+        },
+        {
+          "q": "Do I need an account?",
+          "a": "No. No sign-up and no email address to leave. The tool allows a few measurements a minute rather than more, because a single request here can cost ten DNS queries."
+        },
+        {
+          "q": "Do you store the domain I type?",
+          "a": "No. It goes from your browser to the lookup API, which reads public DNS and answers without writing the domain to a database, a file or a log. The page keeps nothing either: no history, no browser storage, nothing handed to analytics."
+        },
+        {
+          "q": "Why does a subdomain give a different answer?",
+          "a": "Because SPF is published per name and is not inherited. mail.example.com has its own record or none at all — it does not fall back to the one on example.com. Look up the exact name your mail is sent from."
+        }
+      ]
+    },
+    "cta": {
+      "heading": "You measured one record. What is actually sending?",
+      "sub": "SPF says who may send as you. The DMARC reports say who did — every source named, with what authenticated and what did not. Publish one DNS record and Sentinely reads them for you, every day."
+    }
   }
 }

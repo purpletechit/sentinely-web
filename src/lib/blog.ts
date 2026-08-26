@@ -91,6 +91,31 @@ export function postPath(lang: Lang, slug: string): string {
   return localizePath(`/blog/${slug}`, lang);
 }
 
+/**
+ * The path of one particular post in `lang`, found by the slug it carries in
+ * English.
+ *
+ * For the hand-built pages that want to link a specific article — a tool page
+ * pointing at the piece that explains the case it just diagnosed. It answers
+ * `null` when that piece is not published in the language being rendered, and
+ * that is the whole point: the link is emitted only where the page really
+ * exists, so no hand-written link can ever point at an invented slug.
+ */
+export async function postPathByEnglishSlug(
+  lang: Lang,
+  englishSlug: string,
+): Promise<string | null> {
+  const [english] = await getCollection(
+    'blog',
+    ({ data }) => data.locale === 'en' && data.slug === englishSlug,
+  );
+  if (!english) return null;
+  if (lang === 'en') return postPath('en', english.data.slug);
+
+  const translation = english.data.translations.find((entry) => entry.locale === lang);
+  return translation ? postPath(lang, translation.slug) : null;
+}
+
 export function termPath(lang: Lang, kind: TermKind, slug: string, page = 1): string {
   const base = `/blog/${kind}/${slug}`;
   return localizePath(page > 1 ? `${base}/${page}` : base, lang);

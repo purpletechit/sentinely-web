@@ -71,6 +71,14 @@
     "headerAnalyzer": {
       "title": "Analizzatore di intestazioni email — gratis, senza registrazione — Sentinely",
       "description": "Incolla le intestazioni grezze di un'email e leggile in linguaggio chiaro: che cosa ha riportato il server ricevente su SPF, DKIM e DMARC, se i domini sono allineati, che strada ha fatto il messaggio e dove ha perso tempo. Gratis, senza registrazione, e non conserviamo niente di ciò che incolli."
+    },
+    "dmarcDelivery": {
+      "title": "Dove vanno i tuoi report DMARC? — verifica gratuita del tag rua= — Sentinely",
+      "description": "Scrivi un dominio e scopri se il suo record DMARC chiede i report, e a quali indirizzi li mandano i tag rua= e ruf=. Gratis, senza registrazione, e il dominio che cerchi non viene conservato."
+    },
+    "spfSurface": {
+      "title": "Quanto è larga la superficie del tuo SPF? — verifica gratuita — Sentinely",
+      "description": "Scrivi un dominio e guarda quanti indirizzi IPv4 autorizza il suo record SPF, quanti dei dieci lookup DNS consuma e l'albero degli include: da cui il numero è stato letto. Gratis, senza registrazione, e il dominio che cerchi non viene conservato."
     }
   },
   "hero": {
@@ -419,12 +427,17 @@
     "colSolutions": "Soluzioni",
     "colCompany": "Azienda",
     "colLegal": "Legale",
+    "colTools": "Strumenti gratuiti",
     "product": {
       "features": "Funzionalità",
       "how": "Come funziona",
       "pricing": "Prezzi",
-      "faq": "FAQ",
-      "tools": "Analizzatore intestazioni"
+      "faq": "FAQ"
+    },
+    "tools": {
+      "headerAnalyzer": "Analizzatore intestazioni",
+      "dmarcDelivery": "Recapito dei report DMARC",
+      "spfSurface": "Superficie SPF"
     },
     "company": {
       "about": "Chi siamo",
@@ -1091,5 +1104,270 @@
     },
     "nav": "Analizzatore intestazioni",
     "navHint": "Gratis. Leggi le intestazioni di un’email in chiaro."
+  },
+  "dmarcDelivery": {
+    "eyebrow": "Strumento gratuito",
+    "title": "Dove vanno i tuoi report DMARC?",
+    "sub": "Scrivi un dominio e leggi la risposta direttamente dal suo DNS: se il record DMARC chiede i report, e a quali indirizzi arrivano. I report aggregati e quelli di errore restano separati, perché non sono la stessa cosa — e lo strumento non decide al posto tuo se quegli indirizzi siano quelli giusti.",
+    "nav": "Recapito dei report DMARC",
+    "navHint": "Gratis. Vedi a quali indirizzi arrivano i tuoi report.",
+    "form": {
+      "label": "Dominio da cercare",
+      "hint": "Il dominio da cui parte la tua posta, la parte dopo la @. Leggiamo il suo DNS pubblico e nient'altro; puoi incollare anche un indirizzo intero o un URL.",
+      "placeholder": "example.com",
+      "submit": "Cerca il dominio",
+      "submitBusy": "Ricerca…",
+      "clear": "Svuota",
+      "statusBusy": "Sto leggendo il DNS…",
+      "statusDone": "Risposta pronta."
+    },
+    "privacy": {
+      "title": "Non conserviamo il dominio che cerchi",
+      "body": "Il dominio che scrivi va dal tuo browser alla nostra API, che legge il DNS pubblico e risponde: niente registrazione, nessun indirizzo email da lasciare, niente scritto in un database, in un file o in un log. Nemmeno questa pagina conserva qualcosa — nessuna cronologia, nessun salvataggio nel browser, e il dominio non finisce in nessuno strumento di statistica. Chiudi la scheda e non c'è più."
+    },
+    "errors": {
+      "empty": "Prima scrivi un dominio.",
+      "invalid": "Non è un dominio che possiamo interrogare. Scrivi un dominio pubblico, per esempio example.com.",
+      "rateLimited": "Sono diverse ricerche in poco tempo. Aspetta un minuto e riprova — il limite è ciò che tiene lo strumento aperto a tutti senza registrazione.",
+      "network": "Non è stato possibile raggiungere lo strumento. Controlla la connessione e riprova.",
+      "server": "Lo strumento non ha risposto come previsto. Riprova fra poco."
+    },
+    "result": {
+      "eyebrow": "La risposta",
+      "record": {
+        "heading": "Il record che abbiamo letto",
+        "queried": "Nome DNS interrogato",
+        "policy": "Policy",
+        "raw": "Il record così com'è pubblicato",
+        "notFound": "A questo nome non è pubblicato niente.",
+        "unreadable": "Non siamo riusciti a leggere questo nome adesso.",
+        "issues": "Nel record stesso"
+      },
+      "destinations": {
+        "addresses": "I report vanno a",
+        "otherUris": "Altre destinazioni",
+        "requested": "richiesti",
+        "notRequested": "non richiesti",
+        "absent": "Il record non imposta questo tag, quindi qui non viene chiesto niente."
+      },
+      "question": {
+        "eyebrow": "Tocca a te",
+        "sub": "Possiamo leggere dove vanno i report. Non possiamo sapere se quella casella è del fornitore scelto il mese scorso o di uno che non usi da tre anni — da fuori i due casi sono identici. A quella domanda puoi rispondere solo tu."
+      },
+      "notes": {
+        "heading": "Che cosa salta all'occhio",
+        "severity": {
+          "info": "nota",
+          "warning": "da guardare",
+          "critical": "problema"
+        }
+      }
+    },
+    "read": {
+      "eyebrow": "Leggere l'esito",
+      "heading": "Che cosa dice la risposta — e che cosa non può dire",
+      "cards": [
+        {
+          "title": "rua e ruf non sono la stessa cosa",
+          "body": "Il tag aggregato (rua=) chiede il riepilogo quotidiano che ogni provider compila già sul tuo dominio: è il dato su cui si regge tutto il monitoraggio DMARC. Il tag di errore (ruf=) chiede una copia dei singoli messaggi che hanno fallito l'autenticazione, e quasi nessun provider la manda. Un record può impostare l'uno, l'altro, entrambi o nessuno: per questo li mostriamo come le due domande separate che sono."
+        },
+        {
+          "title": "Sugli indirizzi non diamo un giudizio",
+          "body": "Lo strumento legge dove vanno i report. Non decide se sia giusto, perché non può: dmarc@fornitore.example può essere la piattaforma attivata il mese scorso o il residuo di un'agenzia lasciata tre anni fa, e nel DNS le due cose sono identiche. Per questo la risposta finisce con una domanda e non con un verdetto."
+        },
+        {
+          "title": "Un record può essere perfetto e non mandare niente",
+          "body": "I report partono solo se il record ha un tag rua=. Tutto il resto — la policy, l'allineamento, la sintassi — può essere esatto mentre nessun provider ha un posto dove mettere il riepilogo. È il motivo più comune per cui un dominio ha DMARC e nessun dato da guardare."
+        },
+        {
+          "title": "«Non leggibile» non vuol dire «non c'è»",
+          "body": "Quando il DNS non risponde, questa pagina lo dice invece di riportare un'assenza. Una ricerca fallita è un fatto sulla ricerca, non sul dominio: i resolver vanno in timeout, le reti hanno singhiozzi, la validazione DNSSEC fallisce. Riprova fra un momento prima di trarre conclusioni."
+        },
+        {
+          "title": "Dall'altra parte non verifichiamo niente",
+          "body": "Leggiamo il record DMARC e ci fermiamo lì. Se la casella accetti i report, se sia piena, se l'indirizzo esista ancora, se qualcuno legga quello che ci arriva: niente di tutto questo si vede dal DNS. Un indirizzo pubblicato è un'affermazione come ogni altra riga di un record."
+        },
+        {
+          "title": "Questo è un record, non la tua posta",
+          "body": "Una ricerca DNS descrive che cosa un dominio chiede, non che cosa spedisce. Quanta posta parte a tuo nome, chi altro spedisce come te e se si autentica sta nei report stessi — cioè esattamente in quello che comincia ad arrivare quando l'indirizzo è quello giusto."
+        }
+      ]
+    },
+    "related": {
+      "eyebrow": "Continua a leggere",
+      "heading": "Il record è giusto e i report continuano a non arrivare",
+      "body": "Un rua= mancante è la prima cosa da escludere, e spesso l'unica che qualcuno controlla. Quando il tag è impostato bene e dopo una settimana la casella è ancora vuota, ci sono altre sei cose che possono essere di mezzo — nell'ordine in cui vale la pena escluderle.",
+      "cta": "Leggi l'articolo"
+    },
+    "faq": {
+      "eyebrow": "Domande",
+      "heading": "Su questo strumento",
+      "items": [
+        {
+          "q": "Serve un account?",
+          "a": "No. Nessuna registrazione, nessun indirizzo email da lasciare, nessun limite a persona — solo un tetto di poche ricerche al minuto, perché lo strumento resti aperto a tutti."
+        },
+        {
+          "q": "Conservate il dominio che scrivo?",
+          "a": "No. Va dal tuo browser all'API, che legge il DNS pubblico e risponde senza scrivere il dominio in un database, in un file o in un log. Nemmeno la pagina conserva qualcosa: nessuna cronologia, nessun salvataggio nel browser, niente che finisca nelle statistiche."
+        },
+        {
+          "q": "Dice che il mio record non ha il tag rua=. Che cosa aggiungo?",
+          "a": "Una voce rua=mailto: che punti a una casella capace di reggere il volume: ogni provider manda circa un riepilogo al giorno per dominio, quindi un dominio con una buona diffusione significa decine di messaggi al giorno, quasi tutti allegati XML. I report cominciano ad arrivare di solito entro 24-48 ore dalla pubblicazione del tag."
+        },
+        {
+          "q": "Conviene impostare anche ruf=?",
+          "a": "Di solito si guadagna poco. I report di errore possono contenere indirizzi dei destinatari e oggetti dei messaggi, ed è esattamente il motivo per cui quasi tutti i provider hanno smesso di mandarli; i pochi che li mandano ne mandano pochissimi. Il quadro che cerchi sta nei report aggregati."
+        },
+        {
+          "q": "Riconosco un indirizzo ma non l'altro. È un problema?",
+          "a": "Vale la pena scoprirlo, non vale la pena allarmarsi. È normale che un dominio mandi i report in due posti di proposito — una piattaforma di monitoraggio e una casella interna — e le voci vecchie sopravvivono per anni ai cambi di fornitore. Scopri di chi è l'indirizzo prima di toglierlo: cancellare una voce interrompe l'arrivo dei dati in un posto che potrebbe essere ancora in uso."
+        },
+        {
+          "q": "Qualcun altro può leggere i miei report DMARC?",
+          "a": "Chiunque può leggere gli indirizzi nel tuo record: è DNS pubblico, ed è il motivo per cui questo strumento funziona. Quello che non può fare è riceverli — i provider li mandano solo agli indirizzi che il record indica, e solo dopo aver verificato che una casella su un altro dominio abbia accettato di riceverli."
+        }
+      ]
+    },
+    "cta": {
+      "heading": "L'indirizzo è giusto. E quello che ci arriva?",
+      "sub": "Punta il rua= su Sentinely e i riepiloghi quotidiani smettono di essere allegati XML: ogni sorgente che spedisce a tuo nome, con nome e cognome, e che cosa si è autenticato e che cosa no — per tutto il dominio, ogni giorno."
+    }
+  },
+  "spfSurface": {
+    "eyebrow": "Strumento gratuito",
+    "title": "Quanto è larga la superficie del tuo SPF?",
+    "sub": "Scrivi un dominio e guarda quante macchine il suo record SPF autorizza davvero a spedire posta a suo nome — con l'aritmetica, i blocchi da cui viene il totale e l'albero degli include: da cui ogni numero è stato letto.",
+    "nav": "Superficie SPF",
+    "navHint": "Gratis. Conta gli indirizzi che il tuo SPF autorizza.",
+    "form": {
+      "label": "Dominio da cercare",
+      "hint": "Il dominio da cui parte la tua posta, la parte dopo la @. Una richiesta qui può costare dieci query DNS, per questo lo strumento ne consente poche al minuto.",
+      "placeholder": "example.com",
+      "submit": "Misura il record",
+      "submitBusy": "Misurazione…",
+      "clear": "Svuota",
+      "statusBusy": "Sto leggendo il record e tutto ciò che include…",
+      "statusDone": "Risposta pronta."
+    },
+    "privacy": {
+      "title": "Non conserviamo il dominio che cerchi",
+      "body": "Il dominio che scrivi va dal tuo browser alla nostra API, che legge il DNS pubblico e risponde: niente registrazione, nessun indirizzo email da lasciare, niente scritto in un database, in un file o in un log. Nemmeno questa pagina conserva qualcosa — nessuna cronologia, nessun salvataggio nel browser, e il dominio non finisce in nessuno strumento di statistica. Chiudi la scheda e non c'è più."
+    },
+    "errors": {
+      "empty": "Prima scrivi un dominio.",
+      "invalid": "Non è un dominio che possiamo interrogare. Scrivi un dominio pubblico, per esempio example.com.",
+      "rateLimited": "Sono diverse misurazioni in poco tempo. Aspetta un minuto e riprova — una richiesta qui può costare dieci query DNS, e il limite è ciò che tiene lo strumento aperto a tutti senza registrazione.",
+      "network": "Non è stato possibile raggiungere lo strumento. Controlla la connessione e riprova.",
+      "server": "Lo strumento non ha risposto come previsto. Riprova fra poco."
+    },
+    "result": {
+      "eyebrow": "La risposta",
+      "record": {
+        "heading": "Il record che abbiamo letto",
+        "queried": "Nome DNS interrogato",
+        "allQualifier": "Termina con",
+        "raw": "Il record così com'è pubblicato",
+        "notFound": "A questo nome non è pubblicato niente che cominci con v=spf1.",
+        "unreadable": "Non siamo riusciti a leggere questo nome adesso.",
+        "issues": "Nel record stesso"
+      },
+      "lookups": {
+        "used": "{count} su {limit}"
+      },
+      "surface": {
+        "ipv4Addresses": "Indirizzi IPv4",
+        "ipv4Blocks": "Blocchi IPv4",
+        "ipv6Blocks": "Blocchi IPv6",
+        "minimum": "almeno",
+        "ranges": "Mostra tutti i blocchi",
+        "nonEnumerable": "Meccanismi che non si possono contare"
+      },
+      "tree": {
+        "stats": {
+          "ipv4": "IPv4",
+          "ipv4Blocks": "blocchi",
+          "ipv6Blocks": "blocchi IPv6",
+          "lookups": "lookup"
+        },
+        "notRead": "non letto"
+      },
+      "unresolved": {
+        "heading": "I rami che non siamo riusciti a leggere",
+        "sub": "Per queste parti dell'albero la nostra ricerca non ha ottenuto risposta. È un limite della ricerca, non un'affermazione su quei domini — ed è il motivo per cui il numero qui sopra è un minimo e non un totale."
+      },
+      "notes": {
+        "heading": "Che cosa salta all'occhio",
+        "severity": {
+          "info": "nota",
+          "warning": "da guardare",
+          "critical": "problema"
+        }
+      }
+    },
+    "read": {
+      "eyebrow": "Leggere l'esito",
+      "heading": "Che cosa dice la risposta — e che cosa non può dire",
+      "cards": [
+        {
+          "title": "Il numero conta macchine, non mittenti",
+          "body": "Ogni indirizzo dentro il record è una macchina che potrebbe spedire posta a nome del tuo dominio superando il controllo SPF. Quasi tutte appartengono a piattaforme che fanno esattamente quello che hai chiesto loro. La cifra non è un voto e non c'è una soglia sotto cui stare: è la dimensione dell'insieme per cui stai garantendo, e vale la pena conoscerla prima di giudicarla."
+        },
+        {
+          "title": "Alcuni record non hanno un numero",
+          "body": "Un meccanismo come exists: o a: viene risolto da capo a ogni messaggio, quindi non c'è un elenco da leggere: l'insieme autorizzato può cambiare senza che il record cambi di un carattere. In quel caso il conteggio resta vuoto invece di essere riempito con uno zero. Quei record autorizzano più di un elenco fisso, non zero."
+        },
+        {
+          "title": "L'IPv6 si misura in blocchi",
+          "body": "Un solo /32 IPv6 contiene 2^96 indirizzi. Scriverlo accanto a un conteggio IPv4 lo annegherebbe e non significherebbe niente, per questo l'IPv6 viene riportato soltanto come numero di blocchi. Niente in questa pagina trasforma quei blocchi in un conteggio di indirizzi."
+        },
+        {
+          "title": "Dieci lookup sono un tetto rigido",
+          "body": "Ogni include:, a, mx, ptr, exists e redirect= costa un lookup DNS, e quelli dentro un record incluso contano nello stesso totale. Oltre dieci i provider riceventi smettono di valutare e il controllo fallisce — per quanto corretto sia tutto il resto del record."
+        },
+        {
+          "title": "L'albero è il procedimento, non un ornamento",
+          "body": "Ogni ramo mostra quanto porta da solo, compreso tutto ciò che a sua volta include. I rami di proposito non si sommano al totale: un range dichiarato da due fornitori è contato una volta sola in cima. Scendere lungo l'albero è il modo per scoprire a quale fornitore appartiene davvero una larghezza inattesa."
+        },
+        {
+          "title": "Un record non è la recapitabilità",
+          "body": "L'SPF dice chi può spedire. Non dice se un messaggio fosse allineato con il From che il lettore vede, se il DKIM l'abbia firmato, né se sia arrivato. Un record può essere impeccabile e la posta fallire lo stesso il DMARC: quella parte sta nei report."
+        }
+      ]
+    },
+    "faq": {
+      "eyebrow": "Domande",
+      "heading": "Su questo strumento",
+      "items": [
+        {
+          "q": "Quando è troppo largo?",
+          "a": "Non esiste una soglia, e chi te ne vende una sta tirando a indovinare. Una singola piattaforma di posta autorizza legittimamente decine di migliaia di indirizzi. Quello su cui vale la pena intervenire è un ramo di cui non sai rendere conto — un fornitore che non usi più, un include: che nessuno ricorda di aver aggiunto — ed è proprio quello che l'albero serve a far emergere."
+        },
+        {
+          "q": "Perché a volte dice «almeno»?",
+          "a": "Perché una parte del record non si è potuta ridurre a un elenco: o un ramo che la nostra ricerca non è riuscita a leggere, o un meccanismo che si risolve a ogni messaggio e di cui non esiste un elenco in nessun momento. Invece di presentare un conteggio parziale come un totale, lo strumento dice quale dei due casi è capitato e lascia il numero come minimo."
+        },
+        {
+          "q": "Il mio record usa 10 lookup su 10. È un errore?",
+          "a": "Non ancora: dieci si può, undici no. Ma non lascia margine: il prossimo fornitore che aggiungi, o un include: che cresce dalla parte del provider senza avvisarti, porta il record oltre il limite senza che tu l'abbia toccato. È il modo consueto in cui l'SPF si rompe."
+        },
+        {
+          "q": "Serve un account?",
+          "a": "No. Nessuna registrazione e nessun indirizzo email da lasciare. Lo strumento consente poche misurazioni al minuto e non di più, perché una singola richiesta qui può costare dieci query DNS."
+        },
+        {
+          "q": "Conservate il dominio che scrivo?",
+          "a": "No. Va dal tuo browser all'API, che legge il DNS pubblico e risponde senza scrivere il dominio in un database, in un file o in un log. Nemmeno la pagina conserva qualcosa: nessuna cronologia, nessun salvataggio nel browser, niente che finisca nelle statistiche."
+        },
+        {
+          "q": "Perché un sottodominio dà una risposta diversa?",
+          "a": "Perché l'SPF si pubblica per nome e non si eredita. mail.example.com ha il suo record oppure non ne ha nessuno: non ricade su quello di example.com. Cerca esattamente il nome da cui parte la tua posta."
+        }
+      ]
+    },
+    "cta": {
+      "heading": "Hai misurato un record. E chi sta spedendo davvero?",
+      "sub": "L'SPF dice chi può spedire a tuo nome. I report DMARC dicono chi l'ha fatto — ogni sorgente con nome e cognome, e che cosa si è autenticato e che cosa no. Pubblica un record DNS e Sentinely li legge per te, ogni giorno."
+    }
   }
 }

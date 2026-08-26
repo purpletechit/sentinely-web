@@ -1,0 +1,205 @@
+---
+/**
+ * The domain field shared by the two DNS tools: one input, one button, the
+ * error line, the live region, and the note about keeping nothing.
+ *
+ * It lives in its own component so the two tools cannot drift — an input styled
+ * one way here and another way there, or an error line that announces itself on
+ * one page and not on the other, is the kind of difference nobody notices until
+ * a visitor does. The `data-tool-*` hooks are the contract with
+ * `src/scripts/domain-tool.ts`, which wires all of it.
+ *
+ * ⚠️ The input carries no `name`. Nothing typed here may ever be serialised
+ * into a URL: a query string would put the domain in history, in CDN logs and
+ * in the referer of every link the visitor clicks next.
+ */
+interface Props {
+  /** Unique per page — two tools never share one, but the id must be stable. */
+  id: string;
+  label: string;
+  hint: string;
+  placeholder: string;
+  submit: string;
+  clear: string;
+  privacyTitle: string;
+  privacyBody: string;
+  /** Shown when the page has no JavaScript, where nothing can be looked up. */
+  noscript: string;
+}
+
+const { id, label, hint, placeholder, submit, clear, privacyTitle, privacyBody, noscript } =
+  Astro.props;
+
+const hintId = `${id}-hint`;
+---
+
+<form class="dt-form panel" data-tool-form novalidate>
+  <label class="field-label dt-label" for={id}>{label}</label>
+  <p class="dt-hint" id={hintId}>{hint}</p>
+
+  <div class="dt-row">
+    {/* No `name`: see the header note. */}
+    <input
+      class="field dt-input mono"
+      id={id}
+      type="text"
+      inputmode="url"
+      spellcheck="false"
+      autocomplete="off"
+      autocapitalize="off"
+      autocorrect="off"
+      aria-describedby={hintId}
+      placeholder={placeholder}
+      data-tool-input
+    />
+    <div class="dt-actions">
+      <button type="submit" class="btn btn-primary" data-tool-submit>
+        <span data-tool-submit-label>{submit}</span>
+      </button>
+      <button type="button" class="btn btn-ghost" data-tool-clear>{clear}</button>
+    </div>
+  </div>
+
+  <p class="dt-error" role="alert" data-tool-error hidden></p>
+
+  <noscript>
+    <p class="dt-error">{noscript}</p>
+  </noscript>
+</form>
+
+<p class="dt-sr" role="status" aria-live="polite" data-tool-status></p>
+
+<aside class="dt-privacy">
+  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
+    <path
+      d="M12 3 5 6v5c0 4.4 3 8 7 9 4-1 7-4.6 7-9V6l-7-3Z"
+      stroke="currentColor"
+      stroke-width="1.6"
+      stroke-linejoin="round"></path>
+    <path
+      d="M9.2 12.2 11 14l3.8-3.8"
+      stroke="currentColor"
+      stroke-width="1.6"
+      stroke-linecap="round"
+      stroke-linejoin="round"></path>
+  </svg>
+  <div>
+    <p class="dt-privacy-title">{privacyTitle}</p>
+    <p class="dt-privacy-body">{privacyBody}</p>
+  </div>
+</aside>
+
+<style>
+  [hidden] {
+    display: none !important;
+  }
+
+  .dt-form {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+  }
+  .dt-label {
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+  }
+  .dt-hint {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.9rem;
+    max-width: 70ch;
+  }
+
+  /* Stacked on a phone, side by side once there is room for both. */
+  .dt-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .dt-input {
+    background-color: var(--surface-2);
+    font-size: 1rem;
+    padding-block: 0.8rem;
+    min-width: 0;
+  }
+  .dt-input::placeholder {
+    color: var(--faint);
+  }
+  .dt-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .dt-actions .btn {
+    flex: 1 1 auto;
+  }
+
+  .dt-error {
+    margin-top: 0.9rem;
+    color: var(--fail);
+    font-size: 0.9rem;
+    font-weight: 550;
+    line-height: 1.55;
+    max-width: 70ch;
+  }
+  .btn[data-loading] {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
+  /* Visually hidden live region — the outcome is announced without being seen. */
+  .dt-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .dt-privacy {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1.1rem 1.25rem;
+    border: 1px solid var(--accent-line);
+    border-radius: var(--radius);
+    background-color: var(--accent-soft);
+  }
+  .dt-privacy svg {
+    flex: none;
+    color: var(--accent);
+    margin-top: 0.15rem;
+  }
+  .dt-privacy-title {
+    font-weight: 680;
+    color: var(--strong);
+    font-size: 0.95rem;
+  }
+  .dt-privacy-body {
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-top: 0.3rem;
+    max-width: 78ch;
+  }
+
+  @media (min-width: 620px) {
+    .dt-row {
+      flex-direction: row;
+      align-items: flex-start;
+    }
+    .dt-input {
+      flex: 1 1 auto;
+    }
+    .dt-actions {
+      flex: none;
+    }
+    .dt-actions .btn {
+      flex: none;
+    }
+  }
+</style>

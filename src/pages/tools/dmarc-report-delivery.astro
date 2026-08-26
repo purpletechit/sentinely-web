@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DmarcDeliveryBody from '../../components/pages/DmarcDeliveryBody.astro';
+import { useTranslations, type Lang } from '../../i18n/utils';
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+---
+
+<BaseLayout
+  title={t('pages.dmarcDelivery.title')}
+  description={t('pages.dmarcDelivery.description')}
+>
+  <DmarcDeliveryBody />
+</BaseLayout>

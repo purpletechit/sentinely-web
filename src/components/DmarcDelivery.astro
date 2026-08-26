@@ -1,0 +1,473 @@
+---
+/**
+ * "Where do your DMARC reports go?" — a domain, a DNS lookup, and the addresses
+ * the answer actually names.
+ *
+ * ⚠️ **The tool passes no judgement on the addresses, and neither may this
+ * page.** We can read that `dmarc@some-vendor.example` receives the reports; we
+ * cannot know whether that vendor is the one chosen last month or a leftover
+ * from three years ago. Only the reader knows. So the result shows who receives
+ * them and closes with the API's own question — no red, no "warning", no "your
+ * reports are going to somebody else".
+ *
+ * ⚠️ **`rua` and `ruf` are two different things and are shown apart.** The
+ * aggregate report (`rua`) is the daily summary all DMARC monitoring is built
+ * on; the failure report (`ruf`) is a copy of individual failed messages that
+ * almost no provider sends. Merging the two lists would suggest all that
+ * traffic ends up in the same place.
+ *
+ * ⚠️ **The destination blocks render only when a record was actually read.**
+ * With `determinable: false` the DNS did not answer — which is not "no record",
+ * and printing "not requested" underneath it would invent an answer we do not
+ * have.
+ *
+ * Everything the API returns is written with `textContent`: a domain and a DNS
+ * record are a stranger's text and must never be parsed as HTML.
+ */
+import DomainToolField from './tools/DomainToolField.astro';
+import ToolRecordPanel from './tools/ToolRecordPanel.astro';
+import ToolNotesSection from './tools/ToolNotesSection.astro';
+import { useTranslations, type Lang } from '../i18n/utils';
+import { DMARC_REPORT_DELIVERY_ENDPOINT } from '../config';
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+
+/**
+ * Strings the script picks at runtime rather than ones Astro can render at
+ * build time. `<` is escaped so no string can close the script element early.
+ */
+const strings = {
+  submit: t('dmarcDelivery.form.submit'),
+  submitBusy: t('dmarcDelivery.form.submitBusy'),
+  statusBusy: t('dmarcDelivery.form.statusBusy'),
+  statusDone: t('dmarcDelivery.form.statusDone'),
+  errors: t('dmarcDelivery.errors'),
+  severity: t('dmarcDelivery.result.notes.severity'),
+  present: t('dmarcDelivery.result.destinations.requested'),
+  absent: t('dmarcDelivery.result.destinations.notRequested'),
+  notFound: t('dmarcDelivery.result.record.notFound'),
+  unreadable: t('dmarcDelivery.result.record.unreadable'),
+};
+const stringsJson = JSON.stringify(strings).replace(/</g, '\\u003c');
+---
+
+<div
+  class="dd"
+  data-dmarc-tool
+  data-lang={lang}
+  data-endpoint={DMARC_REPORT_DELIVERY_ENDPOINT}
+>
+  <DomainToolField
+    id="dd-domain"
+    label={t('dmarcDelivery.form.label')}
+    hint={t('dmarcDelivery.form.hint')}
+    placeholder={t('dmarcDelivery.form.placeholder')}
+    submit={t('dmarcDelivery.form.submit')}
+    clear={t('dmarcDelivery.form.clear')}
+    privacyTitle={t('dmarcDelivery.privacy.title')}
+    privacyBody={t('dmarcDelivery.privacy.body')}
+    noscript={t('dmarcDelivery.errors.network')}
+  />
+
+  <div class="dd-result" data-tool-result hidden tabindex="-1">
+    <section class="dd-summary panel">
+      <p class="eyebrow">{t('dmarcDelivery.result.eyebrow')}</p>
+      <p class="dd-domain mono" data-dd-domain></p>
+      <p class="dd-summary-text" data-dd-summary></p>
+    </section>
+
+    <ToolRecordPanel
+      heading={t('dmarcDelivery.result.record.heading')}
+      queriedLabel={t('dmarcDelivery.result.record.queried')}
+      rawLabel={t('dmarcDelivery.result.record.raw')}
+      issuesLabel={t('dmarcDelivery.result.record.issues')}
+    >
+      <div class="tr-fact" data-dd-policy-wrap hidden>
+        <dt class="label">{t('dmarcDelivery.result.record.policy')}</dt>
+        <dd class="mono" data-dd-policy></dd>
+      </div>
+    </ToolRecordPanel>
+
+    {/* Two blocks, cloned from one template so `rua` and `ruf` are laid out
+        identically — and so nothing can quietly render them as one list. */}
+    <div class="dd-destinations" data-dd-destinations></div>
+
+    {/* The API's closing question, when there is something to recognise. It is
+        the end of the answer on purpose: the recognising is the reader's. */}
+    <section class="dd-question panel" data-dd-question-wrap hidden>
+      <p class="eyebrow">{t('dmarcDelivery.result.question.eyebrow')}</p>
+      <p class="dd-question-text" data-dd-question></p>
+      <p class="dd-question-sub">{t('dmarcDelivery.result.question.sub')}</p>
+    </section>
+
+    <ToolNotesSection heading={t('dmarcDelivery.result.notes.heading')} />
+  </div>
+
+  {/* Cloned rather than built with createElement so it keeps these styles. */}
+  <template data-tpl-destination>
+    <section class="dd-dest panel">
+      <div class="dd-dest-head">
+        <h2 class="dd-dest-title" data-title></h2>
+        <span class="chip mono" data-tag></span>
+        <span class="chip chip-xs" data-state></span>
+      </div>
+      <p class="dd-dest-desc" data-description></p>
+
+      <div class="dd-dest-body" data-body hidden>
+        <p class="label">{t('dmarcDelivery.result.destinations.addresses')}</p>
+        <ul class="dd-list" data-addresses></ul>
+      </div>
+
+      <div class="dd-dest-body" data-other hidden>
+        <p class="label">{t('dmarcDelivery.result.destinations.otherUris')}</p>
+        <ul class="dd-list" data-other-list></ul>
+      </div>
+
+      <p class="dd-dest-absent" data-absent hidden>
+        {t('dmarcDelivery.result.destinations.absent')}
+      </p>
+    </section>
+  </template>
+
+  <template data-tpl-address>
+    <li class="dd-address mono" data-value></li>
+  </template>
+
+  <script type="application/json" data-tool-strings is:inline set:html={stringsJson}></script>
+</div>
+
+<style>
+  [hidden] {
+    display: none !important;
+  }
+
+  .dd,
+  .dd-result {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .dd-result:focus {
+    outline: none;
+  }
+
+  .dd-summary {
+    padding: 1.6rem 1.5rem;
+  }
+  .dd-domain {
+    margin-top: 0.7rem;
+    font-size: 1.05rem;
+    font-weight: 650;
+    color: var(--strong);
+    overflow-wrap: anywhere;
+  }
+  .dd-summary-text {
+    margin-top: 0.6rem;
+    color: var(--ink);
+    font-size: 1rem;
+    line-height: 1.7;
+    max-width: 72ch;
+  }
+
+  .dd-destinations {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .dd-destinations:empty {
+    display: none;
+  }
+
+  .dd-dest {
+    padding: 1.5rem;
+  }
+  .dd-dest-head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .dd-dest-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--strong);
+    letter-spacing: -0.01em;
+    margin-right: auto;
+  }
+  .dd-dest-desc {
+    margin-top: 0.8rem;
+    color: var(--muted);
+    font-size: 0.94rem;
+    line-height: 1.7;
+    max-width: 76ch;
+  }
+  .dd-dest-body {
+    margin-top: 1.3rem;
+  }
+  .dd-list {
+    margin-top: 0.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  /* Addresses are shown, never linked: a mailto: here would invite writing to
+     a mailbox that belongs to somebody else's reporting pipeline. */
+  .dd-address {
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-2);
+    color: var(--ink);
+    font-size: 0.88rem;
+    overflow-wrap: anywhere;
+  }
+  .dd-dest-absent {
+    margin-top: 1rem;
+    color: var(--muted);
+    font-size: 0.94rem;
+    line-height: 1.65;
+    max-width: 72ch;
+  }
+
+  .dd-question {
+    padding: 1.6rem 1.5rem;
+    border-color: var(--accent-line);
+    background:
+      radial-gradient(90% 140% at 0% 0%, var(--accent-soft), transparent 62%),
+      var(--surface);
+  }
+  .dd-question-text {
+    margin-top: 0.7rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--strong);
+    letter-spacing: -0.01em;
+    line-height: 1.45;
+    max-width: 34ch;
+  }
+  .dd-question-sub {
+    margin-top: 0.6rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    max-width: 72ch;
+  }
+
+  .chip-xs {
+    font-size: 0.68rem;
+    padding: 0.2rem 0.45rem;
+  }
+  .chip-muted {
+    color: var(--muted);
+  }
+</style>
+
+<script>
+  import {
+    readStrings,
+    setupDomainTool,
+    severityChip,
+    type DomainToolData,
+    type DomainToolStrings,
+    type Note,
+    type RecordIssue,
+  } from '../scripts/domain-tool';
+
+  /* ── The shape the API returns ────────────────────────────────────────────
+     Mirrors `DmarcReportDelivery` in the product. Only what this page reads is
+     declared. `null` means "not determinable" everywhere, never "negative".
+  */
+  interface Destination {
+    tag: string;
+    present: boolean;
+    raw: string | null;
+    addresses: string[];
+    otherUris: string[];
+    title: string;
+    description: string;
+  }
+
+  interface Delivery extends DomainToolData {
+    record: {
+      found: boolean | null;
+      queriedName: string;
+      raw: string | null;
+      valid: boolean | null;
+      policy: string | null;
+      issues: RecordIssue[];
+    };
+    aggregate: Destination;
+    forensic: Destination;
+    reason: 'DMARC_NOT_FOUND' | 'DMARC_INVALID' | 'RUA_MISSING' | null;
+    question: string | null;
+    notes: Note[];
+  }
+
+  interface Strings extends DomainToolStrings {
+    /** Chip wording for a tag the record sets, and for one it does not. */
+    present: string;
+    absent: string;
+    /** ⚠️ "nothing published" and "we could not read it" — never the same line. */
+    notFound: string;
+    unreadable: string;
+  }
+
+  const root = document.querySelector<HTMLElement>('[data-dmarc-tool]');
+
+  if (root) {
+    const S = readStrings<Strings>(root);
+    const lang = root.dataset.lang === 'it' ? 'it' : 'en';
+    const endpoint = root.dataset.endpoint ?? '';
+
+    const q = <T extends Element>(sel: string, scope: ParentNode = root) =>
+      scope.querySelector<T>(sel);
+
+    const resultEl = q<HTMLElement>('[data-tool-result]')!;
+    const destinationsEl = q<HTMLElement>('[data-dd-destinations]')!;
+
+    const clone = (name: string): DocumentFragment =>
+      q<HTMLTemplateElement>(`[data-tpl-${name}]`)!.content.cloneNode(true) as DocumentFragment;
+
+    const setText = (el: Element | null, value: string | null | undefined) => {
+      if (el) el.textContent = value ?? '';
+    };
+
+    const show = (el: Element | null, visible: boolean) => {
+      if (el) (el as HTMLElement).hidden = !visible;
+    };
+
+    // ── The record we read ────────────────────────────────────────────────
+
+    const renderRecord = (d: Delivery) => {
+      setText(q('[data-tool-record-queried]'), d.record.queriedName);
+
+      show(q('[data-dd-policy-wrap]'), Boolean(d.record.policy));
+      setText(q('[data-dd-policy]'), d.record.policy);
+
+      const rawEl = q<HTMLElement>('[data-tool-record-raw]')!;
+      const stateEl = q<HTMLElement>('[data-tool-record-state]')!;
+      if (d.record.raw) {
+        setText(rawEl, d.record.raw);
+        show(rawEl, true);
+        show(stateEl, false);
+      } else {
+        show(rawEl, false);
+        // ⚠️ Two different states, and the difference is the whole point:
+        // `false` is "nothing published", `null` is "we could not read it".
+        // The API's summary says which; this line names it next to the record.
+        setText(stateEl, d.record.found === false ? S.notFound : S.unreadable);
+        show(stateEl, true);
+      }
+
+      const list = q<HTMLElement>('[data-tool-record-issues]')!;
+      list.replaceChildren();
+      show(q('[data-tool-record-issues-wrap]'), d.record.issues.length > 0);
+      for (const issue of d.record.issues) {
+        const node = clone('issue');
+        const sev = q<HTMLElement>('[data-sev]', node)!;
+        sev.className = severityChip(issue.severity);
+        sev.textContent = S.severity[issue.severity] ?? issue.severity;
+        // Already localised by the API — printed verbatim.
+        setText(q('[data-message]', node), issue.message);
+        list.append(node);
+      }
+    };
+
+    // ── rua and ruf ───────────────────────────────────────────────────────
+
+    const renderDestination = (destination: Destination): DocumentFragment => {
+      const node = clone('destination');
+
+      // title and description arrive localised; the tag is DNS syntax.
+      setText(q('[data-title]', node), destination.title);
+      setText(q('[data-description]', node), destination.description);
+      setText(q('[data-tag]', node), `${destination.tag}=`);
+
+      const state = q<HTMLElement>('[data-state]', node)!;
+      // Neutral either way. Whether the addresses are the RIGHT ones is not a
+      // question this tool answers, so its chip must not look like an answer.
+      state.className = destination.present ? 'chip chip-xs chip-accent' : 'chip chip-xs chip-muted';
+      state.textContent = destination.present ? S.present : S.absent;
+
+      const addresses = q<HTMLElement>('[data-addresses]', node)!;
+      for (const address of destination.addresses) {
+        const row = clone('address');
+        setText(q('[data-value]', row), address);
+        addresses.append(row);
+      }
+      show(q('[data-body]', node), destination.addresses.length > 0);
+
+      const other = q<HTMLElement>('[data-other-list]', node)!;
+      for (const uri of destination.otherUris) {
+        const row = clone('address');
+        setText(q('[data-value]', row), uri);
+        other.append(row);
+      }
+      show(q('[data-other]', node), destination.otherUris.length > 0);
+
+      show(q('[data-absent]', node), !destination.present);
+      return node;
+    };
+
+    // ── Notes ─────────────────────────────────────────────────────────────
+
+    const renderNotes = (d: Delivery) => {
+      const list = q<HTMLElement>('[data-tool-notes]')!;
+      list.replaceChildren();
+      show(q('[data-tool-notes-section]'), d.notes.length > 0);
+
+      for (const note of d.notes) {
+        const node = clone('note');
+        const sev = q<HTMLElement>('[data-sev]', node)!;
+        sev.className = severityChip(note.severity);
+        sev.textContent = S.severity[note.severity] ?? note.severity;
+        // Titles and details arrive already localised — rendered verbatim.
+        setText(q('[data-title]', node), note.title);
+        setText(q('[data-detail]', node), note.detail);
+        list.append(node);
+      }
+    };
+
+    // ── Rendering ─────────────────────────────────────────────────────────
+
+    const render = (d: Delivery) => {
+      // The Unicode form for an IDN, so somebody who typed `café.fr` sees what
+      // they typed rather than its punycode.
+      setText(q('[data-dd-domain]'), d.unicodeDomain || d.domain);
+      setText(q('[data-dd-summary]'), d.summary);
+
+      renderRecord(d);
+
+      // ⚠️ Only when a record was really read. With `determinable: false` the
+      // DNS did not answer, and "not requested" underneath that would be an
+      // answer we do not have.
+      destinationsEl.replaceChildren();
+      if (d.record.found === true) {
+        destinationsEl.append(renderDestination(d.aggregate));
+        destinationsEl.append(renderDestination(d.forensic));
+      }
+
+      // Null whenever there is nothing to recognise — the API decides that,
+      // not this page.
+      setText(q('[data-dd-question]'), d.question);
+      show(q('[data-dd-question-wrap]'), Boolean(d.question));
+
+      renderNotes(d);
+
+      resultEl.hidden = false;
+      resultEl.focus();
+    };
+
+    setupDomainTool<Delivery>({
+      root,
+      endpoint,
+      lang,
+      strings: S,
+      onData: render,
+      onReset: () => {
+        resultEl.hidden = true;
+      },
+    });
+  }
+</script>

@@ -1,0 +1,133 @@
+---
+/**
+ * The public "where do your DMARC reports go?" page.
+ *
+ * Like the header analyser, it is an acquisition tool as much as a utility:
+ * somebody whose reports never arrived searches for exactly this. So the
+ * section under the tool ("what the answer tells you — and what it cannot") is
+ * written to be worth reading on its own, for the visitor who will never become
+ * a customer as much as for search.
+ */
+import PageHero from '../PageHero.astro';
+import SectionHeading from '../SectionHeading.astro';
+import FeatureCard from '../FeatureCard.astro';
+import Faq from '../Faq.astro';
+import FinalCta from '../FinalCta.astro';
+import DmarcDelivery from '../DmarcDelivery.astro';
+import { postPathByEnglishSlug } from '../../lib/blog';
+import { useTranslations, type Lang } from '../../i18n/utils';
+
+const lang = (Astro.currentLocale ?? 'en') as Lang;
+const t = useTranslations(lang);
+
+type Card = { title: string; body: string };
+const readCards = t('dmarcDelivery.read.cards') as Card[];
+
+/** Icons follow the order of the cards in the dictionaries. */
+const readIcons = ['layers', 'eye-off', 'mail-x', 'radar', 'ban', 'scope'];
+
+/**
+ * ⚠️ Resolved from the blog collection, never hand-written.
+ *
+ * The two languages give this article different slugs, and it might one day be
+ * unpublished in one of them — so the link is looked up, and simply does not
+ * render where the page does not exist. Nothing here can point at a 404.
+ */
+const relatedHref = await postPathByEnglishSlug(lang, 'dmarc-record-correct-but-no-reports');
+---
+
+<PageHero
+  eyebrow={t('dmarcDelivery.eyebrow')}
+  title={t('dmarcDelivery.title')}
+  sub={t('dmarcDelivery.sub')}
+/>
+
+<section class="section section-tool">
+  <div class="container">
+    <DmarcDelivery />
+  </div>
+</section>
+
+<section class="section section-tight">
+  <div class="container">
+    <SectionHeading
+      eyebrow={t('dmarcDelivery.read.eyebrow')}
+      title={t('dmarcDelivery.read.heading')}
+    />
+    <div class="read-grid">
+      {readCards.map((card, i) => (
+        <FeatureCard
+          icon={readIcons[i] ?? 'shield'}
+          title={card.title}
+          body={card.body}
+          delay={(i % 3) * 70}
+        />
+      ))}
+    </div>
+
+    {relatedHref && (
+      <aside class="related panel reveal">
+        <p class="eyebrow">{t('dmarcDelivery.related.eyebrow')}</p>
+        <h3 class="related-title">{t('dmarcDelivery.related.heading')}</h3>
+        <p class="related-body">{t('dmarcDelivery.related.body')}</p>
+        <a class="btn btn-ghost" href={relatedHref}>{t('dmarcDelivery.related.cta')}</a>
+      </aside>
+    )}
+  </div>
+</section>
+
+<Faq keyPrefix="dmarcDelivery.faq" id="tool-faq" />
+
+<FinalCta heading={t('dmarcDelivery.cta.heading')} sub={t('dmarcDelivery.cta.sub')} />
+
+<style>
+  .section-tool {
+    padding-top: 1rem;
+  }
+  .section-tight {
+    padding-top: 0;
+  }
+
+  .read-grid {
+    margin-top: 2.75rem;
+    display: grid;
+    gap: 1.1rem;
+    grid-template-columns: 1fr;
+  }
+
+  .related {
+    margin-top: 2.25rem;
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
+  .related-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--strong);
+    letter-spacing: -0.01em;
+    max-width: 34ch;
+  }
+  .related-body {
+    color: var(--muted);
+    font-size: 0.96rem;
+    line-height: 1.7;
+    max-width: 74ch;
+  }
+  .related .btn {
+    margin-top: 0.6rem;
+  }
+
+  @media (min-width: 620px) {
+    .read-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 980px) {
+    .read-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>
